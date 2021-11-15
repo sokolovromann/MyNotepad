@@ -2,7 +2,13 @@ package ru.sokolovromann.mynotepad.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Blue900 = Color(0xFF0D47A1)
+val LightBlue900 = Color(0xFF5472D3)
+val DarkBlue900 = Color(0xFF002171)
+
+val Gray200 = Color(0xFFEEEEEE)
+val Gray800 = Color(0xFF424242)
+val Red700 = Color(0xFFD32F2F)
+
+val White = Color(0xFFFFFFFF)
+val Black = Color(0xFF000000)
