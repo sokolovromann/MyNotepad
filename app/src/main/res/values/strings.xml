@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">My Notepad</string>
+    <string name="notes_not_found_message">You have no notes</string>
 </resources>
