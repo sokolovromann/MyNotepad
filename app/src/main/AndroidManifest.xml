@@ -12,6 +12,7 @@
         android:theme="@style/Theme.MyNotepad">
         <activity
             android:name=".screens.MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyNotepad.NoActionBar">

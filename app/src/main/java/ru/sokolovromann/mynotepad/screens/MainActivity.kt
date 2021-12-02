@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ru.sokolovromann.mynotepad.screens.addeditnote.AddEditNoteScreen
 import ru.sokolovromann.mynotepad.screens.notes.NotesScreen
 import ru.sokolovromann.mynotepad.screens.notes.NotesViewModel
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
@@ -33,11 +34,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(MainRoute.AddNote.route) {
-                        // TODO Add navigate to AddEditNoteScreen
+                        AddEditNoteScreen(navController = navController)
                     }
-                    composable(MainRoute.EditNote("{noteUid}").route) { navBackStackEntry ->
-                        val noteUid = navBackStackEntry.arguments?.getString("noteUid")
-                        // TODO Add navigate to AddEditNoteScreen
+                    composable(MainRoute.EditNote("{uid}").route) {
+                        AddEditNoteScreen(navController = navController)
                     }
                 }
             }
