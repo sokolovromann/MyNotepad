@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.screens.addeditnote.components.AddEditNoteDisplay
+import ru.sokolovromann.mynotepad.screens.addeditnote.components.AddEditNoteLoading
 import ru.sokolovromann.mynotepad.screens.addeditnote.components.AddEditNoteTopAppBar
 import ru.sokolovromann.mynotepad.ui.components.DefaultLoadingIndicator
 
@@ -44,7 +45,9 @@ fun AddEditNoteScreen(
         snackbarHost = { scaffoldState.snackbarHostState }
     ) {
         when (val state = addEditNoteState.value) {
-            AddEditNoteState.Loading -> { DefaultLoadingIndicator() }
+            AddEditNoteState.Loading -> {
+                AddEditNoteLoading()
+            }
 
             is AddEditNoteState.NoteDisplay -> {
                 AddEditNoteDisplay(
