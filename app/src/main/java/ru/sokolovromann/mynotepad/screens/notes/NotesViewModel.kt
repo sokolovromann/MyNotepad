@@ -25,6 +25,8 @@ class NotesViewModel @Inject constructor(
 
     private val _noteMenuPositionState: MutableState<Int> = mutableStateOf(-1)
 
+    private var lastDeletedNote: Note? = null
+
     fun getNotes() {
         _notesState.value = NotesState.Loading
 
@@ -39,7 +41,8 @@ class NotesViewModel @Inject constructor(
                             noteMenuPosition = _noteMenuPositionState,
                             onNoteMenuPositionChange = { newPosition ->
                                 _noteMenuPositionState.value = newPosition
-                            }
+                            },
+                            onRestoreLastNote = { restoreLastNote() }
                         )
                     }
                 }
@@ -53,6 +56,16 @@ class NotesViewModel @Inject constructor(
 
             withContext(Dispatchers.Main) {
                 _noteMenuPositionState.value = -1
+                lastDeletedNote = note
+            }
+        }
+    }
+
+    private fun restoreLastNote() {
+        viewModelScope.launch(Dispatchers.IO) {
+            lastDeletedNote?.let {
+                val note = it.copy(id = 0L)
+                noteRepository.saveNote(note)
             }
         }
     }

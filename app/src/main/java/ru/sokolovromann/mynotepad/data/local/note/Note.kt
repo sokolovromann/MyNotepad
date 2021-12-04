@@ -19,6 +19,9 @@ data class Note(
     @ColumnInfo(name = "text")
     val text: String,
 
+    @ColumnInfo(name = "created")
+    val created: Long = System.currentTimeMillis(),
+
     @ColumnInfo(name = "last_modified")
     val lastModified: Long = System.currentTimeMillis()
 )

@@ -8,4 +8,6 @@
 
     <string name="notes_delete_note">Delete</string>
     <string name="notes_not_found_message">You have no notes</string>
+    <string name="notes_note_deleted_message">Note deleted</string>
+    <string name="notes_note_deleted_undo">Undo</string>
 </resources>

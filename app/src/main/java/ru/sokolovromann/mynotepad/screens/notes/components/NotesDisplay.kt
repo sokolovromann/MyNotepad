@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,30 +27,42 @@ fun NotesDisplay(
     onNoteClick: (note: Note) -> Unit,
     noteMenuPosition: Int,
     onNoteMenuPositionChange: (newPosition: Int) -> Unit,
-    onDeleteNote: (note: Note) -> Unit
+    onDeleteNote: (note: Note) -> Unit,
+    onNoteDeletedUndo: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        itemsIndexed(notes) { index, note ->
-            TransparentDivider(thickness = if (index == 0) 8.dp else 0.dp)
-            DefaultCard(
-                onClick = { onNoteClick(note) },
-                onLongClick = { onNoteMenuPositionChange(index) },
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) {
-                Column(modifier = Modifier.padding(8.dp)) {
-                    if (note.title.isNotEmpty()) {
-                        NotesDisplayTitleText(note.title)
+    Box {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            itemsIndexed(notes) { index, note ->
+                TransparentDivider(thickness = if (index == 0) 8.dp else 0.dp)
+                DefaultCard(
+                    onClick = { onNoteClick(note) },
+                    onLongClick = { onNoteMenuPositionChange(index) },
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                ) {
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        if (note.title.isNotEmpty()) {
+                            NotesDisplayTitleText(note.title)
+                        }
+                        NotesDisplayBodyText(note.text)
+                        NotesDropdownMenu(
+                            expanded = noteMenuPosition == index,
+                            onDismiss = { onNoteMenuPositionChange(-1) },
+                            onDeleteClick = { onDeleteNote(note) }
+                        )
                     }
-                    NotesDisplayBodyText(note.text)
-                    NotesDropdownMenu(
-                        expanded = noteMenuPosition == index,
-                        onDismiss = { onNoteMenuPositionChange(-1) },
-                        onDeleteClick = { onDeleteNote(note) }
-                    )
                 }
+                TransparentDivider(thickness = if (index == notes.size - 1) 128.dp else 8.dp)
             }
-            TransparentDivider(thickness = if (index == notes.size - 1) 128.dp else 8.dp)
         }
+
+        NotesDeletedMessage(
+            snackbarHostState = snackbarHostState,
+            onUndoClick = onNoteDeletedUndo,
+            modifier = Modifier
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 88.dp)
+                .align(alignment = Alignment.BottomCenter)
+        )
     }
 }
 
@@ -93,7 +108,9 @@ fun NoteDisplayPreview() {
             onNoteClick = {},
             noteMenuPosition = -1,
             onNoteMenuPositionChange = {},
-            onDeleteNote = {}
+            onDeleteNote = {},
+            onNoteDeletedUndo = {},
+            snackbarHostState = rememberScaffoldState().snackbarHostState
         )
     }
 }

@@ -9,7 +9,8 @@ sealed class NotesState {
     data class Notes(
         val notes: List<Note>,
         val noteMenuPosition: State<Int>,
-        val onNoteMenuPositionChange: (newPosition: Int) -> Unit
+        val onNoteMenuPositionChange: (newPosition: Int) -> Unit,
+        val onRestoreLastNote: () -> Unit
     ) : NotesState()
 
     object NotFound : NotesState()
