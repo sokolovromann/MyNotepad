@@ -1,18 +1,15 @@
 package ru.sokolovromann.mynotepad.screens.notes
 
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavController
 import ru.sokolovromann.mynotepad.screens.MainRoute
-import ru.sokolovromann.mynotepad.screens.notes.components.NotesDisplay
-import ru.sokolovromann.mynotepad.screens.notes.components.NotesLoading
-import ru.sokolovromann.mynotepad.screens.notes.components.NotesNotFound
-import ru.sokolovromann.mynotepad.screens.notes.components.NotesTopAppBar
+import ru.sokolovromann.mynotepad.screens.notes.components.*
 import ru.sokolovromann.mynotepad.ui.components.DefaultFloatingActionButton
 
-@ExperimentalMaterialApi
+@ExperimentalFoundationApi
 @Composable
 fun NotesScreen(
     notesViewModel: NotesViewModel,
@@ -37,7 +34,10 @@ fun NotesScreen(
             is NotesState.Notes -> {
                 NotesDisplay(
                     notes = state.notes,
-                    onNoteClick = { note -> navController.navigate(MainRoute.EditNote(note.uid).route) }
+                    onNoteClick = { note -> navController.navigate(MainRoute.EditNote(note.uid).route) },
+                    noteMenuPosition = state.noteMenuPosition.value,
+                    onNoteMenuPositionChange = { newPosition -> state.onNoteMenuPositionChange(newPosition) },
+                    onDeleteNote = { note -> notesViewModel.deleteNote(note) }
                 )
             }
 

@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -14,7 +14,7 @@ import ru.sokolovromann.mynotepad.screens.notes.NotesScreen
 import ru.sokolovromann.mynotepad.screens.notes.NotesViewModel
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
-@ExperimentalMaterialApi
+@ExperimentalFoundationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 

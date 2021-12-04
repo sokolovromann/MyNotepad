@@ -1,37 +1,37 @@
 package ru.sokolovromann.mynotepad.screens.notes.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.sokolovromann.mynotepad.data.local.note.Note
+import ru.sokolovromann.mynotepad.ui.components.DefaultCard
 import ru.sokolovromann.mynotepad.ui.components.TransparentDivider
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
-@ExperimentalMaterialApi
+@ExperimentalFoundationApi
 @Composable
 fun NotesDisplay(
     notes: List<Note>,
-    onNoteClick: (note: Note) -> Unit
+    onNoteClick: (note: Note) -> Unit,
+    noteMenuPosition: Int,
+    onNoteMenuPositionChange: (newPosition: Int) -> Unit,
+    onDeleteNote: (note: Note) -> Unit
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()
-    ) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
         itemsIndexed(notes) { index, note ->
             TransparentDivider(thickness = if (index == 0) 8.dp else 0.dp)
-            Card(
+            DefaultCard(
                 onClick = { onNoteClick(note) },
+                onLongClick = { onNoteMenuPositionChange(index) },
                 modifier = Modifier.padding(horizontal = 8.dp)
             ) {
                 Column(modifier = Modifier.padding(8.dp)) {
@@ -39,6 +39,11 @@ fun NotesDisplay(
                         NotesDisplayTitleText(note.title)
                     }
                     NotesDisplayBodyText(note.text)
+                    NotesDropdownMenu(
+                        expanded = noteMenuPosition == index,
+                        onDismiss = { onNoteMenuPositionChange(-1) },
+                        onDeleteClick = { onDeleteNote(note) }
+                    )
                 }
             }
             TransparentDivider(thickness = if (index == notes.size - 1) 128.dp else 8.dp)
@@ -71,7 +76,7 @@ private fun NotesDisplayBodyText(text: String) {
     )
 }
 
-@ExperimentalMaterialApi
+@ExperimentalFoundationApi
 @Preview(showBackground = true)
 @Composable
 fun NoteDisplayPreview() {
@@ -83,6 +88,12 @@ fun NoteDisplayPreview() {
             Note(title = "Title", text = "Text ".repeat(15)),
             Note(title = "", text = "Text ".repeat(50))
         )
-        NotesDisplay(notes = notes, onNoteClick = {})
+        NotesDisplay(
+            notes = notes,
+            onNoteClick = {},
+            noteMenuPosition = -1,
+            onNoteMenuPositionChange = {},
+            onDeleteNote = {}
+        )
     }
 }
