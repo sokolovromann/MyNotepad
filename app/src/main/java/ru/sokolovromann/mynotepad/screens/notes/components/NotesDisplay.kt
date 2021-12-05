@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.sokolovromann.mynotepad.data.local.note.Note
 import ru.sokolovromann.mynotepad.ui.components.DefaultCard
+import ru.sokolovromann.mynotepad.ui.components.DefaultSnackbar
 import ru.sokolovromann.mynotepad.ui.components.TransparentDivider
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
@@ -56,9 +57,9 @@ fun NotesDisplay(
             }
         }
 
-        NotesDeletedMessage(
+        DefaultSnackbar(
             snackbarHostState = snackbarHostState,
-            onUndoClick = onNoteDeletedUndo,
+            onActionClick = onNoteDeletedUndo,
             modifier = Modifier
                 .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 88.dp)
                 .align(alignment = Alignment.BottomCenter)

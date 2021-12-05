@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.sokolovromann.mynotepad.R
+import ru.sokolovromann.mynotepad.ui.components.DefaultSnackbar
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
 @Composable
@@ -73,7 +74,7 @@ fun AddEditNoteDisplay(
             )
         }
 
-        AddEditNoteSavedMessage(
+        DefaultSnackbar(
             snackbarHostState = snackbarHostState,
             modifier = Modifier
                 .padding(16.dp)

@@ -1,15 +1,14 @@
-package ru.sokolovromann.mynotepad.screens.notes.components
+package ru.sokolovromann.mynotepad.ui.components
 
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import ru.sokolovromann.mynotepad.ui.components.DefaultTextButton
 
 @Composable
-fun NotesDeletedMessage(
-    snackbarHostState: SnackbarHostState,
+fun DefaultSnackbar(
     modifier: Modifier = Modifier,
-    onUndoClick: () -> Unit
+    snackbarHostState: SnackbarHostState,
+    onActionClick: () -> Unit
 ) {
     SnackbarHost(
         modifier = modifier,
@@ -18,11 +17,27 @@ fun NotesDeletedMessage(
             Snackbar(
                 action = {
                     DefaultTextButton(
-                        onClick = onUndoClick,
+                        onClick = onActionClick,
                         text = snackbarData.actionLabel ?: ""
                     )
                 }
             ) {
+                Text(text = snackbarData.message)
+            }
+        }
+    )
+}
+
+@Composable
+fun DefaultSnackbar(
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
+) {
+    SnackbarHost(
+        modifier = modifier,
+        hostState = snackbarHostState,
+        snackbar = { snackbarData ->
+            Snackbar {
                 Text(text = snackbarData.message)
             }
         }
