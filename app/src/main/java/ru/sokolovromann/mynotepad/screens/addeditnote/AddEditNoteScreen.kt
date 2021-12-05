@@ -33,10 +33,16 @@ fun AddEditNoteScreen(
                 onBackClick = { navController.popBackStack() },
                 onSaveClick = {
                     addEditNoteViewModel.saveNote()
-                    coroutineScope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar(
-                            message = savedMessage
-                        )
+
+                    if (addEditNoteState.value is AddEditNoteState.NoteDisplay) {
+                        val showEmptyNoteMessage = (addEditNoteState.value as AddEditNoteState.NoteDisplay).showEmptyNoteMessage
+                        if (!showEmptyNoteMessage.value) {
+                            coroutineScope.launch {
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = savedMessage
+                                )
+                            }
+                        }
                     }
                 }
             )
@@ -55,7 +61,9 @@ fun AddEditNoteScreen(
                     text = state.textState.value,
                     onTitleChange = { newTitle -> state.onTitleChange(newTitle) },
                     onTextChange = { newText -> state.onTextChange(newText) },
-                    snackbarHostState = scaffoldState.snackbarHostState
+                    snackbarHostState = scaffoldState.snackbarHostState,
+                    showEmptyNoteMessage = state.showEmptyNoteMessage.value,
+                    onShowEmptyMessageChange = { isShow -> state.onShowEmptyNoteMessageChange(isShow) }
                 )
             }
         }

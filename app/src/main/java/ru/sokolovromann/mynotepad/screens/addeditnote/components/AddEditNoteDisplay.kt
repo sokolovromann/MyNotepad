@@ -24,7 +24,9 @@ fun AddEditNoteDisplay(
     text: String,
     onTitleChange: (newTitle: String) -> Unit,
     onTextChange: (newText: String) -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    showEmptyNoteMessage: Boolean,
+    onShowEmptyMessageChange: (isShow: Boolean) -> Unit
 ) {
     val scrollState = rememberScrollState()
     
@@ -40,10 +42,7 @@ fun AddEditNoteDisplay(
                 textStyle = MaterialTheme.typography.h6,
                 decorationBox = { innerTextField ->
                     if (title.isEmpty()) {
-                        Text(
-                            text = stringResource(id = R.string.add_edit_note_title_label),
-                            style = MaterialTheme.typography.h6
-                        )
+                        TitleLabel()
                     }
                     innerTextField()
                 },
@@ -59,10 +58,9 @@ fun AddEditNoteDisplay(
                 textStyle = MaterialTheme.typography.body1,
                 decorationBox = { innerTextField ->
                     if (text.isEmpty()) {
-                        Text(
-                            text = stringResource(id = R.string.add_edit_note_text_label),
-                            style = MaterialTheme.typography.body1
-                        )
+                        NoteLabel(showEmptyNoteMessage)
+                    } else {
+                        onShowEmptyMessageChange(false)
                     }
                     innerTextField()
                 },
@@ -83,6 +81,32 @@ fun AddEditNoteDisplay(
     }
 }
 
+@Composable
+private fun TitleLabel() {
+    Text(
+        text = stringResource(id = R.string.add_edit_note_title_label),
+        style = MaterialTheme.typography.h6
+    )
+}
+
+@Composable
+private fun NoteLabel(
+    showEmptyNoteMessage: Boolean
+) {
+    if (showEmptyNoteMessage) {
+        Text(
+            text = stringResource(id = R.string.add_edit_note_empty_note_label),
+            style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colors.error
+        )
+    } else {
+        Text(
+            text = stringResource(id = R.string.add_edit_note_text_label),
+            style = MaterialTheme.typography.body1
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun AddEditNoteDisplayPreview() {
@@ -92,7 +116,9 @@ private fun AddEditNoteDisplayPreview() {
             text = "Note Text ".repeat(50),
             onTitleChange = {},
             onTextChange = {},
-            snackbarHostState = rememberScaffoldState().snackbarHostState
+            snackbarHostState = rememberScaffoldState().snackbarHostState,
+            showEmptyNoteMessage = false,
+            onShowEmptyMessageChange = {}
         )
     }
 }

@@ -26,6 +26,8 @@ class AddEditNoteViewModel @Inject constructor(
 
     private val textState: MutableState<String> = mutableStateOf("")
 
+    private val showEmptyNoteMessageState: MutableState<Boolean> = mutableStateOf(false)
+
     private var originalNote: Note? = null
 
     init {
@@ -47,8 +49,12 @@ class AddEditNoteViewModel @Inject constructor(
             text =  textState.value
         )
 
-        viewModelScope.launch(Dispatchers.IO) {
-            noteRepository.saveNote(note)
+        if (note.text.isEmpty()) {
+            showEmptyNoteMessageState.value = true
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                noteRepository.saveNote(note)
+            }
         }
     }
 
@@ -60,8 +66,10 @@ class AddEditNoteViewModel @Inject constructor(
         _addEditNoteState.value = AddEditNoteState.NoteDisplay(
             titleState = titleState,
             textState = textState,
+            showEmptyNoteMessage = showEmptyNoteMessageState,
             onTitleChange = { newTitle -> titleState.value = newTitle },
-            onTextChange = { newText -> textState.value = newText }
+            onTextChange = { newText -> textState.value = newText },
+            onShowEmptyNoteMessageChange = { isShow -> showEmptyNoteMessageState.value = isShow }
         )
     }
 
