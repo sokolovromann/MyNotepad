@@ -95,7 +95,7 @@ private fun NotesDisplayBodyText(text: String) {
 @ExperimentalFoundationApi
 @Preview(showBackground = true)
 @Composable
-fun NoteDisplayPreview() {
+private fun NoteDisplayPreview() {
     MyNotepadTheme {
         val notes = listOf(
             Note(title = "Title ".repeat(3), text = "Text ".repeat(20)),

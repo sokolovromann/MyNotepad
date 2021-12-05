@@ -38,7 +38,7 @@ fun DefaultLoadingIndicator(
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultLoadingIndicatorPreview() {
+private fun DefaultLoadingIndicatorPreview() {
     MyNotepadTheme {
         DefaultLoadingIndicator(message = "Loading... Please wait...")
     }

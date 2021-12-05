@@ -19,7 +19,7 @@ fun NotesTopAppBar() {
 
 @Preview(showBackground = true)
 @Composable
-fun NotesTopAppBarPreview() {
+private fun NotesTopAppBarPreview() {
     MyNotepadTheme {
         NotesTopAppBar()
     }

@@ -98,7 +98,7 @@ private fun NotFoundMessageText(
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultNotFoundMessagePreview() {
+private fun DefaultNotFoundMessagePreview() {
     MyNotepadTheme {
         DefaultNotFoundMessage(message = "Data is not found")
     }

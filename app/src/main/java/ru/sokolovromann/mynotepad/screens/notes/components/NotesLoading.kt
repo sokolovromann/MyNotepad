@@ -23,7 +23,7 @@ fun NotesLoading() {
 
 @Preview(showBackground = true)
 @Composable
-fun NotesLoadingPreview() {
+private fun NotesLoadingPreview() {
     MyNotepadTheme {
         NotesLoading()
     }

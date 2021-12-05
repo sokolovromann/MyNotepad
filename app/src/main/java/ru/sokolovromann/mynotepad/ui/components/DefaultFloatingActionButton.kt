@@ -30,7 +30,7 @@ fun DefaultFloatingActionButton(
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultFloatingActionButtonPreview() {
+private fun DefaultFloatingActionButtonPreview() {
     MyNotepadTheme {
         DefaultFloatingActionButton(onClick = {})
     }

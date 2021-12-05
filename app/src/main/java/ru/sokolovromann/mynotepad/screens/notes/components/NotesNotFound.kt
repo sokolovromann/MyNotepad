@@ -31,7 +31,7 @@ fun NotesNotFound() {
 
 @Preview(showBackground = true)
 @Composable
-fun NotesNotFoundPreview() {
+private fun NotesNotFoundPreview() {
     MyNotepadTheme {
         NotesNotFound()
     }

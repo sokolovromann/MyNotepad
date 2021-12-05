@@ -52,7 +52,7 @@ fun DefaultIconButton(
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultIconButtonPreview() {
+private fun DefaultIconButtonPreview() {
     MyNotepadTheme {
         Column {
             DefaultIconButton(
