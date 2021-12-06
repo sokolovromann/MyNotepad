@@ -18,8 +18,6 @@ import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val notesViewModel: NotesViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -28,10 +26,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(navController = navController, startDestination = MainRoute.Notes.route) {
                     composable(MainRoute.Notes.route) {
-                        NotesScreen(
-                            notesViewModel = notesViewModel,
-                            navController = navController
-                        )
+                        NotesScreen(navController = navController)
                     }
                     composable(MainRoute.AddNote.route) {
                         AddEditNoteScreen(navController = navController)

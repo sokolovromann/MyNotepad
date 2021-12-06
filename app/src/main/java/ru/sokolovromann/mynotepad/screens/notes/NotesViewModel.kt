@@ -1,6 +1,7 @@
 package ru.sokolovromann.mynotepad.screens.notes
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,12 +21,16 @@ class NotesViewModel @Inject constructor(
     private val noteRepository: NoteRepository
 ) : ViewModel() {
 
-    private val _notesState: MutableLiveData<NotesState> = MutableLiveData(NotesState.Loading)
-    val notesState: LiveData<NotesState> = _notesState
+    private val _notesState: MutableState<NotesState> = mutableStateOf(NotesState.Loading)
+    val notesState: State<NotesState> = _notesState
 
     private val _noteMenuPositionState: MutableState<Int> = mutableStateOf(-1)
 
     private var lastDeletedNote: Note? = null
+
+    init {
+        getNotes()
+    }
 
     fun getNotes() {
         _notesState.value = NotesState.Loading

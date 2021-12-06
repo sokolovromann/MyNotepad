@@ -4,9 +4,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import ru.sokolovromann.mynotepad.R
@@ -17,11 +17,10 @@ import ru.sokolovromann.mynotepad.ui.components.DefaultFloatingActionButton
 @ExperimentalFoundationApi
 @Composable
 fun NotesScreen(
-    notesViewModel: NotesViewModel,
+    notesViewModel: NotesViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    notesViewModel.getNotes()
-    val notesState = notesViewModel.notesState.observeAsState()
+    val notesState = notesViewModel.notesState
 
     val scaffoldState = rememberScaffoldState()
 
