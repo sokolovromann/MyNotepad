@@ -25,8 +25,7 @@ fun AddEditNoteDisplay(
     onTitleChange: (newTitle: String) -> Unit,
     onTextChange: (newText: String) -> Unit,
     snackbarHostState: SnackbarHostState,
-    showEmptyNoteMessage: Boolean,
-    onShowEmptyMessageChange: (isShow: Boolean) -> Unit
+    emptyTextError: Boolean
 ) {
     val scrollState = rememberScrollState()
     
@@ -58,9 +57,7 @@ fun AddEditNoteDisplay(
                 textStyle = MaterialTheme.typography.body1,
                 decorationBox = { innerTextField ->
                     if (text.isEmpty()) {
-                        NoteLabel(showEmptyNoteMessage)
-                    } else {
-                        onShowEmptyMessageChange(false)
+                        NoteLabel(emptyTextError)
                     }
                     innerTextField()
                 },
@@ -91,11 +88,11 @@ private fun TitleLabel() {
 
 @Composable
 private fun NoteLabel(
-    showEmptyNoteMessage: Boolean
+    emptyTextError: Boolean
 ) {
-    if (showEmptyNoteMessage) {
+    if (emptyTextError) {
         Text(
-            text = stringResource(id = R.string.add_edit_note_empty_note_label),
+            text = stringResource(id = R.string.add_edit_note_empty_text_error_label),
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.error
         )
@@ -117,8 +114,7 @@ private fun AddEditNoteDisplayPreview() {
             onTitleChange = {},
             onTextChange = {},
             snackbarHostState = rememberScaffoldState().snackbarHostState,
-            showEmptyNoteMessage = false,
-            onShowEmptyMessageChange = {}
+            emptyTextError = false
         )
     }
 }

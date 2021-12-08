@@ -1,5 +1,5 @@
 <resources>
-    <string name="add_edit_note_empty_note_label">Add note to save</string>
+    <string name="add_edit_note_empty_text_error_label">Add note to save</string>
     <string name="add_edit_note_save">Save</string>
     <string name="add_edit_note_saved_message">Note saved</string>
     <string name="add_edit_note_text_label">Note</string>
