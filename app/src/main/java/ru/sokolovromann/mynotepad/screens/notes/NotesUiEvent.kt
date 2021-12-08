@@ -1,0 +1,9 @@
+package ru.sokolovromann.mynotepad.screens.notes
+
+import ru.sokolovromann.mynotepad.data.local.note.Note
+
+sealed class NotesUiEvent {
+    object AddNote : NotesUiEvent()
+    data class EditNote(val note: Note) : NotesUiEvent()
+    object ShowDeletedMessage : NotesUiEvent()
+}

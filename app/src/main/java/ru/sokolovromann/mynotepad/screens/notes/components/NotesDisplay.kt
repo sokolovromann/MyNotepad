@@ -26,8 +26,8 @@ import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 fun NotesDisplay(
     notes: List<Note>,
     onNoteClick: (note: Note) -> Unit,
-    noteMenuPosition: Int,
-    onNoteMenuPositionChange: (newPosition: Int) -> Unit,
+    noteMenuIndex: Int,
+    onNoteMenuIndexChange: (newIndex: Int) -> Unit,
     onDeleteNote: (note: Note) -> Unit,
     onNoteDeletedUndo: () -> Unit,
     snackbarHostState: SnackbarHostState
@@ -38,7 +38,7 @@ fun NotesDisplay(
                 TransparentDivider(thickness = if (index == 0) 8.dp else 0.dp)
                 DefaultCard(
                     onClick = { onNoteClick(note) },
-                    onLongClick = { onNoteMenuPositionChange(index) },
+                    onLongClick = { onNoteMenuIndexChange(index) },
                     modifier = Modifier.padding(horizontal = 8.dp)
                 ) {
                     Column(modifier = Modifier.padding(8.dp)) {
@@ -47,8 +47,8 @@ fun NotesDisplay(
                         }
                         NotesDisplayBodyText(note.text)
                         NotesDropdownMenu(
-                            expanded = noteMenuPosition == index,
-                            onDismiss = { onNoteMenuPositionChange(-1) },
+                            expanded = noteMenuIndex == index,
+                            onDismiss = { onNoteMenuIndexChange(-1) },
                             onDeleteClick = { onDeleteNote(note) }
                         )
                     }
@@ -107,8 +107,8 @@ private fun NoteDisplayPreview() {
         NotesDisplay(
             notes = notes,
             onNoteClick = {},
-            noteMenuPosition = -1,
-            onNoteMenuPositionChange = {},
+            noteMenuIndex = -1,
+            onNoteMenuIndexChange = {},
             onDeleteNote = {},
             onNoteDeletedUndo = {},
             snackbarHostState = rememberScaffoldState().snackbarHostState
