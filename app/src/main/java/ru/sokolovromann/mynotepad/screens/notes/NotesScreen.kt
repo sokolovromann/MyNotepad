@@ -1,5 +1,6 @@
 package ru.sokolovromann.mynotepad.screens.notes
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
@@ -9,13 +10,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ru.sokolovromann.mynotepad.MyNotepadRoute
 import ru.sokolovromann.mynotepad.R
-import ru.sokolovromann.mynotepad.screens.MainRoute
 import ru.sokolovromann.mynotepad.screens.notes.components.*
 import ru.sokolovromann.mynotepad.ui.components.DefaultFloatingActionButton
+import ru.sokolovromann.mynotepad.ui.components.NavigationDrawer
+import ru.sokolovromann.mynotepad.ui.components.NavigationDrawerHeader
 
 @ExperimentalFoundationApi
 @Composable
@@ -35,9 +37,9 @@ fun NotesScreen(
     LaunchedEffect(true) {
         notesViewModel.notesUiEvent.collectLatest { uiEvent ->
             when (uiEvent) {
-                NotesUiEvent.AddNote -> navController.navigate(MainRoute.AddNote.route)
+                NotesUiEvent.AddNote -> navController.navigate(MyNotepadRoute.Notes.addNoteScreen)
 
-                is NotesUiEvent.EditNote -> navController.navigate(MainRoute.EditNote(uiEvent.note.uid).route)
+                is NotesUiEvent.EditNote -> navController.navigate(MyNotepadRoute.Notes.editNoteScreen(uiEvent.note.uid))
 
                 NotesUiEvent.ShowDeletedMessage -> coroutineScope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -45,19 +47,46 @@ fun NotesScreen(
                         actionLabel = noteDeletedUndo
                     )
                 }
+
+                NotesUiEvent.OpenNavigationMenu -> coroutineScope.launch {
+                    scaffoldState.drawerState.open()
+                }
+
+                NotesUiEvent.CloseNavigationMenu -> coroutineScope.launch {
+                    scaffoldState.drawerState.close()
+                }
             }
         }
     }
 
+    BackHandler(enabled = scaffoldState.drawerState.isOpen) {
+        notesViewModel.onEvent(NotesEvent.NavigationMenuStateChange(false))
+    }
+
     Scaffold(
-        topBar = { NotesTopAppBar() },
+        topBar = {
+            NotesTopAppBar(onNavigationIconClick = {
+                notesViewModel.onEvent(NotesEvent.NavigationMenuStateChange(true))
+            })
+        },
         floatingActionButton = {
             DefaultFloatingActionButton(onClick = {
                 notesViewModel.onEvent(NotesEvent.AddNoteClick)
             })
         },
         scaffoldState = scaffoldState,
-        snackbarHost = { scaffoldState.snackbarHostState }
+        snackbarHost = { scaffoldState.snackbarHostState },
+        drawerContent = {
+            NavigationDrawer(
+                navController = navController,
+                closeNavigation = {
+                    notesViewModel.onEvent(NotesEvent.NavigationMenuStateChange(false)
+                )},
+                drawerHeader = {
+                    NavigationDrawerHeader(title = stringResource(id = R.string.app_name))
+                }
+            )
+        }
     ) {
         when (val state = notesState.value) {
             NotesState.Loading -> NotesLoading()

@@ -7,8 +7,14 @@
 
     <string name="app_name">My Notepad</string>
 
+    <string name="drawer_notes">@string/notes_name</string>
+    <string name="drawer_settings">@string/settings_name</string>
+
     <string name="notes_delete_note">Delete</string>
+    <string name="notes_name">Notes</string>
     <string name="notes_not_found_message">You have no notes</string>
     <string name="notes_note_deleted_message">Note deleted</string>
     <string name="notes_note_deleted_undo">Undo</string>
+
+    <string name="settings_name">Settings</string>
 </resources>

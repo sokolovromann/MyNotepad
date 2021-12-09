@@ -8,4 +8,5 @@ sealed class NotesEvent {
     data class OpenNoteMenu(val index: Int) : NotesEvent()
     data class DeleteNoteClick(val note: Note) : NotesEvent()
     object NoteDeletedUndoClick : NotesEvent()
+    data class NavigationMenuStateChange(val isOpen: Boolean) : NotesEvent()
 }

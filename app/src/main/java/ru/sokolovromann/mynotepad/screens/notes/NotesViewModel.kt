@@ -42,12 +42,24 @@ class NotesViewModel @Inject constructor(
             NotesEvent.AddNoteClick -> viewModelScope.launch {
                 _notesUiEvent.emit(NotesUiEvent.AddNote)
             }
+
             is NotesEvent.NoteClick -> viewModelScope.launch {
                 _notesUiEvent.emit(NotesUiEvent.EditNote(event.note))
             }
+
             is NotesEvent.OpenNoteMenu -> _noteMenuState.value = event.index
+
             is NotesEvent.DeleteNoteClick -> deleteNote(event.note)
+
             NotesEvent.NoteDeletedUndoClick -> restoreLastNote()
+
+            is NotesEvent.NavigationMenuStateChange -> viewModelScope.launch {
+                if (event.isOpen) {
+                    _notesUiEvent.emit(NotesUiEvent.OpenNavigationMenu)
+                } else {
+                    _notesUiEvent.emit(NotesUiEvent.CloseNavigationMenu)
+                }
+            }
         }
     }
 
