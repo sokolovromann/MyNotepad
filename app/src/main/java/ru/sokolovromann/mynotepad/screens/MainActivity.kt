@@ -1,5 +1,7 @@
 package ru.sokolovromann.mynotepad.screens
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,10 +25,23 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 NavHost(navController = navController, startDestination = MyNotepadRoute.Notes.graph) {
-                    notesGraph(navController)
-                    settingsGraph(navController)
+                    notesGraph(
+                        navController = navController
+                    )
+                    settingsGraph(
+                        navController = navController,
+                        onOpenGitHub = { openGitHub() }
+                    )
                 }
             }
         }
+    }
+
+    private fun openGitHub() {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("https://github.com/sokolovromann/MyNotepad")
+        )
+        startActivity(intent)
     }
 }

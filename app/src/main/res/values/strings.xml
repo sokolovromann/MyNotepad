@@ -16,5 +16,11 @@
     <string name="notes_note_deleted_message">Note deleted</string>
     <string name="notes_note_deleted_undo">Undo</string>
 
+    <string name="settings_about_header">About</string>
+    <string name="settings_app_night_theme_title">Night theme</string>
+    <string name="settings_app_version_title">App version</string>
+    <string name="settings_general_header">General</string>
+    <string name="settings_github_description">Tap to open</string>
+    <string name="settings_github_title">GitHub</string>
     <string name="settings_name">Settings</string>
 </resources>

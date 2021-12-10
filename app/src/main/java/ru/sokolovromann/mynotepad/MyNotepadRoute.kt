@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import ru.sokolovromann.mynotepad.screens.addeditnote.AddEditNoteScreen
 import ru.sokolovromann.mynotepad.screens.notes.NotesScreen
+import ru.sokolovromann.mynotepad.screens.settings.SettingsScreen
 
 sealed class MyNotepadRoute(val graph: String, @StringRes val graphNameResId: Int, @DrawableRes val graphIconResId: Int) {
     object Notes : MyNotepadRoute(graph = "notes", graphNameResId = R.string.drawer_notes, R.drawable.ic_notes_navigation) {
@@ -20,7 +21,6 @@ sealed class MyNotepadRoute(val graph: String, @StringRes val graphNameResId: In
         const val settingsScreen = "settingsscreen"
     }
 }
-
 
 @ExperimentalFoundationApi
 fun NavGraphBuilder.notesGraph(navController: NavController) {
@@ -37,10 +37,14 @@ fun NavGraphBuilder.notesGraph(navController: NavController) {
     }
 }
 
-fun NavGraphBuilder.settingsGraph(navController: NavController) {
+@ExperimentalFoundationApi
+fun NavGraphBuilder.settingsGraph(navController: NavController, onOpenGitHub: () -> Unit) {
     navigation(startDestination = MyNotepadRoute.Settings.settingsScreen, route = MyNotepadRoute.Settings.graph) {
         composable(MyNotepadRoute.Settings.settingsScreen) {
-            // TODO Add SettingsScreen
+            SettingsScreen(
+                navController = navController,
+                onOpenGitHub = onOpenGitHub
+            )
         }
     }
 }
