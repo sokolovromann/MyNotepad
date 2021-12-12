@@ -1,5 +1,6 @@
 package ru.sokolovromann.mynotepad.screens.notes.components
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -23,7 +24,9 @@ fun NotesTopAppBar(
             DefaultIconButton(
                 onClick = onNavigationIconClick,
                 imageVector = Icons.Filled.Menu)
-        }
+        },
+        backgroundColor = MaterialTheme.colors.primary,
+        contentColor = MaterialTheme.colors.onPrimary
     )
 }
 

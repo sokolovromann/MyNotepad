@@ -34,7 +34,9 @@ fun AddEditNoteTopAppBar(
                 stringResourceId = R.string.add_edit_note_save,
                 allCaps = true
             )
-        }
+        },
+        backgroundColor = MaterialTheme.colors.primary,
+        contentColor = MaterialTheme.colors.onPrimary
     )
 }
 

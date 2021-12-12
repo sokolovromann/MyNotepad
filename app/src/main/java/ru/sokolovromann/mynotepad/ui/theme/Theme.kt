@@ -7,8 +7,8 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    primary = Blue900,
-    primaryVariant = DarkBlue900,
+    primary = Black,
+    primaryVariant = Black,
     onPrimary = White,
 
     secondary = Blue900,

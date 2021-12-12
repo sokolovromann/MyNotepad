@@ -1,5 +1,6 @@
 package ru.sokolovromann.mynotepad.screens.addeditnote.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
@@ -10,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +31,7 @@ fun AddEditNoteDisplay(
 ) {
     val scrollState = rememberScrollState()
     
-    Box {
+    Box(modifier = Modifier.background(MaterialTheme.colors.surface)) {
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
@@ -38,7 +40,8 @@ fun AddEditNoteDisplay(
             BasicTextField(
                 value = title,
                 onValueChange = { onTitleChange(it) },
-                textStyle = MaterialTheme.typography.h6,
+                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.onSurface),
+                cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
                 decorationBox = { innerTextField ->
                     if (title.isEmpty()) {
                         TitleLabel()
@@ -54,7 +57,8 @@ fun AddEditNoteDisplay(
             BasicTextField(
                 value = text,
                 onValueChange = { onTextChange(it) },
-                textStyle = MaterialTheme.typography.body1,
+                textStyle = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.onSurface),
+                cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
                 decorationBox = { innerTextField ->
                     if (text.isEmpty()) {
                         NoteLabel(emptyTextError)

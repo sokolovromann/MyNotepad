@@ -36,7 +36,9 @@ fun NavigationDrawer(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    Column(modifier = Modifier.fillMaxSize()
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colors.background)
     ) {
         drawerHeader()
         TransparentDivider(thickness = 8.dp)
@@ -95,21 +97,21 @@ private fun NavigationDrawerItem(
     onItemClick: () -> Unit
 ) {
     val itemColor = if (itemSelected) {
-        MaterialTheme.colors.background
+        MaterialTheme.colors.surface
     } else {
         Color.Transparent
     }
 
     val textColor = if (itemSelected) {
-        MaterialTheme.colors.primary
+        MaterialTheme.colors.secondary
     } else {
-        Color.Unspecified
+        MaterialTheme.colors.onSurface
     }
 
     val iconColor = if (itemSelected) {
-        MaterialTheme.colors.primary
+        MaterialTheme.colors.secondary
     } else {
-        LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+        MaterialTheme.colors.onSurface
     }
 
     Row(

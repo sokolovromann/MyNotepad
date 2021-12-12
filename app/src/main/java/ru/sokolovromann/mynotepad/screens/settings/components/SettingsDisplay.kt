@@ -85,7 +85,7 @@ private fun SettingsHeader(
             .fillMaxWidth()
             .padding(8.dp),
         style = MaterialTheme.typography.subtitle1,
-        color = MaterialTheme.colors.primary
+        color = MaterialTheme.colors.secondary
     )
 }
 
@@ -116,8 +116,7 @@ private fun SettingsItem(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                style = MaterialTheme.typography.body2,
-                color = Color.DarkGray
+                style = MaterialTheme.typography.body2
             )
         }
     }
