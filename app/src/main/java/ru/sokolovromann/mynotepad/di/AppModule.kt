@@ -5,25 +5,33 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import ru.sokolovromann.mynotepad.data.local.LocalDatabase
+import ru.sokolovromann.mynotepad.data.local.account.AccountDataStore
 import ru.sokolovromann.mynotepad.data.local.settings.SettingsDataStore
-import ru.sokolovromann.mynotepad.data.repository.NoteRepository
-import ru.sokolovromann.mynotepad.data.repository.NoteRepositoryImpl
-import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
-import ru.sokolovromann.mynotepad.data.repository.SettingsRepositoryImpl
+import ru.sokolovromann.mynotepad.data.remote.auth.AuthApi
+import ru.sokolovromann.mynotepad.data.repository.*
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+    private val Context.settingDataStore: DataStore<Preferences> by preferencesDataStore(
         name = "my_notepad_local_settings"
+    )
+
+    private val Context.accountDataStore: DataStore<Preferences> by preferencesDataStore(
+        name = "my_notepad_local_account"
     )
 
     @Provides
@@ -60,6 +68,42 @@ object AppModule {
     @Provides
     @Singleton
     fun providesSettingsDataStore(@ApplicationContext context: Context): SettingsDataStore {
-        return SettingsDataStore(context.dataStore)
+        return SettingsDataStore(context.settingDataStore)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAccountRepository(accountRepositoryImpl: AccountRepositoryImpl): AccountRepository {
+        return accountRepositoryImpl
+    }
+
+    @Provides
+    @Singleton
+    fun providesAccountRepositoryImpl(accountDataStore: AccountDataStore, authApi: AuthApi, dispatcher: CoroutineDispatcher): AccountRepositoryImpl {
+        return AccountRepositoryImpl(accountDataStore, authApi, dispatcher)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAccountDataStore(@ApplicationContext context: Context): AccountDataStore {
+        return AccountDataStore(context.accountDataStore)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAccountApi(firebaseAuth: FirebaseAuth): AuthApi {
+        return AuthApi(firebaseAuth)
+    }
+
+    @Provides
+    @Singleton
+    fun providesFirebaseAuth(): FirebaseAuth {
+        return Firebase.auth
+    }
+
+    @Provides
+    @Singleton
+    fun providesDispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
     }
 }

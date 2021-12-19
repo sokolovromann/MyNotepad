@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -80,6 +81,8 @@ dependencies {
     implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose_version"
 
     implementation "androidx.datastore:datastore-preferences:$datastore_preferences_version"
+
+    implementation "com.google.firebase:firebase-auth-ktx:$firebase_auth_ktx_version"
 
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$android_junit_version"
