@@ -11,8 +11,9 @@ import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.local.account.AccountDataStore
 import ru.sokolovromann.mynotepad.data.remote.auth.AuthApi
 import ru.sokolovromann.mynotepad.data.remote.auth.UserResponse
+import javax.inject.Inject
 
-class AccountRepositoryImpl(
+class AccountRepositoryImpl @Inject constructor(
     private val dataStore: AccountDataStore,
     private val api: AuthApi,
     private val dispatcher: CoroutineDispatcher

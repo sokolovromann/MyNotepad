@@ -4,8 +4,9 @@ import kotlinx.coroutines.flow.Flow
 import ru.sokolovromann.mynotepad.data.local.settings.NotesSort
 import ru.sokolovromann.mynotepad.data.local.settings.Settings
 import ru.sokolovromann.mynotepad.data.local.settings.SettingsDataStore
+import javax.inject.Inject
 
-class SettingsRepositoryImpl(
+class SettingsRepositoryImpl @Inject constructor(
     private val settingsDataStore: SettingsDataStore
 ) : SettingsRepository {
 

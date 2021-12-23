@@ -1,9 +1,10 @@
 package ru.sokolovromann.mynotepad.data.remote.auth
 
 import com.google.firebase.auth.FirebaseAuth
+import javax.inject.Inject
 import kotlin.NullPointerException
 
-class AuthApi(
+class AuthApi @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) {
 
