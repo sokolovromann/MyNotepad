@@ -10,6 +10,7 @@ import androidx.navigation.navigation
 import ru.sokolovromann.mynotepad.screens.addeditnote.AddEditNoteScreen
 import ru.sokolovromann.mynotepad.screens.notes.NotesScreen
 import ru.sokolovromann.mynotepad.screens.settings.SettingsScreen
+import ru.sokolovromann.mynotepad.screens.welcome.WelcomeScreen
 
 sealed class MyNotepadRoute(val graph: String, @StringRes val graphNameResId: Int, @DrawableRes val graphIconResId: Int) {
     object Notes : MyNotepadRoute(graph = "notes", graphNameResId = R.string.drawer_notes, R.drawable.ic_notes_navigation) {
@@ -19,6 +20,9 @@ sealed class MyNotepadRoute(val graph: String, @StringRes val graphNameResId: In
     }
     object Settings : MyNotepadRoute(graph = "settings", graphNameResId = R.string.drawer_settings, R.drawable.ic_settings_navigation) {
         const val settingsScreen = "settingsscreen"
+    }
+    object Welcome : MyNotepadRoute(graph = "welcome", graphNameResId = 0, graphIconResId = 0) {
+        const val welcomeScreen = "welcomescreen"
     }
 }
 
@@ -45,6 +49,14 @@ fun NavGraphBuilder.settingsGraph(navController: NavController, onOpenGitHub: ()
                 navController = navController,
                 onOpenGitHub = onOpenGitHub
             )
+        }
+    }
+}
+
+fun NavGraphBuilder.welcomeGraph(navController: NavController) {
+    navigation(startDestination = MyNotepadRoute.Welcome.welcomeScreen, route = MyNotepadRoute.Welcome.graph) {
+        composable(MyNotepadRoute.Welcome.welcomeScreen) {
+            WelcomeScreen(navController = navController)
         }
     }
 }

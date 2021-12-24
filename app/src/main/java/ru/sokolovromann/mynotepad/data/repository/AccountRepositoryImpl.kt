@@ -169,6 +169,13 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun continueWithoutSignIn(onResult: (result: Result<Unit>) -> Unit) {
+        runBlocking(dispatcher) {
+            dataStore.saveAccount(Account.LocalAccount)
+            onResult(Result.success(Unit))
+        }
+    }
+
     private fun cacheAccount(userResponse: UserResponse, onCached: (account: Account) -> Unit) {
         runBlocking(dispatcher) {
             val account = Account(

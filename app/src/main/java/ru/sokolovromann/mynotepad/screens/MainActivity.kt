@@ -17,6 +17,7 @@ import ru.sokolovromann.mynotepad.screens.settings.SettingsState
 import ru.sokolovromann.mynotepad.screens.settings.SettingsViewModel
 import ru.sokolovromann.mynotepad.settingsGraph
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
+import ru.sokolovromann.mynotepad.welcomeGraph
 
 @ExperimentalFoundationApi
 @AndroidEntryPoint
@@ -28,7 +29,10 @@ class MainActivity : ComponentActivity() {
             MyNotepadTheme(darkTheme = isAppNightTheme()) {
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = MyNotepadRoute.Notes.graph) {
+                NavHost(navController = navController, startDestination = MyNotepadRoute.Welcome.graph) {
+                    welcomeGraph(
+                        navController = navController
+                    )
                     notesGraph(
                         navController = navController
                     )

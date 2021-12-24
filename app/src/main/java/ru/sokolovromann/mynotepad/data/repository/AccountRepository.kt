@@ -22,4 +22,6 @@ interface AccountRepository {
     fun signOut(onResult: (result: Result<Unit>) -> Unit)
 
     fun deleteAccount(onResult: (result: Result<Unit>) -> Unit)
+
+    fun continueWithoutSignIn(onResult: (result: Result<Unit>) -> Unit)
 }

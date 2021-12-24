@@ -23,4 +23,10 @@
     <string name="settings_github_description">Tap to open</string>
     <string name="settings_github_title">GitHub</string>
     <string name="settings_name">Settings</string>
+
+    <string name="welcome_continue_without_sync">Continue without sync</string>
+    <string name="welcome_create_account">Create account</string>
+    <string name="welcome_sign_in">Sign in</string>
+    <string name="welcome_sign_up">Sign up</string>
+    <string name="welcome_title">Welcome to My Notepad!</string>
 </resources>
