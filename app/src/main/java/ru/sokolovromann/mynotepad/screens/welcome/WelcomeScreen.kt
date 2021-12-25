@@ -21,9 +21,7 @@ fun WelcomeScreen(
     LaunchedEffect(true) {
         welcomeViewModel.welcomeUiEvent.collectLatest { uiEvent ->
             when (uiEvent) {
-                WelcomeUiEvent.OpenSignUp -> {
-                    // TODO Add OpenSignUp
-                }
+                WelcomeUiEvent.OpenSignUp -> navController.navigate(MyNotepadRoute.Welcome.signUpScreen)
                 WelcomeUiEvent.OpenSignIn -> {
                     // TODO Add OpenSignIn
                 }
