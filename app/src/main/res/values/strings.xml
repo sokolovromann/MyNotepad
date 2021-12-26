@@ -24,6 +24,18 @@
     <string name="settings_github_title">GitHub</string>
     <string name="settings_name">Settings</string>
 
+    <string name="sign_in_email_label">Email</string>
+    <string name="sign_in_incorrect_email_message">Enter email</string>
+    <string name="sign_in_incorrect_password_message">Enter password</string>
+    <string name="sign_in_name">Sign in</string>
+    <string name="sign_in_network_error_message">Please check your internet connection</string>
+    <string name="sign_in_password_label">Password</string>
+    <string name="sign_in_reset_password">Reset password</string>
+    <string name="sign_in_reset_password_message">Check your email to reset password</string>
+    <string name="sign_in_sign_in">Sign in</string>
+    <string name="sign_in_sign_in_error_message">Incorrect email or password</string>
+    <string name="sign_in_unknown_error_message">Something went wrong. Please try later.</string>
+
     <string name="sign_up_create_account">Create account</string>
     <string name="sign_up_email_label">Email</string>
     <string name="sign_up_incorrect_email_message">Incorrect email</string>

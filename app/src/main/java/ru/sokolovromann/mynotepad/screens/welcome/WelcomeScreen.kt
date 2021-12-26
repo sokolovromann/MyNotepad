@@ -22,9 +22,7 @@ fun WelcomeScreen(
         welcomeViewModel.welcomeUiEvent.collectLatest { uiEvent ->
             when (uiEvent) {
                 WelcomeUiEvent.OpenSignUp -> navController.navigate(MyNotepadRoute.Welcome.signUpScreen)
-                WelcomeUiEvent.OpenSignIn -> {
-                    // TODO Add OpenSignIn
-                }
+                WelcomeUiEvent.OpenSignIn -> navController.navigate(MyNotepadRoute.Welcome.signInScreen)
                 WelcomeUiEvent.OpenNotes -> navController.navigate(MyNotepadRoute.Notes.notesScreen) {
                     popUpTo(MyNotepadRoute.Welcome.welcomeScreen) {
                         inclusive = true
