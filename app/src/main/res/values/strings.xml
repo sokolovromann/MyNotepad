@@ -19,10 +19,17 @@
     <string name="settings_about_header">About</string>
     <string name="settings_app_night_theme_title">Night theme</string>
     <string name="settings_app_version_title">App version</string>
+    <string name="settings_change_email_title">Change email</string>
+    <string name="settings_change_password_title">Change password</string>
+    <string name="settings_delete_account_title">Delete account</string>
     <string name="settings_general_header">General</string>
     <string name="settings_github_description">Tap to open</string>
     <string name="settings_github_title">GitHub</string>
+    <string name="settings_local_account_header">Local account</string>
     <string name="settings_name">Settings</string>
+    <string name="settings_sign_in_title">Sign in</string>
+    <string name="settings_sign_out_title">Sign out</string>
+    <string name="settings_sign_up_title">Sign up</string>
 
     <string name="sign_in_email_label">Email</string>
     <string name="sign_in_incorrect_email_message">Enter email</string>
@@ -35,7 +42,6 @@
     <string name="sign_in_sign_in">Sign in</string>
     <string name="sign_in_sign_in_error_message">Incorrect email or password</string>
     <string name="sign_in_unknown_error_message">Something went wrong. Please try later.</string>
-
     <string name="sign_up_create_account">Create account</string>
     <string name="sign_up_email_label">Email</string>
     <string name="sign_up_incorrect_email_message">Incorrect email</string>

@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.sokolovromann.mynotepad.BuildConfig
+import ru.sokolovromann.mynotepad.MyNotepadRoute
 import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.screens.settings.components.SettingsDisplay
 import ru.sokolovromann.mynotepad.screens.settings.components.SettingsLoading
@@ -28,6 +29,7 @@ fun SettingsScreen(
     onOpenGitHub: () -> Unit
 ) {
     val settingsState = settingsViewModel.settingsState
+    val accountState = settingsViewModel.accountState
     val scaffoldState = rememberScaffoldState()
 
     val coroutineScope = rememberCoroutineScope()
@@ -43,6 +45,26 @@ fun SettingsScreen(
 
                 SettingsUiEvent.CloseNavigationMenu -> coroutineScope.launch {
                     scaffoldState.drawerState.close()
+                }
+
+                SettingsUiEvent.OpenSignUp -> navController.navigate(MyNotepadRoute.Welcome.signUpScreen)
+
+                SettingsUiEvent.OpenSignIn -> navController.navigate(MyNotepadRoute.Welcome.signInScreen)
+
+                SettingsUiEvent.OpenChangeEmail -> {
+                    // TODO Add OpenChangeEmail
+                }
+
+                SettingsUiEvent.OpenChangePassword -> {
+                    // TODO Add OpenChangePassword
+                }
+
+                SettingsUiEvent.OpenWelcome -> navController.navigate(MyNotepadRoute.Welcome.welcomeScreen) {
+                    navController.backQueue.clear()
+                }
+
+                SettingsUiEvent.OpenDeleteAccount -> {
+                    // TODO Add OpenDeleteAccount
                 }
             }
         }
@@ -83,7 +105,15 @@ fun SettingsScreen(
                 onAppNightThemeChange = { appNightTheme ->
                     settingsViewModel.onEvent(SettingsEvent.OnAppNightThemeChange(appNightTheme))
                 },
-                onGitHubClick = { settingsViewModel.onEvent(SettingsEvent.GitHubClick) }
+                onGitHubClick = { settingsViewModel.onEvent(SettingsEvent.GitHubClick) },
+                localAccount = accountState.value.isLocalAccount(),
+                onSignUpClick = { settingsViewModel.onEvent(SettingsEvent.SignUpClick) },
+                onSignInClick = { settingsViewModel.onEvent(SettingsEvent.SignInClick) },
+                email = accountState.value.email,
+                onChangeEmailClick = { settingsViewModel.onEvent(SettingsEvent.ChangeEmailClick) },
+                onChangePasswordClick = { settingsViewModel.onEvent(SettingsEvent.ChangePasswordClick) },
+                onSignOutClick = { settingsViewModel.onEvent(SettingsEvent.SignOutClick) },
+                onDeleteAccount = { settingsViewModel.onEvent(SettingsEvent.DeleteAccountClick) }
             )
         }
     }

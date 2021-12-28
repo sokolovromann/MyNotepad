@@ -28,7 +28,15 @@ fun SettingsDisplay(
     appNightTheme: Boolean,
     appVersion: String,
     onAppNightThemeChange: (appNightTheme: Boolean) -> Unit,
-    onGitHubClick: () -> Unit
+    onGitHubClick: () -> Unit,
+    localAccount: Boolean,
+    onSignUpClick: () -> Unit,
+    onSignInClick: () -> Unit,
+    email: String,
+    onChangeEmailClick: () -> Unit,
+    onChangePasswordClick: () -> Unit,
+    onSignOutClick: () -> Unit,
+    onDeleteAccount: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -38,7 +46,26 @@ fun SettingsDisplay(
     ) {
         DefaultCard(modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp, top = 16.dp, end = 8.dp, bottom = 8.dp)
+            .padding(8.dp)
+        ) {
+            if (localAccount) {
+                LocalAccountCardContent(
+                    onSignUpClick = onSignUpClick,
+                    onSignInClick = onSignInClick
+                )
+            } else {
+                AccountCardContent(
+                    email = email,
+                    onChangeEmailClick = onChangeEmailClick,
+                    onChangePasswordClick = onChangePasswordClick,
+                    onDeleteAccount = onDeleteAccount,
+                    onSignOutClick = onSignOutClick
+                )
+            }
+        }
+        DefaultCard(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp, top = 0.dp, end = 8.dp, bottom = 8.dp)
         ) {
             Column {
                 SettingsHeader(
@@ -122,6 +149,57 @@ private fun SettingsItem(
     }
 }
 
+@Composable
+private fun LocalAccountCardContent(
+    onSignUpClick: () -> Unit,
+    onSignInClick: () -> Unit
+) {
+    Column {
+        SettingsHeader(
+            text = stringResource(id = R.string.settings_local_account_header)
+        )
+        SettingsItem(
+            title = stringResource(id = R.string.settings_sign_up_title),
+            onItemClick = onSignUpClick
+        )
+        SettingsItem(
+            title = stringResource(id = R.string.settings_sign_in_title),
+            onItemClick = onSignInClick
+        )
+    }
+}
+
+@Composable
+private fun AccountCardContent(
+    email: String,
+    onChangeEmailClick: () -> Unit,
+    onChangePasswordClick: () -> Unit,
+    onSignOutClick: () -> Unit,
+    onDeleteAccount: () -> Unit
+) {
+    Column {
+        SettingsHeader(
+            text = email
+        )
+        SettingsItem(
+            title = stringResource(id = R.string.settings_change_email_title),
+            onItemClick = onChangeEmailClick
+        )
+        SettingsItem(
+            title = stringResource(id = R.string.settings_change_password_title),
+            onItemClick = onChangePasswordClick
+        )
+        SettingsItem(
+            title = stringResource(id = R.string.settings_sign_out_title),
+            onItemClick = onSignOutClick
+        )
+        SettingsItem(
+            title = stringResource(id = R.string.settings_delete_account_title),
+            onItemClick = onDeleteAccount
+        )
+    }
+}
+
 @ExperimentalFoundationApi
 @Preview(showBackground = true)
 @Composable
@@ -131,7 +209,15 @@ private fun SettingsDisplayPreview() {
             appNightTheme = true,
             appVersion = BuildConfig.VERSION_NAME,
             onAppNightThemeChange = {},
-            onGitHubClick = {}
+            onGitHubClick = {},
+            localAccount = false,
+            onSignUpClick = {},
+            onSignInClick = {},
+            email = "email@domain.com",
+            onChangeEmailClick = {},
+            onChangePasswordClick = {},
+            onSignOutClick = {},
+            onDeleteAccount = {}
         )
     }
 }
