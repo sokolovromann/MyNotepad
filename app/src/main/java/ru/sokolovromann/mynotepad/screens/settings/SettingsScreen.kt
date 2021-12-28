@@ -51,9 +51,7 @@ fun SettingsScreen(
 
                 SettingsUiEvent.OpenSignIn -> navController.navigate(MyNotepadRoute.Welcome.signInScreen)
 
-                SettingsUiEvent.OpenChangeEmail -> {
-                    // TODO Add OpenChangeEmail
-                }
+                SettingsUiEvent.OpenChangeEmail -> navController.navigate(MyNotepadRoute.Settings.changeEmailScreen)
 
                 SettingsUiEvent.OpenChangePassword -> {
                     // TODO Add OpenChangePassword

@@ -18,15 +18,17 @@ import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 fun DefaultLoadingIndicator(
     modifier: Modifier = Modifier,
     message: String = "",
-    messageColor: Color = MaterialTheme.colors.onSurface
+    messageColor: Color = MaterialTheme.colors.onSurface,
+    indicatorColor: Color = MaterialTheme.colors.primary
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        CircularProgressIndicator(modifier = Modifier
-            .padding(all = 8.dp)
+        CircularProgressIndicator(
+            modifier = Modifier.padding(all = 8.dp),
+            color = indicatorColor
         )
         Text(
             style = MaterialTheme.typography.body1,
