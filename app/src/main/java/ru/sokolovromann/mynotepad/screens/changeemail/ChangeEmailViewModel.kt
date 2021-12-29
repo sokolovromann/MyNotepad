@@ -54,10 +54,14 @@ class ChangeEmailViewModel @Inject constructor(
 
     private fun changeEmail() {
         _changeEmailState.value = _changeEmailState.value.copy(
-            changing = false
+            changing = true
         )
 
         accountRepository.updateEmail(email = _changeEmailState.value.email) { result ->
+            _changeEmailState.value = _changeEmailState.value.copy(
+                changing = false
+            )
+
             viewModelScope.launch {
                 result
                     .onSuccess {
