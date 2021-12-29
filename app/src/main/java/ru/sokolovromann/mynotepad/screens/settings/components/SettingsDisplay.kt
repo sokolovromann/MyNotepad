@@ -1,24 +1,22 @@
 package ru.sokolovromann.mynotepad.screens.settings.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.sokolovromann.mynotepad.BuildConfig
 import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.ui.components.DefaultCard
+import ru.sokolovromann.mynotepad.ui.components.DefaultSnackbar
 import ru.sokolovromann.mynotepad.ui.components.DefaultSwitch
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
@@ -36,69 +34,89 @@ fun SettingsDisplay(
     onChangeEmailClick: () -> Unit,
     onChangePasswordClick: () -> Unit,
     onSignOutClick: () -> Unit,
-    onDeleteAccount: () -> Unit
+    onDeleteAccountClick: () -> Unit,
+    deleteAccountWarning: Boolean,
+    onDeleteAccountWarningCancelClick: () -> Unit,
+    onDeleteAccountWarningDeleteClick: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     val scrollState = rememberScrollState()
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(scrollState)
-    ) {
-        DefaultCard(modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
+    Box(modifier = Modifier.background(MaterialTheme.colors.surface)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
         ) {
-            if (localAccount) {
-                LocalAccountCardContent(
-                    onSignUpClick = onSignUpClick,
-                    onSignInClick = onSignInClick
-                )
-            } else {
-                AccountCardContent(
-                    email = email,
-                    onChangeEmailClick = onChangeEmailClick,
-                    onChangePasswordClick = onChangePasswordClick,
-                    onDeleteAccount = onDeleteAccount,
-                    onSignOutClick = onSignOutClick
-                )
+            DefaultCard(modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+            ) {
+                if (localAccount) {
+                    LocalAccountCardContent(
+                        onSignUpClick = onSignUpClick,
+                        onSignInClick = onSignInClick
+                    )
+                } else {
+                    AccountCardContent(
+                        email = email,
+                        onChangeEmailClick = onChangeEmailClick,
+                        onChangePasswordClick = onChangePasswordClick,
+                        onDeleteAccount = onDeleteAccountClick,
+                        onSignOutClick = onSignOutClick
+                    )
+                }
             }
-        }
-        DefaultCard(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, top = 0.dp, end = 8.dp, bottom = 8.dp)
-        ) {
-            Column {
-                SettingsHeader(
-                    text = stringResource(id = R.string.settings_general_header)
-                )
-                DefaultSwitch(
-                    title = stringResource(id = R.string.settings_app_night_theme_title),
-                    checked = appNightTheme,
-                    onCheckedChange = onAppNightThemeChange
-                )
+            DefaultCard(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, top = 0.dp, end = 8.dp, bottom = 8.dp)
+            ) {
+                Column {
+                    SettingsHeader(
+                        text = stringResource(id = R.string.settings_general_header)
+                    )
+                    DefaultSwitch(
+                        title = stringResource(id = R.string.settings_app_night_theme_title),
+                        checked = appNightTheme,
+                        onCheckedChange = onAppNightThemeChange
+                    )
+                }
+            }
+
+            DefaultCard(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+            ) {
+                Column {
+                    SettingsHeader(
+                        text = stringResource(id = R.string.settings_about_header)
+                    )
+                    SettingsItem(
+                        title = stringResource(id = R.string.settings_app_version_title),
+                        description = appVersion,
+                        onItemClick = {}
+                    )
+                    SettingsItem(
+                        title = stringResource(id = R.string.settings_github_title),
+                        description = stringResource(id = R.string.settings_github_description),
+                        onItemClick = onGitHubClick
+                    )
+                }
             }
         }
 
-        DefaultCard(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-        ) {
-            Column {
-                SettingsHeader(
-                    text = stringResource(id = R.string.settings_about_header)
-                )
-                SettingsItem(
-                    title = stringResource(id = R.string.settings_app_version_title),
-                    description = appVersion,
-                    onItemClick = {}
-                )
-                SettingsItem(
-                    title = stringResource(id = R.string.settings_github_title),
-                    description = stringResource(id = R.string.settings_github_description),
-                    onItemClick = onGitHubClick
-                )
-            }
+        if (deleteAccountWarning) {
+            SettingsDeleteAccountDialog(
+                onCancelClick = onDeleteAccountWarningCancelClick,
+                onDeleteClick = onDeleteAccountWarningDeleteClick
+            )
         }
+
+        DefaultSnackbar(
+            snackbarHostState = snackbarHostState,
+            modifier = Modifier
+                .padding(16.dp)
+                .align(alignment = Alignment.BottomCenter)
+        )
     }
 }
 
@@ -217,7 +235,11 @@ private fun SettingsDisplayPreview() {
             onChangeEmailClick = {},
             onChangePasswordClick = {},
             onSignOutClick = {},
-            onDeleteAccount = {}
+            onDeleteAccountClick = {},
+            deleteAccountWarning = false,
+            onDeleteAccountWarningCancelClick = {},
+            onDeleteAccountWarningDeleteClick = {},
+            snackbarHostState = rememberScaffoldState().snackbarHostState
         )
     }
 }

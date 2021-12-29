@@ -13,7 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.sokolovromann.mynotepad.MyNotepadRoute
 import ru.sokolovromann.mynotepad.notesGraph
-import ru.sokolovromann.mynotepad.screens.settings.SettingsState
 import ru.sokolovromann.mynotepad.screens.settings.SettingsViewModel
 import ru.sokolovromann.mynotepad.settingsGraph
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
@@ -57,12 +56,6 @@ class MainActivity : ComponentActivity() {
     private fun isAppNightTheme(): Boolean {
         val settingsViewModel: SettingsViewModel = hiltViewModel()
         val settingsState = settingsViewModel.settingsState.value
-
-        var appNightTheme = false
-        if (settingsState is SettingsState.SettingsDisplay) {
-            appNightTheme = settingsState.settings.appNightTheme
-        }
-
-        return appNightTheme
+        return settingsState.settings.appNightTheme
     }
 }

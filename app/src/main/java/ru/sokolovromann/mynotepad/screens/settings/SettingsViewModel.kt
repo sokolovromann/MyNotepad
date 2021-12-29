@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
@@ -24,7 +25,7 @@ class SettingsViewModel @Inject constructor(
     private val accountRepository: AccountRepository
 ) : ViewModel(), ScreensEvent<SettingsEvent> {
 
-    private val _settingsState: MutableState<SettingsState> = mutableStateOf(SettingsState.Empty)
+    private val _settingsState: MutableState<SettingsState> = mutableStateOf(SettingsState())
     val settingsState: State<SettingsState> = _settingsState
 
     private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
@@ -72,19 +73,30 @@ class SettingsViewModel @Inject constructor(
 
             SettingsEvent.SignOutClick -> signOut()
 
-            SettingsEvent.DeleteAccountClick -> viewModelScope.launch {
-                _settingsUiEvent.emit(SettingsUiEvent.OpenDeleteAccount)
-            }
+            SettingsEvent.DeleteAccountClick -> _settingsState.value = _settingsState.value.copy(
+                deleteAccountWarning = true
+            )
+
+            SettingsEvent.AccountWarningDeleteClick -> deleteAccount()
+
+            SettingsEvent.AccountWarningCancelClick -> _settingsState.value = _settingsState.value.copy(
+                deleteAccountWarning = false
+            )
         }
     }
 
     private fun getSettings() {
-        _settingsState.value = SettingsState.Loading
+        _settingsState.value = _settingsState.value.copy(
+            loading = true
+        )
 
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.getSettings().collect { settings ->
                 withContext(Dispatchers.Main) {
-                    _settingsState.value = SettingsState.SettingsDisplay(settings)
+                    _settingsState.value = _settingsState.value.copy(
+                        loading = false,
+                        settings = settings
+                    )
                 }
             }
         }
@@ -112,6 +124,31 @@ class SettingsViewModel @Inject constructor(
                 viewModelScope.launch {
                     _settingsUiEvent.emit(SettingsUiEvent.OpenWelcome)
                 }
+            }
+        }
+    }
+
+    private fun deleteAccount() {
+        _settingsState.value = _settingsState.value.copy(
+            deleteAccountWarning = false
+        )
+
+        accountRepository.deleteAccount { result ->
+            viewModelScope.launch {
+                result
+                    .onSuccess {
+                        _settingsUiEvent.emit(SettingsUiEvent.OpenWelcome)
+                    }
+                    .onFailure { exception ->
+                        when (exception) {
+                            is NetworkException -> _settingsUiEvent.emit(
+                                SettingsUiEvent.ShowNetworkErrorMessage
+                            )
+                            else -> _settingsUiEvent.emit(
+                                SettingsUiEvent.ShowUnknownErrorMessage
+                            )
+                        }
+                    }
             }
         }
     }

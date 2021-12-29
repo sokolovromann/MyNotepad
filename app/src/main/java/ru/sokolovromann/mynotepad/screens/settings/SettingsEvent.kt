@@ -10,4 +10,6 @@ sealed class SettingsEvent {
     object ChangeEmailClick : SettingsEvent()
     object ChangePasswordClick : SettingsEvent()
     object DeleteAccountClick : SettingsEvent()
+    object AccountWarningDeleteClick : SettingsEvent()
+    object AccountWarningCancelClick : SettingsEvent()
 }

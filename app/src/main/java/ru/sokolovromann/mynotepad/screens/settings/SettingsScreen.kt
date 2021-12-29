@@ -28,11 +28,14 @@ fun SettingsScreen(
     navController: NavController,
     onOpenGitHub: () -> Unit
 ) {
-    val settingsState = settingsViewModel.settingsState
+    val settingsState = settingsViewModel.settingsState.value
     val accountState = settingsViewModel.accountState
     val scaffoldState = rememberScaffoldState()
 
     val coroutineScope = rememberCoroutineScope()
+
+    val networkErrorMessage = stringResource(id = R.string.settings_network_error_message)
+    val unknownErrorMessage = stringResource(id = R.string.settings_unknown_error_message)
 
     LaunchedEffect(true) {
         settingsViewModel.settingsUiEvent.collect { uiEvent ->
@@ -59,8 +62,16 @@ fun SettingsScreen(
                     navController.backQueue.clear()
                 }
 
-                SettingsUiEvent.OpenDeleteAccount -> {
-                    // TODO Add OpenDeleteAccount
+                SettingsUiEvent.ShowNetworkErrorMessage -> coroutineScope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = networkErrorMessage
+                    )
+                }
+
+                SettingsUiEvent.ShowUnknownErrorMessage -> coroutineScope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = unknownErrorMessage
+                    )
                 }
             }
         }
@@ -88,15 +99,14 @@ fun SettingsScreen(
                     NavigationDrawerHeader(title = stringResource(id = R.string.app_name))
                 }
             )
-        }
+        },
+        snackbarHost = { scaffoldState.snackbarHostState }
     ) {
-        when (val state = settingsState.value) {
-            SettingsState.Empty -> {}
-
-            SettingsState.Loading -> SettingsLoading()
-
-            is SettingsState.SettingsDisplay -> SettingsDisplay(
-                appNightTheme = state.settings.appNightTheme,
+        if (settingsState.loading) {
+            SettingsLoading()
+        } else {
+            SettingsDisplay(
+                appNightTheme = settingsState.settings.appNightTheme,
                 appVersion = BuildConfig.VERSION_NAME,
                 onAppNightThemeChange = { appNightTheme ->
                     settingsViewModel.onEvent(SettingsEvent.OnAppNightThemeChange(appNightTheme))
@@ -109,7 +119,11 @@ fun SettingsScreen(
                 onChangeEmailClick = { settingsViewModel.onEvent(SettingsEvent.ChangeEmailClick) },
                 onChangePasswordClick = { settingsViewModel.onEvent(SettingsEvent.ChangePasswordClick) },
                 onSignOutClick = { settingsViewModel.onEvent(SettingsEvent.SignOutClick) },
-                onDeleteAccount = { settingsViewModel.onEvent(SettingsEvent.DeleteAccountClick) }
+                onDeleteAccountClick = { settingsViewModel.onEvent(SettingsEvent.DeleteAccountClick) },
+                deleteAccountWarning = settingsState.deleteAccountWarning,
+                onDeleteAccountWarningCancelClick = { settingsViewModel.onEvent(SettingsEvent.AccountWarningCancelClick) },
+                onDeleteAccountWarningDeleteClick = { settingsViewModel.onEvent(SettingsEvent.AccountWarningDeleteClick) },
+                snackbarHostState = scaffoldState.snackbarHostState
             )
         }
     }
