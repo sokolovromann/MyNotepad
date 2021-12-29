@@ -53,9 +53,7 @@ fun SettingsScreen(
 
                 SettingsUiEvent.OpenChangeEmail -> navController.navigate(MyNotepadRoute.Settings.changeEmailScreen)
 
-                SettingsUiEvent.OpenChangePassword -> {
-                    // TODO Add OpenChangePassword
-                }
+                SettingsUiEvent.OpenChangePassword -> navController.navigate(MyNotepadRoute.Settings.changePasswordScreen)
 
                 SettingsUiEvent.OpenWelcome -> navController.navigate(MyNotepadRoute.Welcome.welcomeScreen) {
                     navController.backQueue.clear()
