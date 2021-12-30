@@ -13,15 +13,15 @@ interface AccountRepository {
 
     fun signInWithEmailPassword(email: String, password: String, onResult: (result: Result<Unit>) -> Unit)
 
-    fun updateEmail(email: String, onResult: (result: Result<Unit>) -> Unit)
+    fun updateEmail(currentPassword: String, newEmail: String, onResult: (result: Result<Unit>) -> Unit)
 
-    fun updatePassword(password: String, onResult: (result: Result<Unit>) -> Unit)
+    fun updatePassword(currentPassword: String, newPassword: String, onResult: (result: Result<Unit>) -> Unit)
 
     fun sendPasswordResetEmail(email: String, onResult: (result: Result<Unit>) -> Unit)
 
     fun signOut(onResult: (result: Result<Unit>) -> Unit)
 
-    fun deleteAccount(onResult: (result: Result<Unit>) -> Unit)
+    fun deleteAccount(currentPassword: String, onResult: (result: Result<Unit>) -> Unit)
 
     fun continueWithoutSignIn(onResult: (result: Result<Unit>) -> Unit)
 }

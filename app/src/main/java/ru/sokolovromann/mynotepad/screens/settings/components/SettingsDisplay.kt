@@ -3,9 +3,7 @@ package ru.sokolovromann.mynotepad.screens.settings.components
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import ru.sokolovromann.mynotepad.BuildConfig
 import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.ui.components.DefaultCard
-import ru.sokolovromann.mynotepad.ui.components.DefaultSnackbar
 import ru.sokolovromann.mynotepad.ui.components.DefaultSwitch
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
@@ -34,11 +31,7 @@ fun SettingsDisplay(
     onChangeEmailClick: () -> Unit,
     onChangePasswordClick: () -> Unit,
     onSignOutClick: () -> Unit,
-    onDeleteAccountClick: () -> Unit,
-    deleteAccountWarning: Boolean,
-    onDeleteAccountWarningCancelClick: () -> Unit,
-    onDeleteAccountWarningDeleteClick: () -> Unit,
-    snackbarHostState: SnackbarHostState
+    onDeleteAccountClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -103,20 +96,6 @@ fun SettingsDisplay(
                 }
             }
         }
-
-        if (deleteAccountWarning) {
-            SettingsDeleteAccountDialog(
-                onCancelClick = onDeleteAccountWarningCancelClick,
-                onDeleteClick = onDeleteAccountWarningDeleteClick
-            )
-        }
-
-        DefaultSnackbar(
-            snackbarHostState = snackbarHostState,
-            modifier = Modifier
-                .padding(16.dp)
-                .align(alignment = Alignment.BottomCenter)
-        )
     }
 }
 
@@ -235,11 +214,7 @@ private fun SettingsDisplayPreview() {
             onChangeEmailClick = {},
             onChangePasswordClick = {},
             onSignOutClick = {},
-            onDeleteAccountClick = {},
-            deleteAccountWarning = false,
-            onDeleteAccountWarningCancelClick = {},
-            onDeleteAccountWarningDeleteClick = {},
-            snackbarHostState = rememberScaffoldState().snackbarHostState
+            onDeleteAccountClick = {}
         )
     }
 }

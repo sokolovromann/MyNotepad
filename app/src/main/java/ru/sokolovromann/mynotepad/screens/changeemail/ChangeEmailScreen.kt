@@ -67,8 +67,11 @@ fun ChangeEmailScreen(
     ) {
         ChangeEmailDisplay(
             email = changeEmailState.value.email,
+            password = changeEmailState.value.password,
             onEmailChange = { newEmail -> changeEmailViewModel.onEvent(ChangeEmailEvent.OnEmailChange(newEmail)) },
+            onPasswordChange = { newPassword -> changeEmailViewModel.onEvent(ChangeEmailEvent.OnPasswordChange(newPassword)) },
             incorrectEmail = changeEmailState.value.incorrectEmail,
+            incorrectPassword = changeEmailState.value.incorrectPassword,
             snackbarHostState = scaffoldState.snackbarHostState
         )
     }

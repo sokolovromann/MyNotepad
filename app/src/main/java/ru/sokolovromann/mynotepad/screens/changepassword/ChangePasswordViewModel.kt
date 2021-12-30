@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
@@ -27,11 +28,15 @@ class ChangePasswordViewModel @Inject constructor(
 
     override fun onEvent(event: ChangePasswordEvent) {
         when (event) {
-            is ChangePasswordEvent.OnPasswordChange -> _changePasswordState.value = _changePasswordState.value.copy(
-                password = event.newPassword
+            is ChangePasswordEvent.OnNewPasswordChange -> _changePasswordState.value = _changePasswordState.value.copy(
+                newPassword = event.newPassword
             )
 
-            ChangePasswordEvent.ChangeClick -> if (isCorrectPassword()) {
+            is ChangePasswordEvent.OnCurrentPasswordChange -> _changePasswordState.value = _changePasswordState.value.copy(
+                currentPassword = event.newPassword
+            )
+
+            ChangePasswordEvent.ChangeClick -> if (isCorrectNewPassword() && isCorrectCurrentPassword()) {
                 changePassword()
             }
 
@@ -41,14 +46,24 @@ class ChangePasswordViewModel @Inject constructor(
         }
     }
 
-    private fun isCorrectPassword(): Boolean {
-        val correctPassword = _changePasswordState.value.password.length > 8
+    private fun isCorrectNewPassword(): Boolean {
+        val correctPassword = _changePasswordState.value.newPassword.length > 8
         _changePasswordState.value = _changePasswordState.value.copy(
-            incorrectPassword = !correctPassword,
+            incorrectNewPassword = !correctPassword,
             changing = false
         )
 
-        return !_changePasswordState.value.incorrectPassword
+        return !_changePasswordState.value.incorrectNewPassword
+    }
+
+    private fun isCorrectCurrentPassword(): Boolean {
+        val correctPassword = _changePasswordState.value.currentPassword.isNotEmpty()
+        _changePasswordState.value = _changePasswordState.value.copy(
+            incorrectCurrentPassword = !correctPassword,
+            changing = false
+        )
+
+        return !_changePasswordState.value.incorrectCurrentPassword
     }
 
     private fun changePassword() {
@@ -56,7 +71,10 @@ class ChangePasswordViewModel @Inject constructor(
             changing = true
         )
 
-        accountRepository.updatePassword(password = _changePasswordState.value.password) { result ->
+        accountRepository.updatePassword(
+            currentPassword = _changePasswordState.value.currentPassword,
+            newPassword = _changePasswordState.value.newPassword
+        ) { result ->
             _changePasswordState.value = _changePasswordState.value.copy(
                 changing = false
             )
@@ -70,6 +88,9 @@ class ChangePasswordViewModel @Inject constructor(
                         when (exception) {
                             is NetworkException -> _changePasswordUiEvent.emit(
                                 ChangePasswordUiEvent.ShowNetworkErrorMessage
+                            )
+                            is IncorrectDataException -> _changePasswordState.value = _changePasswordState.value.copy(
+                                incorrectCurrentPassword = true
                             )
                             else -> _changePasswordUiEvent.emit(
                                 ChangePasswordUiEvent.ShowUnknownErrorMessage

@@ -9,6 +9,5 @@ sealed class SettingsUiEvent {
     object OpenChangeEmail : SettingsUiEvent()
     object OpenChangePassword : SettingsUiEvent()
     object OpenWelcome : SettingsUiEvent()
-    object ShowNetworkErrorMessage : SettingsUiEvent()
-    object ShowUnknownErrorMessage : SettingsUiEvent()
+    object OpenDeleteAccount : SettingsUiEvent()
 }

@@ -19,9 +19,12 @@ import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
 @Composable
 fun ChangePasswordDisplay(
-    password: String,
-    onPasswordChange: (newPassword: String) -> Unit,
-    incorrectPassword: Boolean,
+    newPassword: String,
+    currentPassword: String,
+    onNewPasswordChange: (newPassword: String) -> Unit,
+    onCurrentPasswordChange: (newPassword: String) -> Unit,
+    incorrectNewPassword: Boolean,
+    incorrectCurrentPassword: Boolean,
     snackbarHostState: SnackbarHostState
 ) {
     Box(modifier = Modifier.background(MaterialTheme.colors.surface)) {
@@ -31,20 +34,36 @@ fun ChangePasswordDisplay(
                 .padding(8.dp)
         ) {
             OutlinedTextField(
-                value = password,
-                onValueChange = { onPasswordChange(it) },
-                label = { Text(text = stringResource(id = R.string.change_password_password_label)) },
+                value = newPassword,
+                onValueChange = { onNewPasswordChange(it) },
+                label = { Text(text = stringResource(id = R.string.change_password_new_password_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
-                isError = incorrectPassword,
+                isError = incorrectNewPassword,
                 modifier = Modifier.fillMaxWidth()
             )
             DefaultHelperText(
-                helperText = stringResource(id = R.string.change_password_password_helper),
+                helperText = stringResource(id = R.string.change_password_new_password_helper),
                 errorText = stringResource(id = R.string.change_password_min_length_password_message),
-                isError = incorrectPassword,
+                isError = incorrectNewPassword,
                 modifier = Modifier.padding(start = 16.dp, bottom = 4.dp)
+            )
+            OutlinedTextField(
+                value = currentPassword,
+                onValueChange = { onCurrentPasswordChange(it) },
+                label = { Text(text = stringResource(id = R.string.change_password_current_password_label)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = PasswordVisualTransformation(),
+                singleLine = true,
+                isError = incorrectCurrentPassword,
+                modifier = Modifier.fillMaxWidth()
+            )
+            DefaultHelperText(
+                helperText = "",
+                errorText = stringResource(id = R.string.change_password_incorrect_current_password_message),
+                isError = incorrectCurrentPassword,
+                modifier = Modifier.padding(start = 16.dp)
             )
         }
         DefaultSnackbar(
@@ -61,9 +80,12 @@ fun ChangePasswordDisplay(
 fun ChangePasswordDisplayPreview() {
     MyNotepadTheme {
         ChangePasswordDisplay(
-            password = "abc12345.",
-            onPasswordChange = {},
-            incorrectPassword = true,
+            newPassword = "abcd12345.",
+            currentPassword = "abc12345.",
+            onNewPasswordChange = {},
+            onCurrentPasswordChange = {},
+            incorrectNewPassword = true,
+            incorrectCurrentPassword = false,
             snackbarHostState = rememberScaffoldState().snackbarHostState
         )
     }

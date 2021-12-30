@@ -10,6 +10,7 @@ import androidx.navigation.navigation
 import ru.sokolovromann.mynotepad.screens.addeditnote.AddEditNoteScreen
 import ru.sokolovromann.mynotepad.screens.changeemail.ChangeEmailScreen
 import ru.sokolovromann.mynotepad.screens.changepassword.ChangePasswordScreen
+import ru.sokolovromann.mynotepad.screens.deleteaccount.DeleteAccountScreen
 import ru.sokolovromann.mynotepad.screens.notes.NotesScreen
 import ru.sokolovromann.mynotepad.screens.settings.SettingsScreen
 import ru.sokolovromann.mynotepad.screens.signin.SignInScreen
@@ -26,6 +27,7 @@ sealed class MyNotepadRoute(val graph: String, @StringRes val graphNameResId: In
         const val settingsScreen = "settingsscreen"
         const val changeEmailScreen = "changeemailscreen"
         const val changePasswordScreen = "changepasswordscreen"
+        const val deleteAccountScreen = "deleteaccountscreen"
     }
     object Welcome : MyNotepadRoute(graph = "welcome", graphNameResId = 0, graphIconResId = 0) {
         const val welcomeScreen = "welcomescreen"
@@ -63,6 +65,9 @@ fun NavGraphBuilder.settingsGraph(navController: NavController, onOpenGitHub: ()
         }
         composable(MyNotepadRoute.Settings.changePasswordScreen) {
             ChangePasswordScreen(navController = navController)
+        }
+        composable(MyNotepadRoute.Settings.deleteAccountScreen) {
+            DeleteAccountScreen(navController = navController)
         }
     }
 }

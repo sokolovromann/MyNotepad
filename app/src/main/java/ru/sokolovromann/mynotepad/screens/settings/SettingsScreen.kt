@@ -34,9 +34,6 @@ fun SettingsScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val networkErrorMessage = stringResource(id = R.string.settings_network_error_message)
-    val unknownErrorMessage = stringResource(id = R.string.settings_unknown_error_message)
-
     LaunchedEffect(true) {
         settingsViewModel.settingsUiEvent.collect { uiEvent ->
             when (uiEvent) {
@@ -62,17 +59,7 @@ fun SettingsScreen(
                     navController.backQueue.clear()
                 }
 
-                SettingsUiEvent.ShowNetworkErrorMessage -> coroutineScope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = networkErrorMessage
-                    )
-                }
-
-                SettingsUiEvent.ShowUnknownErrorMessage -> coroutineScope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = unknownErrorMessage
-                    )
-                }
+                SettingsUiEvent.OpenDeleteAccount -> navController.navigate(MyNotepadRoute.Settings.deleteAccountScreen)
             }
         }
     }
@@ -119,11 +106,7 @@ fun SettingsScreen(
                 onChangeEmailClick = { settingsViewModel.onEvent(SettingsEvent.ChangeEmailClick) },
                 onChangePasswordClick = { settingsViewModel.onEvent(SettingsEvent.ChangePasswordClick) },
                 onSignOutClick = { settingsViewModel.onEvent(SettingsEvent.SignOutClick) },
-                onDeleteAccountClick = { settingsViewModel.onEvent(SettingsEvent.DeleteAccountClick) },
-                deleteAccountWarning = settingsState.deleteAccountWarning,
-                onDeleteAccountWarningCancelClick = { settingsViewModel.onEvent(SettingsEvent.AccountWarningCancelClick) },
-                onDeleteAccountWarningDeleteClick = { settingsViewModel.onEvent(SettingsEvent.AccountWarningDeleteClick) },
-                snackbarHostState = scaffoldState.snackbarHostState
+                onDeleteAccountClick = { settingsViewModel.onEvent(SettingsEvent.DeleteAccountClick) }
             )
         }
     }

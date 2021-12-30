@@ -1,4 +1,4 @@
-package ru.sokolovromann.mynotepad.screens.changeemail.components
+package ru.sokolovromann.mynotepad.screens.deleteaccount.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,12 +18,9 @@ import ru.sokolovromann.mynotepad.ui.components.DefaultSnackbar
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
 @Composable
-fun ChangeEmailDisplay(
-    email: String,
+fun DeleteAccountDisplay(
     password: String,
-    onEmailChange: (newEmail: String) -> Unit,
     onPasswordChange: (newPassword: String) -> Unit,
-    incorrectEmail: Boolean,
     incorrectPassword: Boolean,
     snackbarHostState: SnackbarHostState
 ) {
@@ -33,25 +30,17 @@ fun ChangeEmailDisplay(
                 .fillMaxSize()
                 .padding(8.dp)
         ) {
-            OutlinedTextField(
-                value = email,
-                onValueChange = { onEmailChange(it) },
-                label = { Text(text = stringResource(id = R.string.change_email_email_label)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true,
-                isError = incorrectEmail,
-                modifier = Modifier.fillMaxWidth()
-            )
-            DefaultHelperText(
-                helperText = "",
-                errorText = stringResource(id = R.string.change_email_incorrect_email_message),
-                isError = incorrectEmail,
-                modifier = Modifier.padding(start = 16.dp, bottom = 4.dp)
+            Text(
+                text = stringResource(id = R.string.delete_account_warning),
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
             )
             OutlinedTextField(
                 value = password,
                 onValueChange = { onPasswordChange(it) },
-                label = { Text(text = stringResource(id = R.string.change_email_password_label)) },
+                label = { Text(text = stringResource(id = R.string.delete_account_password_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
@@ -60,7 +49,7 @@ fun ChangeEmailDisplay(
             )
             DefaultHelperText(
                 helperText = "",
-                errorText = stringResource(id = R.string.change_email_incorrect_password_message),
+                errorText = stringResource(id = R.string.delete_account_incorrect_password_message),
                 isError = incorrectPassword,
                 modifier = Modifier.padding(start = 16.dp)
             )
@@ -76,14 +65,11 @@ fun ChangeEmailDisplay(
 
 @Preview(showBackground = true)
 @Composable
-private fun ChangeEmailDisplayPreview() {
+fun DeleteAccountDisplayPreview() {
     MyNotepadTheme {
-        ChangeEmailDisplay(
-            email = "new-email@domain.com",
+        DeleteAccountDisplay(
             password = "abc12345.",
-            onEmailChange = {},
             onPasswordChange = {},
-            incorrectEmail = true,
             incorrectPassword = false,
             snackbarHostState = rememberScaffoldState().snackbarHostState
         )

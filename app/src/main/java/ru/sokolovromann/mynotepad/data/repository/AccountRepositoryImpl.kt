@@ -3,6 +3,7 @@ package ru.sokolovromann.mynotepad.data.repository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
@@ -84,37 +85,35 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun updateEmail(email: String, onResult: (result: Result<Unit>) -> Unit) {
-        api.updateEmail(email) { userResult ->
-            userResult
-                .onSuccess {
-                    cacheEmail(email) { onResult(Result.success(Unit)) }
-                }
-                .onFailure { exception ->
-                    when (exception) {
-                        is FirebaseNetworkException -> onResult(Result.failure(NetworkException()))
-                        is FirebaseAuthException -> onResult(Result.failure(NetworkException()))
-                        is NullPointerException -> onResult(Result.failure(exception))
-                        else -> onResult(Result.failure(Exception(exception.message)))
+    override fun updateEmail(currentPassword: String, newEmail: String, onResult: (result: Result<Unit>) -> Unit) {
+        val updateEmail = {
+            api.updateEmail(newEmail) { userResult ->
+                userResult
+                    .onSuccess {
+                        cacheEmail(newEmail) { onResult(Result.success(Unit)) }
                     }
-                }
+                    .onFailure { onResult(failureResult(it)) }
+            }
+        }
+        api.resignIn(currentPassword) { resignInResult ->
+            resignInResult
+                .onSuccess { updateEmail() }
+                .onFailure { onResult(failureResult(it)) }
         }
     }
 
-    override fun updatePassword(password: String, onResult: (result: Result<Unit>) -> Unit) {
-        api.updatePassword(password) { userResult ->
-            userResult
-                .onSuccess {
-                    onResult(Result.success(Unit))
-                }
-                .onFailure { exception ->
-                    when (exception) {
-                        is FirebaseNetworkException -> onResult(Result.failure(NetworkException()))
-                        is FirebaseAuthException -> onResult(Result.failure(NetworkException()))
-                        is NullPointerException -> onResult(Result.failure(exception))
-                        else -> onResult(Result.failure(Exception(exception.message)))
-                    }
-                }
+    override fun updatePassword(currentPassword: String, newPassword: String, onResult: (result: Result<Unit>) -> Unit) {
+        val updatePassword = {
+            api.updatePassword(newPassword) { userResult ->
+                userResult
+                    .onSuccess { onResult(Result.success(Unit)) }
+                    .onFailure { onResult(failureResult(it)) }
+            }
+        }
+        api.resignIn(currentPassword) { resignInResult ->
+            resignInResult
+                .onSuccess { updatePassword() }
+                .onFailure { onResult(failureResult(it)) }
         }
     }
 
@@ -152,20 +151,20 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun deleteAccount(onResult: (result: Result<Unit>) -> Unit) {
-        api.deleteCurrentUser { userResult ->
-            userResult
-                .onSuccess {
-                    clearCache { onResult(Result.success(Unit)) }
-                }
-                .onFailure { exception ->
-                    when (exception) {
-                        is FirebaseNetworkException -> onResult(Result.failure(NetworkException()))
-                        is FirebaseAuthException -> onResult(Result.failure(NetworkException()))
-                        is NullPointerException -> onResult(Result.failure(exception))
-                        else -> onResult(Result.failure(Exception(exception.message)))
+    override fun deleteAccount(currentPassword: String, onResult: (result: Result<Unit>) -> Unit) {
+        val deleteCurrentUser = {
+            api.deleteCurrentUser { userResult ->
+                userResult
+                    .onSuccess {
+                        clearCache { onResult(Result.success(Unit)) }
                     }
-                }
+                    .onFailure { onResult(failureResult(it)) }
+            }
+        }
+        api.resignIn(currentPassword) { resignInResult ->
+            resignInResult
+                .onSuccess { deleteCurrentUser() }
+                .onFailure { onResult(failureResult(it)) }
         }
     }
 
@@ -199,6 +198,17 @@ class AccountRepositoryImpl @Inject constructor(
         runBlocking(dispatcher) {
             dataStore.clear()
             onClear()
+        }
+    }
+
+    private fun<T> failureResult(throwable: Throwable): Result<T> {
+        return when (throwable) {
+            is FirebaseNetworkException -> Result.failure(NetworkException())
+            is FirebaseAuthRecentLoginRequiredException -> Result.failure(IncorrectDataException())
+            is FirebaseAuthInvalidCredentialsException -> Result.failure(IncorrectDataException())
+            is FirebaseAuthException -> Result.failure(NetworkException())
+            is NullPointerException -> Result.failure(throwable)
+            else -> Result.failure(Exception(throwable.message))
         }
     }
 }

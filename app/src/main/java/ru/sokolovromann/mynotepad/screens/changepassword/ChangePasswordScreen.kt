@@ -66,9 +66,12 @@ fun ChangePasswordScreen(
         snackbarHost = { scaffoldState.snackbarHostState }
     ) {
         ChangePasswordDisplay(
-            password = changePasswordState.value.password,
-            onPasswordChange = { newPassword -> changePasswordViewModel.onEvent(ChangePasswordEvent.OnPasswordChange(newPassword)) },
-            incorrectPassword = changePasswordState.value.incorrectPassword,
+            newPassword = changePasswordState.value.newPassword,
+            currentPassword = changePasswordState.value.currentPassword,
+            onNewPasswordChange = { newPassword -> changePasswordViewModel.onEvent(ChangePasswordEvent.OnNewPasswordChange(newPassword)) },
+            onCurrentPasswordChange = { newPassword -> changePasswordViewModel.onEvent(ChangePasswordEvent.OnCurrentPasswordChange(newPassword)) },
+            incorrectNewPassword = changePasswordState.value.incorrectNewPassword,
+            incorrectCurrentPassword = changePasswordState.value.incorrectCurrentPassword,
             snackbarHostState = scaffoldState.snackbarHostState
         )
     }

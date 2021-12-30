@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
@@ -32,7 +33,11 @@ class ChangeEmailViewModel @Inject constructor(
                 email = event.newEmail
             )
 
-            ChangeEmailEvent.ChangeClick -> if (isCorrectEmail()) {
+            is ChangeEmailEvent.OnPasswordChange -> _changeEmailState.value = _changeEmailState.value.copy(
+                password = event.newPassword
+            )
+
+            ChangeEmailEvent.ChangeClick -> if (isCorrectEmail() && isCorrectPassword()) {
                 changeEmail()
             }
 
@@ -52,12 +57,25 @@ class ChangeEmailViewModel @Inject constructor(
         return !_changeEmailState.value.incorrectEmail
     }
 
+    private fun isCorrectPassword(): Boolean {
+        val correctPassword = _changeEmailState.value.password.isNotEmpty()
+        _changeEmailState.value = _changeEmailState.value.copy(
+            incorrectPassword = !correctPassword,
+            changing = false
+        )
+
+        return !_changeEmailState.value.incorrectPassword
+    }
+
     private fun changeEmail() {
         _changeEmailState.value = _changeEmailState.value.copy(
             changing = true
         )
 
-        accountRepository.updateEmail(email = _changeEmailState.value.email) { result ->
+        accountRepository.updateEmail(
+            currentPassword = _changeEmailState.value.password,
+            newEmail = _changeEmailState.value.email
+        ) { result ->
             _changeEmailState.value = _changeEmailState.value.copy(
                 changing = false
             )
@@ -72,6 +90,11 @@ class ChangeEmailViewModel @Inject constructor(
                             is NetworkException -> _changeEmailUiEvent.emit(
                                 ChangeEmailUiEvent.ShowNetworkErrorMessage
                             )
+                            is IncorrectDataException -> {
+                                _changeEmailState.value = _changeEmailState.value.copy(
+                                    incorrectPassword = true
+                                )
+                            }
                             else -> _changeEmailUiEvent.emit(
                                 ChangeEmailUiEvent.ShowUnknownErrorMessage
                             )
