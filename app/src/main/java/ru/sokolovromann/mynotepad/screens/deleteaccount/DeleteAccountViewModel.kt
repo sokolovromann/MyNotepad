@@ -6,18 +6,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
+import ru.sokolovromann.mynotepad.data.repository.NoteRepository
+import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class DeleteAccountViewModel @Inject constructor(
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
+    private val noteRepository: NoteRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel(), ScreensEvent<DeleteAccountEvent> {
 
     private val _deleteAccountState: MutableState<DeleteAccountState> = mutableStateOf(DeleteAccountState())
@@ -33,7 +38,7 @@ class DeleteAccountViewModel @Inject constructor(
             )
 
             DeleteAccountEvent.DeleteClick -> if (isCorrectPassword()) {
-                deleteAccount()
+                deleteAllUserData()
             }
 
             DeleteAccountEvent.CloseClick -> viewModelScope.launch {
@@ -52,24 +57,39 @@ class DeleteAccountViewModel @Inject constructor(
         return !_deleteAccountState.value.incorrectPassword
     }
 
-    private fun deleteAccount() {
+    private fun deleteAllUserData() {
         _deleteAccountState.value = _deleteAccountState.value.copy(
             deleting = true
         )
 
+        clearData {
+            deleteAccount {
+                viewModelScope.launch {
+                    _deleteAccountUiEvent.emit(DeleteAccountUiEvent.OpenWelcome)
+                }
+            }
+        }
+    }
+
+    private fun clearData(onSuccess: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.clearNotes()
+            settingsRepository.clearSettings()
+            onSuccess()
+        }
+    }
+
+    private fun deleteAccount(onSuccess: () -> Unit) {
         accountRepository.deleteAccount(
             currentPassword = _deleteAccountState.value.password
         ) { result ->
             _deleteAccountState.value = _deleteAccountState.value.copy(
                 deleting = false
             )
-
-            viewModelScope.launch {
-                result
-                    .onSuccess {
-                        _deleteAccountUiEvent.emit(DeleteAccountUiEvent.OpenWelcome)
-                    }
-                    .onFailure { exception ->
+            result
+                .onSuccess { onSuccess() }
+                .onFailure { exception ->
+                    viewModelScope.launch {
                         when (exception) {
                             is NetworkException -> _deleteAccountUiEvent.emit(
                                 DeleteAccountUiEvent.ShowNetworkErrorMessage
@@ -82,7 +102,7 @@ class DeleteAccountViewModel @Inject constructor(
                             )
                         }
                     }
-            }
+                }
         }
     }
 }

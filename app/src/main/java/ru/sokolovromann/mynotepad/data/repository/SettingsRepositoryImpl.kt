@@ -21,4 +21,8 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun saveNotesSort(notesSort: NotesSort) {
         settingsDataStore.saveNotesSort(notesSort)
     }
+
+    override suspend fun clearSettings() {
+        settingsDataStore.clearSettings()
+    }
 }

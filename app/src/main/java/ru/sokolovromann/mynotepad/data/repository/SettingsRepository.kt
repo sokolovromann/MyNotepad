@@ -11,4 +11,6 @@ interface SettingsRepository {
     suspend fun saveAppNightTheme(nightTheme: Boolean)
 
     suspend fun saveNotesSort(notesSort: NotesSort)
+
+    suspend fun clearSettings()
 }

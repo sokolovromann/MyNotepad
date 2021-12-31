@@ -35,4 +35,12 @@ class SettingsDataStore @Inject constructor(
             preferences[notesSortKey] = notesSort.name
         }
     }
+
+    suspend fun clearSettings() {
+        val defaultSettings = Settings()
+        dataStore.edit { preferences ->
+            preferences[appNightThemeKey] = defaultSettings.appNightTheme
+            preferences[notesSortKey] = defaultSettings.notesSort.name
+        }
+    }
 }
