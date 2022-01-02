@@ -12,14 +12,17 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.local.note.Note
+import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class NotesViewModel @Inject constructor(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    private val accountRepository: AccountRepository
 ) : ViewModel(), ScreensEvent<NotesEvent> {
 
     private val _notesState: MutableState<NotesState> = mutableStateOf(NotesState.Loading)
@@ -28,6 +31,9 @@ class NotesViewModel @Inject constructor(
     private val _noteMenuState: MutableState<Int> = mutableStateOf(-1)
     val noteMenuState: State<Int> = _noteMenuState
 
+    private val _accountNameState: MutableState<String> = mutableStateOf(Account.DEFAULT_NAME)
+    val accountNameState: State<String> = _accountNameState
+
     private val _notesUiEvent: MutableSharedFlow<NotesUiEvent> = MutableSharedFlow()
     val notesUiEvent: SharedFlow<NotesUiEvent> = _notesUiEvent
 
@@ -35,6 +41,7 @@ class NotesViewModel @Inject constructor(
 
     init {
         getNotes()
+        getAccount()
     }
 
     override fun onEvent(event: NotesEvent) {
@@ -96,6 +103,16 @@ class NotesViewModel @Inject constructor(
             lastDeletedNote?.let {
                 val note = it.copy(id = 0L)
                 noteRepository.saveNote(note)
+            }
+        }
+    }
+
+    private fun getAccount() {
+        viewModelScope.launch(Dispatchers.IO) {
+            accountRepository.getAccount().collect { account ->
+                withContext(Dispatchers.Main) {
+                    _accountNameState.value = account.getName()
+                }
             }
         }
     }

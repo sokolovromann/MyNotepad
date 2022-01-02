@@ -83,7 +83,10 @@ fun SettingsScreen(
                         SettingsEvent.OnNavigationMenuStateChange(false)
                     )},
                 drawerHeader = {
-                    NavigationDrawerHeader(title = stringResource(id = R.string.app_name))
+                    NavigationDrawerHeader(
+                        title = stringResource(id = R.string.app_name),
+                        description = accountState.value.getName()
+                    )
                 }
             )
         },
@@ -102,7 +105,7 @@ fun SettingsScreen(
                 localAccount = accountState.value.isLocalAccount(),
                 onSignUpClick = { settingsViewModel.onEvent(SettingsEvent.SignUpClick) },
                 onSignInClick = { settingsViewModel.onEvent(SettingsEvent.SignInClick) },
-                email = accountState.value.email,
+                accountName = accountState.value.getName(),
                 onChangeEmailClick = { settingsViewModel.onEvent(SettingsEvent.ChangeEmailClick) },
                 onChangePasswordClick = { settingsViewModel.onEvent(SettingsEvent.ChangePasswordClick) },
                 onSignOutClick = { settingsViewModel.onEvent(SettingsEvent.SignOutClick) },

@@ -27,7 +27,7 @@ fun SettingsDisplay(
     localAccount: Boolean,
     onSignUpClick: () -> Unit,
     onSignInClick: () -> Unit,
-    email: String,
+    accountName: String,
     onChangeEmailClick: () -> Unit,
     onChangePasswordClick: () -> Unit,
     onSignOutClick: () -> Unit,
@@ -51,7 +51,7 @@ fun SettingsDisplay(
                     )
                 } else {
                     AccountCardContent(
-                        email = email,
+                        accountName = accountName,
                         onChangeEmailClick = onChangeEmailClick,
                         onChangePasswordClick = onChangePasswordClick,
                         onDeleteAccount = onDeleteAccountClick,
@@ -168,7 +168,7 @@ private fun LocalAccountCardContent(
 
 @Composable
 private fun AccountCardContent(
-    email: String,
+    accountName: String,
     onChangeEmailClick: () -> Unit,
     onChangePasswordClick: () -> Unit,
     onSignOutClick: () -> Unit,
@@ -176,7 +176,7 @@ private fun AccountCardContent(
 ) {
     Column {
         SettingsHeader(
-            text = email
+            text = accountName
         )
         SettingsItem(
             title = stringResource(id = R.string.settings_change_email_title),
@@ -210,7 +210,7 @@ private fun SettingsDisplayPreview() {
             localAccount = false,
             onSignUpClick = {},
             onSignInClick = {},
-            email = "email@domain.com",
+            accountName = "email@domain.com",
             onChangeEmailClick = {},
             onChangePasswordClick = {},
             onSignOutClick = {},

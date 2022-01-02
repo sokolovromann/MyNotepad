@@ -27,6 +27,7 @@ fun NotesScreen(
 ) {
     val notesState = notesViewModel.notesState
     val noteMenuState = notesViewModel.noteMenuState
+    val accountEmailState = notesViewModel.accountNameState
     val scaffoldState = rememberScaffoldState()
 
     val coroutineScope = rememberCoroutineScope()
@@ -83,7 +84,10 @@ fun NotesScreen(
                     notesViewModel.onEvent(NotesEvent.NavigationMenuStateChange(false)
                 )},
                 drawerHeader = {
-                    NavigationDrawerHeader(title = stringResource(id = R.string.app_name))
+                    NavigationDrawerHeader(
+                        title = stringResource(id = R.string.app_name),
+                        description = accountEmailState.value
+                    )
                 }
             )
         }
