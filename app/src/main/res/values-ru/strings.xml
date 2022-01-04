@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_edit_note_empty_text_error_label">Добавьте заметку для сохранения</string>
+    <string name="add_edit_note_save">Сохранить</string>
+    <string name="add_edit_note_saved_message">Заметка сохранена</string>
+    <string name="add_edit_note_text_label">Заметка</string>
+    <string name="add_edit_note_title_label">Заголовок</string>
+
+    <string name="change_email_change">Изменить</string>
+    <string name="change_email_changed_message">Email изменён</string>
+    <string name="change_email_email_label">Новый email</string>
+    <string name="change_email_incorrect_email_message">Неправильный email</string>
+    <string name="change_email_incorrect_password_message">Введите текущий пароль</string>
+    <string name="change_email_network_error_message">Пожалуйста, проверьте ваше интернет-соединение</string>
+    <string name="change_email_password_label">Текущий пароль</string>
+    <string name="change_email_unknown_error_message">Что-то пошло не так. Пожалуйста, попробуйте позже.</string>
+
+    <string name="delete_account_delete">Удалить</string>
+    <string name="delete_account_warning">Все ваши данные будут удалены.</string>
+    <string name="delete_account_network_error_message">Пожалуйста, проверьте ваше интернет-соединение</string>
+    <string name="delete_account_unknown_error_message">Что-то пошло не так. Пожалуйста, попробуйте позже.</string>
+    <string name="delete_account_password_label">Текущий пароль</string>
+    <string name="delete_account_incorrect_password_message">Введите текущий пароль</string>
+
+    <string name="change_password_change">Изменить</string>
+    <string name="change_password_changed_message">Пароль изменён</string>
+    <string name="change_password_current_password_label">Текущий пароль</string>
+    <string name="change_password_incorrect_current_password_message">Введите текущий пароль</string>
+    <string name="change_password_min_length_password_message">Минимум 8 символов</string>
+    <string name="change_password_network_error_message">Пожалуйста, проверьте ваше интернет-соединение</string>
+    <string name="change_password_new_password_helper">Как минимум 8 символов</string>
+    <string name="change_password_new_password_label">Новый пароль</string>
+    <string name="change_password_unknown_error_message">Что-то пошло не так. Пожалуйста, попробуйте позже.</string>
+
+    <string name="drawer_notes">@string/notes_name</string>
+    <string name="drawer_settings">@string/settings_name</string>
+
+    <string name="notes_delete_note">Удалить</string>
+    <string name="notes_name">Заметки</string>
+    <string name="notes_not_found_message">У вас нет заметок</string>
+    <string name="notes_note_deleted_message">Заметка удалена</string>
+    <string name="notes_note_deleted_undo">Отмена</string>
+
+    <string name="settings_about_header">О приложении</string>
+    <string name="settings_app_night_theme_title">Ночная тема</string>
+    <string name="settings_app_version_title">Версия приложения</string>
+    <string name="settings_change_email_title">Изменить email</string>
+    <string name="settings_change_password_title">Изменить пароль</string>
+    <string name="settings_delete_account_title">Удалить аккаунт</string>
+
+    <string name="settings_general_header">Общие</string>
+    <string name="settings_github_description">Нажмите, чтобы открыть</string>
+    <string name="settings_github_title">GitHub</string>
+    <string name="settings_local_account_header">Локальный аккаунт</string>
+    <string name="settings_name">Настройки</string>
+    <string name="settings_sign_in_title">Войти</string>
+    <string name="settings_sign_out_title">Выйти</string>
+    <string name="settings_sign_up_title">Создать аккаунт</string>
+
+    <string name="sign_in_email_label">Email</string>
+    <string name="sign_in_incorrect_email_message">Введите email</string>
+    <string name="sign_in_incorrect_password_message">Введите пароль</string>
+    <string name="sign_in_name">Войти</string>
+    <string name="sign_in_network_error_message">Пожалуйста, проверьте ваше интернет-соединение</string>
+    <string name="sign_in_password_label">Пароль</string>
+    <string name="sign_in_reset_password">Сбросить пароль</string>
+    <string name="sign_in_reset_password_message">Проверьте ваш email, чтобы сбросить пароль</string>
+    <string name="sign_in_sign_in">Войти</string>
+    <string name="sign_in_sign_in_error_message">Неправильный email или пароль</string>
+    <string name="sign_in_unknown_error_message">Что-то пошло не так. Пожалуйста, попробуйте позже.</string>
+
+    <string name="sign_up_create_account">Создать аккаунт</string>
+    <string name="sign_up_email_label">Email</string>
+    <string name="sign_up_incorrect_email_message">Неправильный email</string>
+    <string name="sign_up_incorrect_min_length_password_message">Минимум 8 символов</string>
+    <string name="sign_up_name">Создать аккаунт</string>
+    <string name="sign_up_network_error_message">Пожалуйста, проверьте ваше интернет-соединение</string>
+    <string name="sign_up_password_helper">Как минимум 8 символов</string>
+    <string name="sign_up_password_label">Пароль</string>
+    <string name="sign_up_unknown_error_message">Что-то пошло не так. Пожалуйста, попробуйте позже.</string>
+
+    <string name="welcome_continue_without_sync">Продолжить без создания аккаунта</string>
+    <string name="welcome_sign_in">Войти</string>
+    <string name="welcome_sign_up">Создать аккаунт</string>
+    <string name="welcome_title">Добро пожаловать в My Notepad!</string>
+</resources>

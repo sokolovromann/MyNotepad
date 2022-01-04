@@ -5,7 +5,7 @@
     <string name="add_edit_note_text_label">Note</string>
     <string name="add_edit_note_title_label">Title</string>
 
-    <string name="app_name">My Notepad</string>
+    <string name="app_name" translatable="false">My Notepad</string>
 
     <string name="change_email_change">Change</string>
     <string name="change_email_changed_message">Email changed</string>
