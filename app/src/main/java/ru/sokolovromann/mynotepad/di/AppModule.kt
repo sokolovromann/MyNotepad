@@ -13,12 +13,17 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.*
+import io.ktor.client.engine.android.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import ru.sokolovromann.mynotepad.data.local.LocalDatabase
 import ru.sokolovromann.mynotepad.data.local.account.AccountDataStore
 import ru.sokolovromann.mynotepad.data.local.settings.SettingsDataStore
 import ru.sokolovromann.mynotepad.data.remote.auth.AuthApi
+import ru.sokolovromann.mynotepad.data.remote.note.NoteApi
 import ru.sokolovromann.mynotepad.data.repository.*
 import javax.inject.Singleton
 
@@ -42,8 +47,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesNoteRepositoryImpl(localDatabase: LocalDatabase): NoteRepositoryImpl {
-        return NoteRepositoryImpl(localDatabase)
+    fun providesNoteRepositoryImpl(localDatabase: LocalDatabase, noteApi: NoteApi): NoteRepositoryImpl {
+        return NoteRepositoryImpl(localDatabase, noteApi)
     }
 
     @Provides
@@ -51,6 +56,22 @@ object AppModule {
     fun providesLocalDatabase(@ApplicationContext context: Context): LocalDatabase {
         return Room.databaseBuilder(context, LocalDatabase::class.java, "my_notepad_local_database")
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun providesNoteApi(client: HttpClient): NoteApi {
+        return NoteApi(client)
+    }
+
+    @Provides
+    @Singleton
+    fun providesHttpClient(): HttpClient {
+        return HttpClient(Android) {
+            install(JsonFeature) {
+                serializer = KotlinxSerializer()
+            }
+        }
     }
 
     @Provides

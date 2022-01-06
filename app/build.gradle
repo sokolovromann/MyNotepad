@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 android {
@@ -46,7 +47,7 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerVersion '1.5.31'
+        kotlinCompilerVersion kotlin_version
     }
     packagingOptions {
         resources {
@@ -83,6 +84,13 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:$datastore_preferences_version"
 
     implementation "com.google.firebase:firebase-auth-ktx:$firebase_auth_ktx_version"
+
+    implementation "io.ktor:ktor-client-core:$ktor_version"
+    implementation "io.ktor:ktor-client-android:$ktor_version"
+    implementation "io.ktor:ktor-client-cio:$ktor_version"
+    implementation "io.ktor:ktor-client-serialization:$ktor_version"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_json_version"
 
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$android_junit_version"
