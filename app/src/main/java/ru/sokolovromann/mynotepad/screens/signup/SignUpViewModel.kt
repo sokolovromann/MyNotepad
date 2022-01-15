@@ -35,7 +35,7 @@ class SignUpViewModel @Inject constructor(
             is SignUpEvent.OnPasswordChange -> _signUpState.value = _signUpState.value.copy(
                 password = event.newPassword
             )
-            SignUpEvent.CreateAccountClick -> if (checkCorrectEmailPassword()) {
+            SignUpEvent.CreateAccountClick -> if (isCorrectEmailPassword()) {
                 createAccount()
             }
             SignUpEvent.CloseClick -> viewModelScope.launch {
@@ -44,7 +44,7 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun checkCorrectEmailPassword(): Boolean {
+    private fun isCorrectEmailPassword(): Boolean {
         val correctEmail = Patterns.EMAIL_ADDRESS.matcher(_signUpState.value.email).matches()
         _signUpState.value = _signUpState.value.copy(
             incorrectEmail = !correctEmail,
