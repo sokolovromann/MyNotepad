@@ -61,13 +61,13 @@ fun NotesScreen(
     }
 
     BackHandler(enabled = scaffoldState.drawerState.isOpen) {
-        notesViewModel.onEvent(NotesEvent.NavigationMenuStateChange(false))
+        notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(false))
     }
 
     Scaffold(
         topBar = {
             NotesTopAppBar(onNavigationIconClick = {
-                notesViewModel.onEvent(NotesEvent.NavigationMenuStateChange(true))
+                notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(true))
             })
         },
         floatingActionButton = {
@@ -81,7 +81,7 @@ fun NotesScreen(
             NavigationDrawer(
                 navController = navController,
                 closeNavigation = {
-                    notesViewModel.onEvent(NotesEvent.NavigationMenuStateChange(false)
+                    notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(false)
                 )},
                 drawerHeader = {
                     NavigationDrawerHeader(

@@ -60,7 +60,7 @@ class NotesViewModel @Inject constructor(
 
             NotesEvent.NoteDeletedUndoClick -> restoreLastNote()
 
-            is NotesEvent.NavigationMenuStateChange -> viewModelScope.launch {
+            is NotesEvent.OnNavigationMenuStateChange -> viewModelScope.launch {
                 if (event.isOpen) {
                     _notesUiEvent.emit(NotesUiEvent.OpenNavigationMenu)
                 } else {
