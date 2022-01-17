@@ -13,6 +13,9 @@ data class Note(
     @ColumnInfo(name = "uid")
     val uid: String = UUID.randomUUID().toString(),
 
+    @ColumnInfo(name = "owner")
+    val owner: String = "",
+
     @ColumnInfo(name = "title")
     val title: String,
 

@@ -22,6 +22,8 @@ import kotlinx.coroutines.Dispatchers
 import ru.sokolovromann.mynotepad.data.local.LocalDatabase
 import ru.sokolovromann.mynotepad.data.local.account.AccountDataStore
 import ru.sokolovromann.mynotepad.data.local.settings.SettingsDataStore
+import ru.sokolovromann.mynotepad.data.mapping.NoteMapping
+import ru.sokolovromann.mynotepad.data.mapping.NoteMappingImpl
 import ru.sokolovromann.mynotepad.data.remote.auth.AuthApi
 import ru.sokolovromann.mynotepad.data.remote.note.NoteApi
 import ru.sokolovromann.mynotepad.data.repository.*
@@ -47,8 +49,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesNoteRepositoryImpl(localDatabase: LocalDatabase, noteApi: NoteApi): NoteRepositoryImpl {
-        return NoteRepositoryImpl(localDatabase, noteApi)
+    fun providesNoteRepositoryImpl(localDatabase: LocalDatabase, noteApi: NoteApi, noteMapping: NoteMapping): NoteRepositoryImpl {
+        return NoteRepositoryImpl(localDatabase, noteApi, noteMapping)
     }
 
     @Provides
@@ -72,6 +74,18 @@ object AppModule {
                 serializer = KotlinxSerializer()
             }
         }
+    }
+
+    @Provides
+    @Singleton
+    fun providesNoteMapping(noteMappingImpl: NoteMappingImpl): NoteMapping {
+        return noteMappingImpl
+    }
+
+    @Provides
+    @Singleton
+    fun providesNoteMappingImpl(): NoteMappingImpl {
+        return NoteMappingImpl()
     }
 
     @Provides

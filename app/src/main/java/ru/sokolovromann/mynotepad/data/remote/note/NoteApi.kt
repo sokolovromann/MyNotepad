@@ -10,10 +10,10 @@ class NoteApi @Inject constructor(
     private val client: HttpClient
 ) {
 
-    suspend fun getNotes(accessRequest: NoteAccessRequest): Result<NotesResponse> {
+    suspend fun getNotes(owner: String, tokenId: String): Result<NotesResponse> {
         return try {
             val response: Map<String, NoteResponse> = client.get{
-                url(HttpRoute.notes(accessRequest.userUid, accessRequest.tokenId))
+                url(HttpRoute.notes(owner, tokenId))
             }
             val notesResponse = NotesResponse(response.values.toList())
             Result.success(notesResponse)
@@ -22,11 +22,11 @@ class NoteApi @Inject constructor(
         }
     }
 
-    suspend fun putNote(accessRequest: NoteAccessRequest, noteRequest: NoteRequest): Result<NoteResponse> {
+    suspend fun putNote(noteRequest: NoteRequest, tokenId: String): Result<NoteResponse> {
         return try {
             Result.success(
                 client.put {
-                    url(HttpRoute.note(noteRequest.uid, accessRequest.userUid, accessRequest.tokenId))
+                    url(HttpRoute.note(noteRequest.uid, noteRequest.owner, tokenId))
                     contentType(ContentType.Application.Json)
                     body = noteRequest
                 }
@@ -36,11 +36,11 @@ class NoteApi @Inject constructor(
         }
     }
 
-    suspend fun deleteNote(accessRequest: NoteAccessRequest, noteRequest: NoteRequest): Result<Unit> {
+    suspend fun deleteNote(noteRequest: NoteRequest, tokenId: String): Result<Unit> {
         return try {
             Result.success(
                 client.delete(
-                    urlString = HttpRoute.note(noteRequest.uid, accessRequest.userUid, accessRequest.tokenId)
+                    urlString = HttpRoute.note(noteRequest.uid, noteRequest.owner, tokenId)
                 )
             )
         } catch (e: Exception) {
