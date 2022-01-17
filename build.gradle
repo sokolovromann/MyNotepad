@@ -1,11 +1,18 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
+        my_notepad_code_version = 1
+        my_notepad_version = '1.0.0'
+        compile_sdk_version = 31
+        min_sdk_version = 23
+        target_sdk_version = 31
+
+        gradle_version = '7.0.4'
         kotlin_version = '1.5.31'
         google_services_version = '4.3.10'
         core_ktx_version = '1.7.0'
         appcompat_version = '1.4.1'
-        material_version = '1.4.0'
+        material_version = '1.5.0'
         compose_version = '1.0.5'
         activity_compose_version = '1.4.0'
         navigation_compose_version = '2.4.0-rc01'
@@ -27,7 +34,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         classpath "com.google.gms:google-services:$google_services_version"

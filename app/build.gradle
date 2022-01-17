@@ -8,14 +8,14 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk compile_sdk_version
 
     defaultConfig {
         applicationId "ru.sokolovromann.mynotepad"
-        minSdk 23
-        targetSdk 31
-        versionCode 1
-        versionName "1.0.0"
+        minSdk min_sdk_version
+        targetSdk target_sdk_version
+        versionCode my_notepad_code_version
+        versionName my_notepad_version
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
