@@ -1,6 +1,7 @@
 package ru.sokolovromann.mynotepad.data.mapping
 
 import ru.sokolovromann.mynotepad.data.local.note.Note
+import ru.sokolovromann.mynotepad.data.local.note.NoteSyncState
 import ru.sokolovromann.mynotepad.data.remote.note.NoteRequest
 import ru.sokolovromann.mynotepad.data.remote.note.NoteResponse
 import ru.sokolovromann.mynotepad.data.remote.note.NotesResponse
@@ -13,7 +14,8 @@ class NoteMappingImpl : NoteMapping {
         title = noteResponse.title,
         text = noteResponse.text,
         created = noteResponse.created,
-        lastModified = noteResponse.lastModified
+        lastModified = noteResponse.lastModified,
+        syncState = NoteSyncState.NOTHING.name
     )
 
     override fun toNoteRequest(note: Note) = NoteRequest(

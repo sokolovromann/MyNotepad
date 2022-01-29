@@ -47,4 +47,16 @@ class NoteApi @Inject constructor(
             Result.failure(e)
         }
     }
+
+    suspend fun clearNotes(owner: String, tokenId: String): Result<Unit> {
+        return try {
+            Result.success(
+                client.delete(
+                    urlString = HttpRoute.notes(owner, tokenId)
+                )
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

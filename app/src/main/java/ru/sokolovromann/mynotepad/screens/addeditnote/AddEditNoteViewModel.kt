@@ -87,7 +87,7 @@ class AddEditNoteViewModel @Inject constructor(
             _addEditNoteState.value = _addEditNoteState.value.copy(emptyTextError = true)
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                noteRepository.saveNote(note)
+                noteRepository.saveNote(note, NoteRepository.NO_TOKEN_ID)
                 withContext(Dispatchers.Main) {
                     _addEditNoteUiEvent.emit(AddEditNoteUiEvent.ShowSavedMessage)
                 }

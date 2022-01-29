@@ -26,5 +26,13 @@ data class Note(
     val created: Long = System.currentTimeMillis(),
 
     @ColumnInfo(name = "last_modified")
-    val lastModified: Long = System.currentTimeMillis()
-)
+    val lastModified: Long = System.currentTimeMillis(),
+
+    @ColumnInfo(name = "sync_state")
+    val syncState: String = NoteSyncState.SAVE.name
+) {
+
+    companion object {
+        val EMPTY: Note = Note(title = "", text = "")
+    }
+}

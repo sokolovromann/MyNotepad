@@ -88,7 +88,7 @@ class NotesViewModel @Inject constructor(
 
     private fun deleteNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
-            noteRepository.deleteNote(note)
+            noteRepository.deleteNote(note, NoteRepository.NO_TOKEN_ID)
 
             withContext(Dispatchers.Main) {
                 lastDeletedNote = note
@@ -102,7 +102,7 @@ class NotesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             lastDeletedNote?.let {
                 val note = it.copy(id = 0L)
-                noteRepository.saveNote(note)
+                noteRepository.saveNote(note, NoteRepository.NO_TOKEN_ID)
             }
         }
     }

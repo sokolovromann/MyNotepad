@@ -7,6 +7,8 @@ interface AccountRepository {
 
     suspend fun getAccount(): Flow<Account>
 
+    suspend fun getToken(onResult: (result: Result<String>) -> Unit)
+
     fun syncAccount(onResult: (result: Result<Account>) -> Unit)
 
     fun signUpWithEmailPassword(email: String, password: String, onResult: (result: Result<Unit>) -> Unit)

@@ -24,6 +24,14 @@ class AccountRepositoryImpl @Inject constructor(
         return dataStore.getAccount()
     }
 
+    override suspend fun getToken(onResult: (result: Result<String>) -> Unit) {
+        api.getTokenId { tokenResult ->
+            tokenResult
+                .onSuccess { tokenId -> onResult(Result.success(tokenId)) }
+                .onFailure { exception -> onResult(failureResult(exception)) }
+        }
+    }
+
     override fun syncAccount(onResult: (result: Result<Account>) -> Unit) {
         api.getCurrentUser { userResult ->
             userResult

@@ -13,18 +13,27 @@ class AuthApi @Inject constructor(
         if (currentUser == null) {
             onResult(Result.failure(NullPointerException("Current user is null")))
         } else {
+            val userResponse = UserResponse(
+                uid = currentUser.uid,
+                email = currentUser.email ?: "",
+                tokenId = ""
+            )
+            onResult(Result.success(userResponse))
+        }
+    }
+
+    fun getTokenId(onResult: (result: Result<String>) -> Unit) {
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser == null) {
+            onResult(Result.failure(NullPointerException("Current user is null")))
+        } else {
             currentUser.getIdToken(true)
                 .addOnSuccessListener { tokenResult ->
                     val tokenId = tokenResult.token
                     if (tokenId == null) {
                         onResult(Result.failure(NullPointerException("Token is null")))
                     } else {
-                        val userResponse = UserResponse(
-                            uid = currentUser.uid,
-                            email = currentUser.email ?: "",
-                            tokenId = tokenId
-                        )
-                        onResult(Result.success(userResponse))
+                        onResult(Result.success(tokenId))
                     }
                 }
                 .addOnFailureListener { exception -> onResult(Result.failure(exception)) }

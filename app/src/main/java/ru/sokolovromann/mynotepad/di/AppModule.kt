@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -21,6 +22,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import ru.sokolovromann.mynotepad.data.local.LocalDatabase
 import ru.sokolovromann.mynotepad.data.local.account.AccountDataStore
+import ru.sokolovromann.mynotepad.data.local.note.NoteDao
 import ru.sokolovromann.mynotepad.data.local.settings.SettingsDataStore
 import ru.sokolovromann.mynotepad.data.mapping.NoteMapping
 import ru.sokolovromann.mynotepad.data.mapping.NoteMappingImpl
@@ -49,8 +51,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesNoteRepositoryImpl(localDatabase: LocalDatabase, noteApi: NoteApi, noteMapping: NoteMapping): NoteRepositoryImpl {
-        return NoteRepositoryImpl(localDatabase, noteApi, noteMapping)
+    fun providesNoteRepositoryImpl(noteDao: NoteDao, noteApi: NoteApi, noteMapping: NoteMapping, workManager: WorkManager): NoteRepositoryImpl {
+        return NoteRepositoryImpl(noteDao, noteApi, noteMapping, workManager)
+    }
+
+    @Provides
+    @Singleton
+    fun providesNoteDao(localDatabase: LocalDatabase): NoteDao {
+        return localDatabase.noteDao()
     }
 
     @Provides
@@ -86,6 +94,12 @@ object AppModule {
     @Singleton
     fun providesNoteMappingImpl(): NoteMappingImpl {
         return NoteMappingImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun providesWorkManager(@ApplicationContext context: Context): WorkManager {
+        return WorkManager.getInstance(context)
     }
 
     @Provides

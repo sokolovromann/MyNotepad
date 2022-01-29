@@ -73,7 +73,7 @@ class DeleteAccountViewModel @Inject constructor(
 
     private fun clearData(onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            noteRepository.clearNotes()
+            noteRepository.clearNotes("", NoteRepository.NO_TOKEN_ID)
             settingsRepository.clearSettings()
             onSuccess()
         }
