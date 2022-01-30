@@ -24,6 +24,8 @@ import ru.sokolovromann.mynotepad.data.local.LocalDatabase
 import ru.sokolovromann.mynotepad.data.local.account.AccountDataStore
 import ru.sokolovromann.mynotepad.data.local.note.NoteDao
 import ru.sokolovromann.mynotepad.data.local.settings.SettingsDataStore
+import ru.sokolovromann.mynotepad.data.mapping.AccountMapping
+import ru.sokolovromann.mynotepad.data.mapping.AccountMappingImpl
 import ru.sokolovromann.mynotepad.data.mapping.NoteMapping
 import ru.sokolovromann.mynotepad.data.mapping.NoteMappingImpl
 import ru.sokolovromann.mynotepad.data.remote.auth.AuthApi
@@ -128,8 +130,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesAccountRepositoryImpl(accountDataStore: AccountDataStore, authApi: AuthApi, dispatcher: CoroutineDispatcher): AccountRepositoryImpl {
-        return AccountRepositoryImpl(accountDataStore, authApi, dispatcher)
+    fun providesAccountRepositoryImpl(accountDataStore: AccountDataStore, authApi: AuthApi, accountMapping: AccountMapping, dispatcher: CoroutineDispatcher): AccountRepositoryImpl {
+        return AccountRepositoryImpl(accountDataStore, authApi, accountMapping, dispatcher)
     }
 
     @Provides
@@ -148,6 +150,18 @@ object AppModule {
     @Singleton
     fun providesFirebaseAuth(): FirebaseAuth {
         return Firebase.auth
+    }
+
+    @Provides
+    @Singleton
+    fun providesAccountMapping(accountMappingImpl: AccountMappingImpl): AccountMapping {
+        return accountMappingImpl
+    }
+
+    @Provides
+    @Singleton
+    fun providesAccountMappingImpl(): AccountMappingImpl {
+        return AccountMappingImpl()
     }
 
     @Provides

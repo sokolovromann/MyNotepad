@@ -2,20 +2,17 @@ package ru.sokolovromann.mynotepad.data.local.account
 
 data class Account(
     val uid: String,
-    val email: String,
-    val tokenId: String
+    val email: String
 ) {
 
     companion object {
         const val DEFAULT_NAME = ""
         private const val LOCAL_UID = "local_uid"
         private const val LOCAL_EMAIL = "local_email"
-        private const val LOCAL_TOKEN_ID = "local_token_id"
 
         val LocalAccount: Account = Account(
             uid = LOCAL_UID,
-            email = LOCAL_EMAIL,
-            tokenId = LOCAL_TOKEN_ID
+            email = LOCAL_EMAIL
         )
     }
 

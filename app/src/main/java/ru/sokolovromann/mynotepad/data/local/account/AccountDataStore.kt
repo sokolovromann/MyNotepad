@@ -13,14 +13,12 @@ class AccountDataStore @Inject constructor(
 ) {
     private val uidKey = stringPreferencesKey("uid")
     private val emailKey = stringPreferencesKey("email")
-    private val tokenIdKey = stringPreferencesKey("tokenId")
 
     fun getAccount(): Flow<Account> {
         return dataStore.data.map { preferences ->
             Account(
                 uid = preferences[uidKey] ?: "",
-                email = preferences[emailKey] ?: "",
-                tokenId = preferences[tokenIdKey] ?: ""
+                email = preferences[emailKey] ?: ""
             )
         }
     }
@@ -29,7 +27,6 @@ class AccountDataStore @Inject constructor(
         dataStore.edit { preferences ->
             preferences[uidKey] = account.uid
             preferences[emailKey] = account.email
-            preferences[tokenIdKey] = account.tokenId
         }
     }
 
@@ -43,7 +40,6 @@ class AccountDataStore @Inject constructor(
         dataStore.edit { preferences ->
             preferences[uidKey] = ""
             preferences[emailKey] = ""
-            preferences[tokenIdKey] = ""
         }
     }
 }

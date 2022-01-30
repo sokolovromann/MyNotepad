@@ -10,6 +10,7 @@ import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.local.account.AccountDataStore
+import ru.sokolovromann.mynotepad.data.mapping.AccountMapping
 import ru.sokolovromann.mynotepad.data.remote.auth.AuthApi
 import ru.sokolovromann.mynotepad.data.remote.auth.UserResponse
 import javax.inject.Inject
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class AccountRepositoryImpl @Inject constructor(
     private val dataStore: AccountDataStore,
     private val api: AuthApi,
+    private val accountMapping: AccountMapping,
     private val dispatcher: CoroutineDispatcher
 ) : AccountRepository {
 
@@ -185,11 +187,7 @@ class AccountRepositoryImpl @Inject constructor(
 
     private fun cacheAccount(userResponse: UserResponse, onCached: (account: Account) -> Unit) {
         runBlocking(dispatcher) {
-            val account = Account(
-                uid = userResponse.uid,
-                email = userResponse.email,
-                tokenId = userResponse.tokenId
-            )
+            val account = accountMapping.toAccount(userResponse)
             dataStore.saveAccount(account)
             onCached(account)
         }

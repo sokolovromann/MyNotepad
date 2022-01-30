@@ -15,8 +15,7 @@ class AuthApi @Inject constructor(
         } else {
             val userResponse = UserResponse(
                 uid = currentUser.uid,
-                email = currentUser.email ?: "",
-                tokenId = ""
+                email = currentUser.email ?: ""
             )
             onResult(Result.success(userResponse))
         }
