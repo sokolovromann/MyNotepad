@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.local.note.Note
+import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
 import javax.inject.Inject
@@ -19,11 +21,15 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditNoteViewModel @Inject constructor(
     private val noteRepository: NoteRepository,
+    private val accountRepository: AccountRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(), ScreensEvent<AddEditNoteEvent> {
 
     private val _addEditNoteState: MutableState<AddEditNoteState> = mutableStateOf(AddEditNoteState())
     val addEditNoteState: State<AddEditNoteState> = _addEditNoteState
+
+    private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
+    val accountState: State<Account> = _accountState
 
     private val _addEditNoteUiEvent: MutableSharedFlow<AddEditNoteUiEvent> = MutableSharedFlow()
     val addEditNoteUiEvent: SharedFlow<AddEditNoteUiEvent> = _addEditNoteUiEvent
@@ -37,6 +43,8 @@ class AddEditNoteViewModel @Inject constructor(
         } else {
             loadNote(uid)
         }
+
+        getAccount()
     }
 
     override fun onEvent(event: AddEditNoteEvent) {
@@ -73,6 +81,29 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
+    private fun getAccount() {
+        viewModelScope.launch(Dispatchers.IO) {
+            accountRepository.getAccount().collect { account ->
+                withContext(Dispatchers.Main) {
+                    _accountState.value = account
+                }
+            }
+        }
+    }
+
+    private fun getTokenId(onCompleted: (tokenId: String) -> Unit) {
+        if (_accountState.value.isLocalAccount()) {
+            onCompleted(NoteRepository.LOCAL_TOKEN_ID)
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                accountRepository.getToken { tokenResult ->
+                    val tokenId = tokenResult.getOrDefault(NoteRepository.NO_TOKEN_ID)
+                    onCompleted(tokenId)
+                }
+            }
+        }
+    }
+
     private fun saveNote() {
         val note = originalNote?.copy(
             title = _addEditNoteState.value.title,
@@ -86,10 +117,12 @@ class AddEditNoteViewModel @Inject constructor(
         if (note.text.isEmpty()) {
             _addEditNoteState.value = _addEditNoteState.value.copy(emptyTextError = true)
         } else {
-            viewModelScope.launch(Dispatchers.IO) {
-                noteRepository.saveNote(note, NoteRepository.NO_TOKEN_ID)
-                withContext(Dispatchers.Main) {
-                    _addEditNoteUiEvent.emit(AddEditNoteUiEvent.ShowSavedMessage)
+            getTokenId { tokenId ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    noteRepository.saveNote(note, tokenId)
+                    withContext(Dispatchers.Main) {
+                        _addEditNoteUiEvent.emit(AddEditNoteUiEvent.ShowSavedMessage)
+                    }
                 }
             }
         }

@@ -9,9 +9,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
+import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
@@ -28,8 +31,15 @@ class DeleteAccountViewModel @Inject constructor(
     private val _deleteAccountState: MutableState<DeleteAccountState> = mutableStateOf(DeleteAccountState())
     val deleteAccountState: State<DeleteAccountState> = _deleteAccountState
 
+    private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
+    val accountState: State<Account> = _accountState
+
     private val _deleteAccountUiEvent: MutableSharedFlow<DeleteAccountUiEvent> = MutableSharedFlow()
     val deleteAccountUiEvent: SharedFlow<DeleteAccountUiEvent> = _deleteAccountUiEvent
+
+    init {
+        getAccount()
+    }
 
     override fun onEvent(event: DeleteAccountEvent) {
         when (event) {
@@ -43,6 +53,16 @@ class DeleteAccountViewModel @Inject constructor(
 
             DeleteAccountEvent.CloseClick -> viewModelScope.launch {
                 _deleteAccountUiEvent.emit(DeleteAccountUiEvent.OpenSettings)
+            }
+        }
+    }
+
+    private fun getAccount() {
+        viewModelScope.launch(Dispatchers.IO) {
+            accountRepository.getAccount().collect { account ->
+                withContext(Dispatchers.Main) {
+                    _accountState.value = account
+                }
             }
         }
     }
@@ -72,10 +92,12 @@ class DeleteAccountViewModel @Inject constructor(
     }
 
     private fun clearData(onSuccess: () -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            noteRepository.clearNotes("", NoteRepository.NO_TOKEN_ID)
-            settingsRepository.clearSettings()
-            onSuccess()
+        getTokenId { tokenId ->
+            viewModelScope.launch(Dispatchers.IO) {
+                noteRepository.clearNotes(_accountState.value.uid, tokenId)
+                settingsRepository.clearSettings()
+                onSuccess()
+            }
         }
     }
 
@@ -103,6 +125,19 @@ class DeleteAccountViewModel @Inject constructor(
                         }
                     }
                 }
+        }
+    }
+
+    private fun getTokenId(onCompleted: (tokenId: String) -> Unit) {
+        if (_accountState.value.isLocalAccount()) {
+            onCompleted(NoteRepository.LOCAL_TOKEN_ID)
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                accountRepository.getToken { tokenResult ->
+                    val tokenId = tokenResult.getOrDefault(NoteRepository.NO_TOKEN_ID)
+                    onCompleted(tokenId)
+                }
+            }
         }
     }
 }

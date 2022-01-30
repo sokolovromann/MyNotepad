@@ -31,8 +31,8 @@ class NotesViewModel @Inject constructor(
     private val _noteMenuState: MutableState<Int> = mutableStateOf(-1)
     val noteMenuState: State<Int> = _noteMenuState
 
-    private val _accountNameState: MutableState<String> = mutableStateOf(Account.DEFAULT_NAME)
-    val accountNameState: State<String> = _accountNameState
+    private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
+    val accountState: State<Account> = _accountState
 
     private val _notesUiEvent: MutableSharedFlow<NotesUiEvent> = MutableSharedFlow()
     val notesUiEvent: SharedFlow<NotesUiEvent> = _notesUiEvent
@@ -40,6 +40,7 @@ class NotesViewModel @Inject constructor(
     private var lastDeletedNote: Note? = null
 
     init {
+        syncNotes()
         getNotes()
         getAccount()
     }
@@ -70,6 +71,10 @@ class NotesViewModel @Inject constructor(
         }
     }
 
+    private fun syncNotes() {
+        noteRepository.scheduleSyncNotes()
+    }
+
     private fun getNotes() {
         _notesState.value = NotesState.Loading
 
@@ -87,22 +92,26 @@ class NotesViewModel @Inject constructor(
     }
 
     private fun deleteNote(note: Note) {
-        viewModelScope.launch(Dispatchers.IO) {
-            noteRepository.deleteNote(note, NoteRepository.NO_TOKEN_ID)
+        getTokenId { tokenId ->
+            viewModelScope.launch(Dispatchers.IO) {
+                noteRepository.deleteNote(note, tokenId)
 
-            withContext(Dispatchers.Main) {
-                lastDeletedNote = note
-                _noteMenuState.value = -1
-                _notesUiEvent.emit(NotesUiEvent.ShowDeletedMessage)
+                withContext(Dispatchers.Main) {
+                    lastDeletedNote = note
+                    _noteMenuState.value = -1
+                    _notesUiEvent.emit(NotesUiEvent.ShowDeletedMessage)
+                }
             }
         }
     }
 
     private fun restoreLastNote() {
-        viewModelScope.launch(Dispatchers.IO) {
-            lastDeletedNote?.let {
-                val note = it.copy(id = 0L)
-                noteRepository.saveNote(note, NoteRepository.NO_TOKEN_ID)
+        getTokenId { tokenId ->
+            viewModelScope.launch(Dispatchers.IO) {
+                lastDeletedNote?.let {
+                    val note = it.copy(id = 0L)
+                    noteRepository.saveNote(note, tokenId)
+                }
             }
         }
     }
@@ -111,7 +120,20 @@ class NotesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             accountRepository.getAccount().collect { account ->
                 withContext(Dispatchers.Main) {
-                    _accountNameState.value = account.getName()
+                    _accountState.value = account
+                }
+            }
+        }
+    }
+
+    private fun getTokenId(onCompleted: (tokenId: String) -> Unit) {
+        if (_accountState.value.isLocalAccount()) {
+            onCompleted(NoteRepository.LOCAL_TOKEN_ID)
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                accountRepository.getToken { tokenResult ->
+                    val tokenId = tokenResult.getOrDefault(NoteRepository.NO_TOKEN_ID)
+                    onCompleted(tokenId)
                 }
             }
         }
