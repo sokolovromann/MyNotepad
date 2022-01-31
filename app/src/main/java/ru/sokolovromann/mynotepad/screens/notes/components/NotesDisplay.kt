@@ -11,14 +11,15 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.data.local.note.Note
-import ru.sokolovromann.mynotepad.ui.components.DefaultCard
-import ru.sokolovromann.mynotepad.ui.components.DefaultSnackbar
-import ru.sokolovromann.mynotepad.ui.components.TransparentDivider
+import ru.sokolovromann.mynotepad.data.local.settings.NotesSort
+import ru.sokolovromann.mynotepad.ui.components.*
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
 @ExperimentalFoundationApi
@@ -30,12 +31,26 @@ fun NotesDisplay(
     onNoteMenuIndexChange: (newIndex: Int) -> Unit,
     onDeleteNote: (note: Note) -> Unit,
     onNoteDeletedUndo: () -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    onSortClick: () -> Unit,
+    notesSort: NotesSort
 ) {
     Box {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        DefaultTextButton(
+            onClick = onSortClick,
+            text = when (notesSort) {
+                NotesSort.CREATED_ASC -> stringResource(id = R.string.notes_sort_created_asc)
+                NotesSort.CREATED_DESC -> stringResource(id = R.string.notes_sort_created_desc)
+                NotesSort.LAST_MODIFIED_ASC -> stringResource(id = R.string.notes_sort_last_modified_asc)
+                NotesSort.LAST_MODIFIED_DESC -> stringResource(id = R.string.notes_sort_last_modified_desc)
+            },
+            modifier = Modifier.padding(all = 8.dp)
+        )
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 56.dp)
+        ) {
             itemsIndexed(notes) { index, note ->
-                TransparentDivider(thickness = if (index == 0) 8.dp else 0.dp)
                 DefaultCard(
                     onClick = { onNoteClick(note) },
                     onLongClick = { onNoteMenuIndexChange(index) },
@@ -111,7 +126,9 @@ private fun NoteDisplayPreview() {
             onNoteMenuIndexChange = {},
             onDeleteNote = {},
             onNoteDeletedUndo = {},
-            snackbarHostState = rememberScaffoldState().snackbarHostState
+            snackbarHostState = rememberScaffoldState().snackbarHostState,
+            onSortClick = {},
+            notesSort = NotesSort.CREATED_DESC
         )
     }
 }

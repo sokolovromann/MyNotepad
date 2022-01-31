@@ -2,8 +2,7 @@ package ru.sokolovromann.mynotepad.screens.notes
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,6 +18,7 @@ import ru.sokolovromann.mynotepad.ui.components.DefaultFloatingActionButton
 import ru.sokolovromann.mynotepad.ui.components.NavigationDrawer
 import ru.sokolovromann.mynotepad.ui.components.NavigationDrawerHeader
 
+@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @Composable
 fun NotesScreen(
@@ -28,7 +28,9 @@ fun NotesScreen(
     val notesState = notesViewModel.notesState
     val noteMenuState = notesViewModel.noteMenuState
     val accountState = notesViewModel.accountState
+    val notesSortState = notesViewModel.notesSortState
     val scaffoldState = rememberScaffoldState()
+    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -56,6 +58,14 @@ fun NotesScreen(
                 NotesUiEvent.CloseNavigationMenu -> coroutineScope.launch {
                     scaffoldState.drawerState.close()
                 }
+
+                NotesUiEvent.OpenSortNotesSheet -> coroutineScope.launch {
+                    sheetState.show()
+                }
+
+                NotesUiEvent.CloseSortNotesSheet -> coroutineScope.launch {
+                    sheetState.hide()
+                }
             }
         }
     }
@@ -64,48 +74,66 @@ fun NotesScreen(
         notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(false))
     }
 
-    Scaffold(
-        topBar = {
-            NotesTopAppBar(onNavigationIconClick = {
-                notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(true))
-            })
-        },
-        floatingActionButton = {
-            DefaultFloatingActionButton(onClick = {
-                notesViewModel.onEvent(NotesEvent.AddNoteClick)
-            })
-        },
-        scaffoldState = scaffoldState,
-        snackbarHost = { scaffoldState.snackbarHostState },
-        drawerContent = {
-            NavigationDrawer(
-                navController = navController,
-                closeNavigation = {
-                    notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(false)
-                )},
-                drawerHeader = {
-                    NavigationDrawerHeader(
-                        title = stringResource(id = R.string.app_name),
-                        description = accountState.value.getName()
-                    )
+    BackHandler(enabled = sheetState.isVisible) {
+        notesViewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(false))
+    }
+
+    ModalBottomSheetLayout(
+        sheetContent = {
+            NotesSortSheet(
+                notesSort = notesSortState.value,
+                onNotesSortChange = { notesSort ->
+                    notesViewModel.onEvent(NotesEvent.OnNotesSortChange(notesSort))
+                    notesViewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(false))
                 }
             )
-        }
+        },
+        sheetState = sheetState
     ) {
-        when (val state = notesState.value) {
-            NotesState.Loading -> NotesLoading()
+        Scaffold(
+            topBar = {
+                NotesTopAppBar(onNavigationIconClick = {
+                    notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(true))
+                })
+            },
+            floatingActionButton = {
+                DefaultFloatingActionButton(onClick = {
+                    notesViewModel.onEvent(NotesEvent.AddNoteClick)
+                })
+            },
+            scaffoldState = scaffoldState,
+            snackbarHost = { scaffoldState.snackbarHostState },
+            drawerContent = {
+                NavigationDrawer(
+                    navController = navController,
+                    closeNavigation = {
+                        notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(false))},
+                    drawerHeader = {
+                        NavigationDrawerHeader(
+                            title = stringResource(id = R.string.app_name),
+                            description = accountState.value.getName()
+                        )
+                    }
+                )
+            }
+        ) {
+            when (val state = notesState.value) {
+                NotesState.Loading -> NotesLoading()
 
-            is NotesState.Notes -> NotesDisplay(
-                notes = state.notes,
-                onNoteClick = { note -> notesViewModel.onEvent(NotesEvent.NoteClick(note)) },
-                noteMenuIndex = noteMenuState.value,
-                onNoteMenuIndexChange = { newIndex -> notesViewModel.onEvent(NotesEvent.OpenNoteMenu(newIndex))},
-                onDeleteNote = { note -> notesViewModel.onEvent(NotesEvent.DeleteNoteClick(note)) },
-                onNoteDeletedUndo = { notesViewModel.onEvent(NotesEvent.NoteDeletedUndoClick) },
-                snackbarHostState = scaffoldState.snackbarHostState
-            )
+                is NotesState.Notes -> NotesDisplay(
+                    notes = state.notes,
+                    onNoteClick = { note -> notesViewModel.onEvent(NotesEvent.NoteClick(note)) },
+                    noteMenuIndex = noteMenuState.value,
+                    onNoteMenuIndexChange = { newIndex -> notesViewModel.onEvent(NotesEvent.OpenNoteMenu(newIndex))},
+                    onDeleteNote = { note -> notesViewModel.onEvent(NotesEvent.DeleteNoteClick(note)) },
+                    onNoteDeletedUndo = { notesViewModel.onEvent(NotesEvent.NoteDeletedUndoClick) },
+                    snackbarHostState = scaffoldState.snackbarHostState,
+                    onSortClick = { notesViewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(true)) },
+                    notesSort = notesSortState.value
+                )
 
-            NotesState.NotFound -> NotesNotFound()
+                NotesState.NotFound -> NotesNotFound()
+            }
         }
     }
 }

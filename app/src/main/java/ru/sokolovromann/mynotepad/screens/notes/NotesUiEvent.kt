@@ -8,4 +8,6 @@ sealed class NotesUiEvent {
     object ShowDeletedMessage : NotesUiEvent()
     object OpenNavigationMenu : NotesUiEvent()
     object CloseNavigationMenu : NotesUiEvent()
+    object OpenSortNotesSheet : NotesUiEvent()
+    object CloseSortNotesSheet : NotesUiEvent()
 }

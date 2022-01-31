@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -18,6 +19,7 @@ import ru.sokolovromann.mynotepad.settingsGraph
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 import ru.sokolovromann.mynotepad.welcomeGraph
 
+@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

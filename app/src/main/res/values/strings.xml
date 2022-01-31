@@ -16,13 +16,6 @@
     <string name="change_email_password_label">Current password</string>
     <string name="change_email_unknown_error_message">Something went wrong. Please try later.</string>
 
-    <string name="delete_account_delete">Delete</string>
-    <string name="delete_account_warning">All data will be deleted.</string>
-    <string name="delete_account_network_error_message">Please check your internet connection</string>
-    <string name="delete_account_unknown_error_message">Something went wrong. Please try later.</string>
-    <string name="delete_account_password_label">Current password</string>
-    <string name="delete_account_incorrect_password_message">Enter current password</string>
-
     <string name="change_password_change">Change</string>
     <string name="change_password_changed_message">Password changed</string>
     <string name="change_password_current_password_label">Current password</string>
@@ -33,6 +26,13 @@
     <string name="change_password_new_password_label">New password</string>
     <string name="change_password_unknown_error_message">Something went wrong. Please try later.</string>
 
+    <string name="delete_account_delete">Delete</string>
+    <string name="delete_account_incorrect_password_message">Enter current password</string>
+    <string name="delete_account_network_error_message">Please check your internet connection</string>
+    <string name="delete_account_password_label">Current password</string>
+    <string name="delete_account_unknown_error_message">Something went wrong. Please try later.</string>
+    <string name="delete_account_warning">All data will be deleted.</string>
+
     <string name="drawer_notes">@string/notes_name</string>
     <string name="drawer_settings">@string/settings_name</string>
 
@@ -41,6 +41,11 @@
     <string name="notes_not_found_message">You have no notes</string>
     <string name="notes_note_deleted_message">Note deleted</string>
     <string name="notes_note_deleted_undo">Undo</string>
+    <string name="notes_sort_by">Sort by</string>
+    <string name="notes_sort_created_asc">Created (oldest)</string>
+    <string name="notes_sort_created_desc">Created (newest)</string>
+    <string name="notes_sort_last_modified_asc">Last modified (oldest)</string>
+    <string name="notes_sort_last_modified_desc">Last modified (newest)</string>
 
     <string name="settings_about_header">About</string>
     <string name="settings_app_night_theme_title">Night theme</string>
@@ -48,7 +53,6 @@
     <string name="settings_change_email_title">Change email</string>
     <string name="settings_change_password_title">Change password</string>
     <string name="settings_delete_account_title">Delete account</string>
-
     <string name="settings_general_header">General</string>
     <string name="settings_github_description">Tap to open</string>
     <string name="settings_github_title">GitHub</string>

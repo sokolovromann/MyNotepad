@@ -3,6 +3,7 @@ package ru.sokolovromann.mynotepad
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -36,6 +37,7 @@ sealed class MyNotepadRoute(val graph: String, @StringRes val graphNameResId: In
     }
 }
 
+@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun NavGraphBuilder.notesGraph(navController: NavController) {
     navigation(startDestination = MyNotepadRoute.Notes.notesScreen, route = MyNotepadRoute.Notes.graph) {

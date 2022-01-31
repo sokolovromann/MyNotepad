@@ -8,6 +8,8 @@ interface SettingsRepository {
 
     suspend fun getSettings(): Flow<Settings>
 
+    suspend fun getNotesSort(): Flow<NotesSort>
+
     suspend fun saveAppNightTheme(nightTheme: Boolean)
 
     suspend fun saveNotesSort(notesSort: NotesSort)

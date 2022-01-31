@@ -24,6 +24,12 @@ class SettingsDataStore @Inject constructor(
         }
     }
 
+    fun getNotesSort(): Flow<NotesSort> {
+        return dataStore.data.map { preferences ->
+            enumValueOf(preferences[notesSortKey] ?: NotesSort.CREATED_ASC.name)
+        }
+    }
+
     suspend fun saveAppNightTheme(nightTheme: Boolean) {
         dataStore.edit { preferences ->
             preferences[appNightThemeKey] = nightTheme
