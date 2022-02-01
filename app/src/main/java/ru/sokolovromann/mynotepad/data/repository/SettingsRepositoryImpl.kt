@@ -14,6 +14,10 @@ class SettingsRepositoryImpl @Inject constructor(
         return settingsDataStore.getSettings()
     }
 
+    override suspend fun getAppNightTheme(): Flow<Boolean> {
+        return settingsDataStore.getAppNightTheme()
+    }
+
     override suspend fun getNotesSort(): Flow<NotesSort> {
         return settingsDataStore.getNotesSort()
     }

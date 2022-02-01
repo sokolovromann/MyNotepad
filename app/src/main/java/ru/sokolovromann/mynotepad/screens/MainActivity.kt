@@ -7,40 +7,37 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import ru.sokolovromann.mynotepad.MyNotepadRoute
+import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
 import ru.sokolovromann.mynotepad.notesGraph
-import ru.sokolovromann.mynotepad.screens.settings.SettingsViewModel
 import ru.sokolovromann.mynotepad.settingsGraph
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 import ru.sokolovromann.mynotepad.welcomeGraph
+import javax.inject.Inject
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @Inject lateinit var settingsRepository: SettingsRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyNotepadTheme(darkTheme = isAppNightTheme()) {
+            MyNotepadTheme(isAppNightTheme()) {
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = MyNotepadRoute.Welcome.graph) {
-                    welcomeGraph(
-                        navController = navController
-                    )
-                    notesGraph(
-                        navController = navController
-                    )
-                    settingsGraph(
-                        navController = navController,
-                        onOpenGitHub = { openGitHub() }
-                    )
+                NavHost(navController, MyNotepadRoute.Welcome.graph) {
+                    welcomeGraph(navController)
+                    notesGraph(navController)
+                    settingsGraph(navController) { openGitHub() }
                 }
             }
         }
@@ -56,8 +53,13 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun isAppNightTheme(): Boolean {
-        val settingsViewModel: SettingsViewModel = hiltViewModel()
-        val settingsState = settingsViewModel.settingsState.value
-        return settingsState.settings.appNightTheme
+        var appNightTheme by rememberSaveable {
+            mutableStateOf(false)
+        }
+
+        LaunchedEffect(true) {
+            settingsRepository.getAppNightTheme().collectLatest { appNightTheme = it }
+        }
+        return appNightTheme
     }
 }
