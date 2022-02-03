@@ -22,12 +22,20 @@ class SettingsRepositoryImpl @Inject constructor(
         return settingsDataStore.getNotesSort()
     }
 
+    override suspend fun getNotesLastSync(): Flow<Long> {
+        return settingsDataStore.getNotesLastSync()
+    }
+
     override suspend fun saveAppNightTheme(nightTheme: Boolean) {
         settingsDataStore.saveAppNightTheme(nightTheme)
     }
 
     override suspend fun saveNotesSort(notesSort: NotesSort) {
         settingsDataStore.saveNotesSort(notesSort)
+    }
+
+    override suspend fun saveNotesLastSync(notesLastSync: Long) {
+        settingsDataStore.saveNotesLastSync(notesLastSync)
     }
 
     override suspend fun clearSettings() {

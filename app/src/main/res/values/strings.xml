@@ -34,6 +34,7 @@
     <string name="delete_account_warning">All data will be deleted.</string>
 
     <string name="drawer_notes">@string/notes_name</string>
+    <string name="drawer_refresh">Refresh</string>
     <string name="drawer_settings">@string/settings_name</string>
 
     <string name="notes_delete_note">Delete</string>
@@ -41,6 +42,7 @@
     <string name="notes_not_found_message">You have no notes</string>
     <string name="notes_note_deleted_message">Note deleted</string>
     <string name="notes_note_deleted_undo">Undo</string>
+    <string name="notes_refreshing">Refreshing…</string>
     <string name="notes_sort_by">Sort by</string>
     <string name="notes_sort_created_asc">Created (oldest)</string>
     <string name="notes_sort_created_desc">Created (newest)</string>

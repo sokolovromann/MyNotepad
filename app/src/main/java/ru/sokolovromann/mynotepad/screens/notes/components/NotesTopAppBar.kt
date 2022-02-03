@@ -14,11 +14,18 @@ import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
 @Composable
 fun NotesTopAppBar(
-    onNavigationIconClick: () -> Unit
+    onNavigationIconClick: () -> Unit,
+    syncing: Boolean
 ) {
     TopAppBar(
         title = {
-            Text(text = stringResource(id = R.string.notes_name))
+            Text(
+                text = if (syncing) {
+                    stringResource(id = R.string.notes_refreshing)
+                } else {
+                    stringResource(id = R.string.notes_name)
+                }
+            )
         },
         navigationIcon = {
             DefaultIconButton(
@@ -35,7 +42,8 @@ fun NotesTopAppBar(
 private fun NotesTopAppBarPreview() {
     MyNotepadTheme {
         NotesTopAppBar(
-            onNavigationIconClick = {}
+            onNavigationIconClick = {},
+            syncing = false
         )
     }
 }

@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,7 +29,8 @@ import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 fun NavigationDrawer(
     navController: NavController,
     closeNavigation: () -> Unit,
-    drawerHeader: @Composable () -> Unit = {}
+    drawerHeader: @Composable () -> Unit = {},
+    onRefresh: () -> Unit = {}
 ) {
     val items = listOf(
         MyNotepadRoute.Notes,
@@ -60,6 +63,16 @@ fun NavigationDrawer(
                 }
             )
         }
+        Divider()
+        NavigationDrawerItem(
+            text = stringResource(id = R.string.drawer_refresh),
+            painterIcon = painterResource(id = R.drawable.ic_all_refresh),
+            itemSelected = false,
+            onItemClick = {
+                onRefresh()
+                closeNavigation()
+            }
+        )
     }
 }
 

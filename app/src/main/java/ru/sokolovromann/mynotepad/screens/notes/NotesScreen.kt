@@ -29,6 +29,7 @@ fun NotesScreen(
     val noteMenuState = notesViewModel.noteMenuState
     val accountState = notesViewModel.accountState
     val notesSortState = notesViewModel.notesSortState
+    val notesSyncState = notesViewModel.notesSyncState
     val scaffoldState = rememberScaffoldState()
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
@@ -92,9 +93,10 @@ fun NotesScreen(
     ) {
         Scaffold(
             topBar = {
-                NotesTopAppBar(onNavigationIconClick = {
-                    notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(true))
-                })
+                NotesTopAppBar(
+                    onNavigationIconClick = { notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(true)) },
+                    syncing = notesSyncState.value.syncing
+                )
             },
             floatingActionButton = {
                 DefaultFloatingActionButton(onClick = {
@@ -113,7 +115,8 @@ fun NotesScreen(
                             title = stringResource(id = R.string.app_name),
                             description = accountState.value.getName()
                         )
-                    }
+                    },
+                    onRefresh = { notesViewModel.onEvent(NotesEvent.RefreshNotesClick) }
                 )
             }
         ) {

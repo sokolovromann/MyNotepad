@@ -12,9 +12,13 @@ interface SettingsRepository {
 
     suspend fun getNotesSort(): Flow<NotesSort>
 
+    suspend fun getNotesLastSync(): Flow<Long>
+
     suspend fun saveAppNightTheme(nightTheme: Boolean)
 
     suspend fun saveNotesSort(notesSort: NotesSort)
+
+    suspend fun saveNotesLastSync(notesLastSync: Long)
 
     suspend fun clearSettings()
 }

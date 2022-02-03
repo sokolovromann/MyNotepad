@@ -38,13 +38,20 @@ class NotesViewModel @Inject constructor(
     private val _notesSortState: MutableState<NotesSort> = mutableStateOf(NotesSort.CREATED_ASC)
     val notesSortState: State<NotesSort> = _notesSortState
 
+    private val _notesSyncState: MutableState<NotesSyncState> = mutableStateOf(NotesSyncState())
+    val notesSyncState: State<NotesSyncState> = _notesSyncState
+
     private val _notesUiEvent: MutableSharedFlow<NotesUiEvent> = MutableSharedFlow()
     val notesUiEvent: SharedFlow<NotesUiEvent> = _notesUiEvent
+
+    private val defaultSyncPeriod: Long = 3600000L // 1 hour
 
     private var lastDeletedNote: Note? = null
 
     init {
-        syncNotes()
+        checkSyncNotes { isSync ->
+            if (isSync) syncNotes()
+        }
         getNotesSort {
             getNotes()
         }
@@ -84,6 +91,8 @@ class NotesViewModel @Inject constructor(
             }
 
             is NotesEvent.OnNotesSortChange -> saveNotesSort(event.notesSort)
+
+            is NotesEvent.RefreshNotesClick -> syncNotes()
         }
     }
 
@@ -104,8 +113,25 @@ class NotesViewModel @Inject constructor(
         }
     }
 
+    private fun checkSyncNotes(onCompleted: (isSync: Boolean) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val lastSync = settingsRepository.getNotesLastSync().first()
+            withContext(Dispatchers.Main) {
+                _notesSyncState.value = _notesSyncState.value.copy(lastSync = lastSync)
+
+                val nextSync = lastSync + defaultSyncPeriod
+                onCompleted(nextSync < System.currentTimeMillis())
+            }
+        }
+    }
+
     private fun syncNotes() {
+        _notesSyncState.value = _notesSyncState.value.copy(syncing = true)
         noteRepository.scheduleSyncNotes()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.saveNotesLastSync(System.currentTimeMillis())
+        }
     }
 
     private fun getNotes() {
@@ -119,6 +145,7 @@ class NotesViewModel @Inject constructor(
                     } else {
                         _notesState.value = NotesState.Notes(sortNotes(notes))
                     }
+                    _notesSyncState.value = _notesSyncState.value.copy(syncing = false)
                 }
             }
         }
