@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import ru.sokolovromann.mynotepad.MyNotepadRoute
 import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.screens.notes.components.*
-import ru.sokolovromann.mynotepad.ui.components.DefaultFloatingActionButton
+import ru.sokolovromann.mynotepad.ui.components.IconFloatingActionButton
 import ru.sokolovromann.mynotepad.ui.components.NavigationDrawer
 import ru.sokolovromann.mynotepad.ui.components.NavigationDrawerHeader
 
@@ -99,7 +99,7 @@ fun NotesScreen(
                 )
             },
             floatingActionButton = {
-                DefaultFloatingActionButton(onClick = {
+                IconFloatingActionButton(onClick = {
                     notesViewModel.onEvent(NotesEvent.AddNoteClick)
                 })
             },

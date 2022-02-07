@@ -12,7 +12,6 @@
         <item name="colorOnSurface">@color/black</item>
         <item name="colorError">@color/red_700</item>
         <item name="colorOnError">@color/white</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
     </style>
 
     <style name="Theme.MyNotepad.NoActionBar">

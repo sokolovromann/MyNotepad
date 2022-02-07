@@ -44,8 +44,8 @@ fun WelcomeDisplay(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_welcome_logo),
-                    tint = MaterialTheme.colors.onPrimary,
                     contentDescription = "",
+                    tint = MaterialTheme.colors.onPrimary,
                     modifier = Modifier.padding(16.dp)
                 )
             }

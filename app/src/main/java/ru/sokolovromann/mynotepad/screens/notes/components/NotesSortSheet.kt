@@ -2,7 +2,6 @@ package ru.sokolovromann.mynotepad.screens.notes.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -13,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.data.local.settings.NotesSort
-import ru.sokolovromann.mynotepad.ui.components.DefaultRadioButton
+import ru.sokolovromann.mynotepad.ui.components.RadioButtonItem
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
 @Composable
@@ -27,7 +26,7 @@ fun NotesSortSheet(
             text = stringResource(id = R.string.notes_sort_by),
             style = MaterialTheme.typography.body1
         )
-        DefaultRadioButton(
+        RadioButtonItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
@@ -35,7 +34,7 @@ fun NotesSortSheet(
             selected = notesSort == NotesSort.CREATED_ASC,
             onSelectedChange = { onNotesSortChange(NotesSort.CREATED_ASC) }
         )
-        DefaultRadioButton(
+        RadioButtonItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
@@ -43,7 +42,7 @@ fun NotesSortSheet(
             selected = notesSort == NotesSort.CREATED_DESC,
             onSelectedChange = { onNotesSortChange(NotesSort.CREATED_DESC) }
         )
-        DefaultRadioButton(
+        RadioButtonItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
@@ -51,7 +50,7 @@ fun NotesSortSheet(
             selected = notesSort == NotesSort.LAST_MODIFIED_ASC,
             onSelectedChange = { onNotesSortChange(NotesSort.LAST_MODIFIED_ASC) }
         )
-        DefaultRadioButton(
+        RadioButtonItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),

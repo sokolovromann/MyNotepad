@@ -5,20 +5,21 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
-    primary = Black,
-    primaryVariant = Black,
+    primary = Blue500,
+    primaryVariant = DarkBlue900,
     onPrimary = White,
 
-    secondary = Blue900,
+    secondary = Blue500,
     secondaryVariant = DarkBlue900,
     onSecondary = White,
 
-    background = Gray800,
+    background = DarkGray900,
     onBackground = White,
 
-    surface = Black,
+    surface = Gray900,
     onSurface = White,
 
     error = Red700,
@@ -57,5 +58,23 @@ fun MyNotepadTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composa
         typography = Typography,
         shapes = Shapes,
         content = content
+    )
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(
+        color = if (darkTheme) {
+            DarkColorPalette.surface
+        } else {
+            LightColorPalette.primaryVariant
+        },
+        darkIcons = false
+    )
+    systemUiController.setNavigationBarColor(
+        color = if (darkTheme) {
+            DarkColorPalette.surface
+        } else {
+            LightColorPalette.surface
+        },
+        darkIcons = !darkTheme
     )
 }

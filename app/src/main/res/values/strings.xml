@@ -58,7 +58,7 @@
     <string name="settings_general_header">General</string>
     <string name="settings_github_description">Tap to open</string>
     <string name="settings_github_title">GitHub</string>
-    <string name="settings_local_account_header">Local account</string>
+    <string name="settings_account_header">Account</string>
     <string name="settings_name">Settings</string>
     <string name="settings_sign_in_title">Sign in</string>
     <string name="settings_sign_out_title">Sign out</string>

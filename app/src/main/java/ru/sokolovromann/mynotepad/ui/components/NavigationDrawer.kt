@@ -1,11 +1,10 @@
 package ru.sokolovromann.mynotepad.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -63,7 +62,7 @@ fun NavigationDrawer(
                 }
             )
         }
-        Divider()
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
         NavigationDrawerItem(
             text = stringResource(id = R.string.drawer_refresh),
             painterIcon = painterResource(id = R.drawable.ic_all_refresh),
@@ -124,7 +123,7 @@ private fun NavigationDrawerItem(
     val iconColor = if (itemSelected) {
         MaterialTheme.colors.secondary
     } else {
-        MaterialTheme.colors.onSurface
+        MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
     }
 
     Row(
@@ -151,7 +150,16 @@ private fun NavigationDrawerItem(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    name = "Light",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Preview(
+    name = "Night",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 private fun NavigationDrawerPreview() {
     MyNotepadTheme {

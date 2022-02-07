@@ -56,7 +56,7 @@
     <string name="settings_general_header">Общие</string>
     <string name="settings_github_description">Нажмите, чтобы открыть</string>
     <string name="settings_github_title">GitHub</string>
-    <string name="settings_local_account_header">Локальный аккаунт</string>
+    <string name="settings_account_header">Аккаунт</string>
     <string name="settings_name">Настройки</string>
     <string name="settings_sign_in_title">Войти</string>
     <string name="settings_sign_out_title">Выйти</string>

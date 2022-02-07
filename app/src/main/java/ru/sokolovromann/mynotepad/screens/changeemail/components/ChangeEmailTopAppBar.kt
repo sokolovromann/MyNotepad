@@ -1,16 +1,12 @@
 package ru.sokolovromann.mynotepad.screens.changeemail.components
 
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import ru.sokolovromann.mynotepad.R
-import ru.sokolovromann.mynotepad.ui.components.DefaultIconButton
-import ru.sokolovromann.mynotepad.ui.components.DefaultLoadingIndicator
-import ru.sokolovromann.mynotepad.ui.components.DefaultTextButton
+import ru.sokolovromann.mynotepad.ui.components.*
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
 @Composable
@@ -19,32 +15,23 @@ fun ChangeEmailTopAppBar(
     onChangeClick: () -> Unit,
     changing: Boolean
 ) {
-    TopAppBar(
-        title = {},
+    DefaultTopAppBar(
         navigationIcon = {
-            DefaultIconButton(
+            AppBarIconButton(
                 onClick = onCloseClick,
-                imageVector = Icons.Filled.Close
+                icon = Icons.Filled.Close
             )
         },
         actions = {
             if (changing) {
-                DefaultLoadingIndicator(
-                    indicatorColor = MaterialTheme.colors.onPrimary
-                )
+                AppBarLoadingIndicator()
             } else {
-                DefaultTextButton(
+                AppBarTextButton(
                     onClick = onChangeClick,
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = MaterialTheme.colors.onPrimary
-                    ),
-                    stringResourceId = R.string.change_email_change,
-                    allCaps = true
+                    text = stringResource(id = R.string.change_email_change)
                 )
             }
         },
-        backgroundColor = MaterialTheme.colors.primary,
-        contentColor = MaterialTheme.colors.onPrimary
     )
 }
 

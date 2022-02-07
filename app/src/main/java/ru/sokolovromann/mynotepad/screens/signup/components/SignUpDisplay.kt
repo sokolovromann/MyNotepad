@@ -13,8 +13,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.sokolovromann.mynotepad.R
+import ru.sokolovromann.mynotepad.ui.components.CircularLoading
 import ru.sokolovromann.mynotepad.ui.components.DefaultHelperText
-import ru.sokolovromann.mynotepad.ui.components.DefaultLoadingIndicator
 import ru.sokolovromann.mynotepad.ui.components.DefaultSnackbar
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
@@ -74,7 +74,7 @@ fun SignUpDisplay(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (creatingAccount) {
-                    DefaultLoadingIndicator()
+                    CircularLoading()
                 } else {
                     OutlinedButton(
                         onClick = onCreateAccountClick,
