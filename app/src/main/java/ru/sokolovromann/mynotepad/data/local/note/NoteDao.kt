@@ -27,6 +27,9 @@ interface NoteDao {
     @Query("UPDATE notes SET sync_state = :syncState")
     fun updateSyncStates(syncState: String = NoteSyncState.DELETE.name)
 
+    @Query("UPDATE notes SET sync_state = :syncState, owner = :owner")
+    fun prepareNotesForSync(syncState: String = NoteSyncState.SAVE.name, owner: String)
+
     @Delete
     fun deleteNote(note: Note): Int
 

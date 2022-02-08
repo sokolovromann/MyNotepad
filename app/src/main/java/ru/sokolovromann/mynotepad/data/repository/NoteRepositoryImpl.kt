@@ -98,6 +98,10 @@ class NoteRepositoryImpl @Inject constructor(
         noteDao.updateSyncStates(syncState.name)
     }
 
+    override suspend fun prepareNotesForSync(syncState: NoteSyncState, owner: String) {
+        noteDao.prepareNotesForSync(syncState.name, owner)
+    }
+
     override suspend fun deleteNote(note: Note, tokenId: String) {
         when (tokenId) {
             NoteRepository.LOCAL_TOKEN_ID -> deleteLocalNote(note)

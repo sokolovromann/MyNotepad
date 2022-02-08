@@ -29,6 +29,8 @@ interface NoteRepository {
 
     suspend fun updateSyncStates(syncState: NoteSyncState)
 
+    suspend fun prepareNotesForSync(syncState: NoteSyncState, owner: String)
+
     suspend fun deleteNote(note: Note, tokenId: String)
 
     suspend fun clearNotes(owner: String, tokenId: String)

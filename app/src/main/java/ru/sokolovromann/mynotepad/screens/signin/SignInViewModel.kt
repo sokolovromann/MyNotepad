@@ -13,13 +13,16 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
+import ru.sokolovromann.mynotepad.data.local.note.NoteSyncState
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
+import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
+    private val noteRepository: NoteRepository
 ) : ViewModel(), ScreensEvent<SignInEvent> {
 
     private val _signInState: MutableState<SignInState> = mutableStateOf(SignInState())
@@ -84,7 +87,8 @@ class SignInViewModel @Inject constructor(
                     )
 
                     result
-                        .onSuccess {
+                        .onSuccess { account ->
+                            prepareNotesForSync(account.uid)
                             _signInUiEvent.emit(SignInUiEvent.OpenNotes)
                         }
                         .onFailure { exception ->
@@ -124,6 +128,15 @@ class SignInViewModel @Inject constructor(
                         }
                 }
             }
+        }
+    }
+
+    private fun prepareNotesForSync(owner: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.prepareNotesForSync(
+                syncState = NoteSyncState.SAVE,
+                owner = owner
+            )
         }
     }
 }

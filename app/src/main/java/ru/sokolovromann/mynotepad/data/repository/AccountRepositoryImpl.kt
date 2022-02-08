@@ -54,12 +54,12 @@ class AccountRepositoryImpl @Inject constructor(
     override fun signUpWithEmailPassword(
         email: String,
         password: String,
-        onResult: (result: Result<Unit>) -> Unit
+        onResult: (result: Result<Account>) -> Unit
     ) {
         api.createUserWithEmailPassword(email, password) { userResult ->
             userResult
                 .onSuccess { userResponse ->
-                    cacheAccount(userResponse) { onResult(Result.success(Unit)) }
+                    cacheAccount(userResponse) { account -> onResult(Result.success(account)) }
                 }
                 .onFailure { exception ->
                     when (exception) {
@@ -76,12 +76,12 @@ class AccountRepositoryImpl @Inject constructor(
     override fun signInWithEmailPassword(
         email: String,
         password: String,
-        onResult: (result: Result<Unit>) -> Unit
+        onResult: (result: Result<Account>) -> Unit
     ) {
         api.signInWithEmailPassword(email, password) { userResult ->
             userResult
                 .onSuccess { userResponse ->
-                    cacheAccount(userResponse) { onResult(Result.success(Unit)) }
+                    cacheAccount(userResponse) { account -> onResult(Result.success(account)) }
                 }
                 .onFailure { exception ->
                     when (exception) {

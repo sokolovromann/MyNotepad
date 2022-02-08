@@ -11,9 +11,9 @@ interface AccountRepository {
 
     fun syncAccount(onResult: (result: Result<Account>) -> Unit)
 
-    fun signUpWithEmailPassword(email: String, password: String, onResult: (result: Result<Unit>) -> Unit)
+    fun signUpWithEmailPassword(email: String, password: String, onResult: (result: Result<Account>) -> Unit)
 
-    fun signInWithEmailPassword(email: String, password: String, onResult: (result: Result<Unit>) -> Unit)
+    fun signInWithEmailPassword(email: String, password: String, onResult: (result: Result<Account>) -> Unit)
 
     fun updateEmail(currentPassword: String, newEmail: String, onResult: (result: Result<Unit>) -> Unit)
 
