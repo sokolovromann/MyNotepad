@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
+import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
 import javax.inject.Inject
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
+    private val noteRepository: NoteRepository
 ) : ViewModel(), ScreensEvent<SettingsEvent> {
 
     private val _settingsState: MutableState<SettingsState> = mutableStateOf(SettingsState())
@@ -114,10 +116,17 @@ class SettingsViewModel @Inject constructor(
     private fun signOut() {
         viewModelScope.launch(Dispatchers.IO) {
             accountRepository.signOut {
+                clearNotes()
                 viewModelScope.launch {
                     _settingsUiEvent.emit(SettingsUiEvent.OpenWelcome)
                 }
             }
+        }
+    }
+
+    private fun clearNotes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.clearNotes("", NoteRepository.LOCAL_TOKEN_ID)
         }
     }
 }
