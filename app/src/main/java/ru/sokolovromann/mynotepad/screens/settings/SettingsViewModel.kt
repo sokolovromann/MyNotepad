@@ -117,6 +117,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             accountRepository.signOut {
                 clearNotes()
+                clearSetting()
                 viewModelScope.launch {
                     _settingsUiEvent.emit(SettingsUiEvent.OpenWelcome)
                 }
@@ -127,6 +128,12 @@ class SettingsViewModel @Inject constructor(
     private fun clearNotes() {
         viewModelScope.launch(Dispatchers.IO) {
             noteRepository.clearNotes("", NoteRepository.LOCAL_TOKEN_ID)
+        }
+    }
+
+    private fun clearSetting() {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.clearSettings()
         }
     }
 }
