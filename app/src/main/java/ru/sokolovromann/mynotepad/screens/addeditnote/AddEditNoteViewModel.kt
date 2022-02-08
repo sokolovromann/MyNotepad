@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.local.note.Note
+import ru.sokolovromann.mynotepad.data.local.note.NoteSyncState
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
@@ -105,13 +106,22 @@ class AddEditNoteViewModel @Inject constructor(
     }
 
     private fun saveNote() {
+        val noteSyncState = if (_accountState.value.isLocalAccount()) {
+            NoteSyncState.NO_SYNC.name
+        } else {
+            NoteSyncState.SAVE.name
+        }
+
         val note = originalNote?.copy(
             title = _addEditNoteState.value.title,
             text = _addEditNoteState.value.text,
-            lastModified = System.currentTimeMillis()
+            lastModified = System.currentTimeMillis(),
+            syncState = noteSyncState
         ) ?: Note(
+            owner = _accountState.value.uid,
             title = _addEditNoteState.value.title,
-            text = _addEditNoteState.value.text
+            text = _addEditNoteState.value.text,
+            syncState = noteSyncState
         )
 
         if (note.text.isEmpty()) {
