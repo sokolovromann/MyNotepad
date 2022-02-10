@@ -44,10 +44,10 @@
     <string name="notes_note_deleted_undo">Undo</string>
     <string name="notes_refreshing">Refreshing…</string>
     <string name="notes_sort_by">Sort by</string>
-    <string name="notes_sort_created_asc">Created (oldest)</string>
-    <string name="notes_sort_created_desc">Created (newest)</string>
-    <string name="notes_sort_last_modified_asc">Last modified (oldest)</string>
-    <string name="notes_sort_last_modified_desc">Last modified (newest)</string>
+    <string name="notes_sort_created_asc">Created&#9650;</string>
+    <string name="notes_sort_created_desc">Created&#9660;</string>
+    <string name="notes_sort_last_modified_asc">Last modified&#9650;</string>
+    <string name="notes_sort_last_modified_desc">Last modified&#9660;</string>
 
     <string name="settings_about_header">About</string>
     <string name="settings_app_night_theme_title">Night theme</string>

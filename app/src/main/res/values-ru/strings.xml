@@ -42,10 +42,10 @@
     <string name="notes_note_deleted_undo">Отмена</string>
     <string name="notes_refreshing">Обновление…</string>
     <string name="notes_sort_by">Сортировать</string>
-    <string name="notes_sort_created_asc">Создание (сначала старые)</string>
-    <string name="notes_sort_created_desc">Создание (сначала новые)</string>
-    <string name="notes_sort_last_modified_asc">Посл. изменения (сначала старые)</string>
-    <string name="notes_sort_last_modified_desc">Посл. изменения (сначала новые)</string>
+    <string name="notes_sort_created_asc">По созданию&#9650;</string>
+    <string name="notes_sort_created_desc">По созданию&#9660;</string>
+    <string name="notes_sort_last_modified_asc">По посл. изменениям&#9650;</string>
+    <string name="notes_sort_last_modified_desc">По посл. изменениям&#9660;</string>
 
     <string name="settings_about_header">О приложении</string>
     <string name="settings_app_night_theme_title">Ночная тема</string>
