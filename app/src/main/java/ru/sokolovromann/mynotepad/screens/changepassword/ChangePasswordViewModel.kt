@@ -9,7 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
+import ru.sokolovromann.mynotepad.data.exception.AuthException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
@@ -89,7 +89,7 @@ class ChangePasswordViewModel @Inject constructor(
                             is NetworkException -> _changePasswordUiEvent.emit(
                                 ChangePasswordUiEvent.ShowNetworkErrorMessage
                             )
-                            is IncorrectDataException -> _changePasswordState.value = _changePasswordState.value.copy(
+                            is AuthException -> _changePasswordState.value = _changePasswordState.value.copy(
                                 incorrectCurrentPassword = true
                             )
                             else -> _changePasswordUiEvent.emit(

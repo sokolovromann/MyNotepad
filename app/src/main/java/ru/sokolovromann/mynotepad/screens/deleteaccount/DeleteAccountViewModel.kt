@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
+import ru.sokolovromann.mynotepad.data.exception.AuthException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
@@ -116,7 +116,7 @@ class DeleteAccountViewModel @Inject constructor(
                             is NetworkException -> _deleteAccountUiEvent.emit(
                                 DeleteAccountUiEvent.ShowNetworkErrorMessage
                             )
-                            is IncorrectDataException -> _deleteAccountState.value = _deleteAccountState.value.copy(
+                            is AuthException -> _deleteAccountState.value = _deleteAccountState.value.copy(
                                 incorrectPassword = true
                             )
                             else -> _deleteAccountUiEvent.emit(

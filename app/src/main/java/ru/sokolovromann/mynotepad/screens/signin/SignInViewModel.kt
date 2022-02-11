@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
+import ru.sokolovromann.mynotepad.data.exception.AuthException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.local.note.NoteSyncState
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
@@ -96,7 +96,7 @@ class SignInViewModel @Inject constructor(
                                 is NetworkException -> _signInUiEvent.emit(
                                     SignInUiEvent.ShowNetworkErrorMessage
                                 )
-                                is IncorrectDataException -> _signInUiEvent.emit(
+                                is AuthException -> _signInUiEvent.emit(
                                     SignInUiEvent.ShowSignInErrorMessage
                                 )
                                 else -> _signInUiEvent.emit(

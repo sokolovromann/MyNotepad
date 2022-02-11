@@ -2,11 +2,9 @@ package ru.sokolovromann.mynotepad.data.repository
 
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import ru.sokolovromann.mynotepad.data.exception.IncorrectDataException
+import ru.sokolovromann.mynotepad.data.exception.AuthException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.local.account.AccountDataStore
@@ -40,14 +38,7 @@ class AccountRepositoryImpl @Inject constructor(
                 .onSuccess { userResponse ->
                     cacheAccount(userResponse) { account -> onResult(Result.success(account)) }
                 }
-                .onFailure { exception ->
-                    when (exception) {
-                        is FirebaseNetworkException -> onResult(Result.failure(NetworkException()))
-                        is FirebaseAuthException -> onResult(Result.failure(NetworkException()))
-                        is NullPointerException -> onResult(Result.failure(exception))
-                        else -> onResult(Result.failure(Exception(exception.message)))
-                    }
-                }
+                .onFailure { exception -> onResult(failureResult(exception)) }
         }
     }
 
@@ -61,15 +52,7 @@ class AccountRepositoryImpl @Inject constructor(
                 .onSuccess { userResponse ->
                     cacheAccount(userResponse) { account -> onResult(Result.success(account)) }
                 }
-                .onFailure { exception ->
-                    when (exception) {
-                        is FirebaseNetworkException -> onResult(Result.failure(NetworkException()))
-                        is FirebaseAuthInvalidCredentialsException -> onResult(Result.failure(IncorrectDataException()))
-                        is FirebaseAuthException -> onResult(Result.failure(NetworkException()))
-                        is NullPointerException -> onResult(Result.failure(exception))
-                        else -> onResult(Result.failure(Exception(exception.message)))
-                    }
-                }
+                .onFailure { exception -> onResult(failureResult(exception)) }
         }
     }
 
@@ -83,15 +66,7 @@ class AccountRepositoryImpl @Inject constructor(
                 .onSuccess { userResponse ->
                     cacheAccount(userResponse) { account -> onResult(Result.success(account)) }
                 }
-                .onFailure { exception ->
-                    when (exception) {
-                        is FirebaseNetworkException -> onResult(Result.failure(NetworkException()))
-                        is FirebaseAuthInvalidCredentialsException -> onResult(Result.failure(IncorrectDataException()))
-                        is FirebaseAuthException -> onResult(Result.failure(NetworkException()))
-                        is NullPointerException -> onResult(Result.failure(exception))
-                        else -> onResult(Result.failure(Exception(exception.message)))
-                    }
-                }
+                .onFailure { exception -> onResult(failureResult(exception)) }
         }
     }
 
@@ -133,14 +108,7 @@ class AccountRepositoryImpl @Inject constructor(
                 .onSuccess {
                     onResult(Result.success(Unit))
                 }
-                .onFailure { exception ->
-                    when (exception) {
-                        is FirebaseNetworkException -> onResult(Result.failure(NetworkException()))
-                        is FirebaseAuthException -> onResult(Result.failure(NetworkException()))
-                        is NullPointerException -> onResult(Result.failure(exception))
-                        else -> onResult(Result.failure(Exception(exception.message)))
-                    }
-                }
+                .onFailure { exception -> onResult(failureResult(exception)) }
         }
     }
 
@@ -150,14 +118,7 @@ class AccountRepositoryImpl @Inject constructor(
                 .onSuccess {
                     clearCache { onResult(Result.success(Unit)) }
                 }
-                .onFailure { exception ->
-                    when (exception) {
-                        is FirebaseNetworkException -> onResult(Result.failure(NetworkException()))
-                        is FirebaseAuthException -> onResult(Result.failure(NetworkException()))
-                        is NullPointerException -> onResult(Result.failure(exception))
-                        else -> onResult(Result.failure(Exception(exception.message)))
-                    }
-                }
+                .onFailure { exception -> onResult(failureResult(exception)) }
         }
     }
 
@@ -210,9 +171,7 @@ class AccountRepositoryImpl @Inject constructor(
     private fun<T> failureResult(throwable: Throwable): Result<T> {
         return when (throwable) {
             is FirebaseNetworkException -> Result.failure(NetworkException())
-            is FirebaseAuthRecentLoginRequiredException -> Result.failure(IncorrectDataException())
-            is FirebaseAuthInvalidCredentialsException -> Result.failure(IncorrectDataException())
-            is FirebaseAuthException -> Result.failure(NetworkException())
+            is FirebaseAuthException -> Result.failure(AuthException(throwable.errorCode))
             is NullPointerException -> Result.failure(throwable)
             else -> Result.failure(Exception(throwable.message))
         }

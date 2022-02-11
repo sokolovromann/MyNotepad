@@ -26,7 +26,7 @@ fun ChangeEmailScreen(
 
     val changedMessage = stringResource(id = R.string.change_email_changed_message)
     val networkErrorMessage = stringResource(id = R.string.change_email_network_error_message)
-    val unknownErrorMessage = stringResource(id = R.string.change_email_incorrect_email_message)
+    val unknownErrorMessage = stringResource(id = R.string.change_email_unknown_error_message)
 
     LaunchedEffect(true) {
         changeEmailViewModel.changeEmailUiEvent.collectLatest { uiEvent ->
