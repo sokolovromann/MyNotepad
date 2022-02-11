@@ -5,6 +5,7 @@
     <string name="add_edit_note_text_label">Заметка</string>
     <string name="add_edit_note_title_label">Заголовок</string>
 
+    <string name="app_name">Мой блокнот</string>
     <string name="app_network_error_message">Сетевая ошибка, пожалуйста, проверьте ваше интернет-соединение</string>
     <string name="app_unknown_error_message">Неизвестная ошибка, пожалуйста, попробуйте позже</string>
 
@@ -90,5 +91,5 @@
     <string name="welcome_continue_without_sync">Продолжить без создания аккаунта</string>
     <string name="welcome_sign_in">Войти</string>
     <string name="welcome_sign_up">Создать аккаунт</string>
-    <string name="welcome_title">Добро пожаловать в My Notepad!</string>
+    <string name="welcome_title">@string/app_name</string>
 </resources>

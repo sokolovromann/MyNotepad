@@ -5,7 +5,7 @@
     <string name="add_edit_note_text_label">Note</string>
     <string name="add_edit_note_title_label">Title</string>
 
-    <string name="app_name" translatable="false">My Notepad</string>
+    <string name="app_name">My Notepad</string>
     <string name="app_network_error_message">Network error, please check your internet connection</string>
     <string name="app_unknown_error_message">Unknown error, please try again later</string>
 
