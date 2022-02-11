@@ -24,9 +24,7 @@ fun WelcomeScreen(
                 WelcomeUiEvent.OpenSignUp -> navController.navigate(MyNotepadRoute.Welcome.signUpScreen)
                 WelcomeUiEvent.OpenSignIn -> navController.navigate(MyNotepadRoute.Welcome.signInScreen)
                 WelcomeUiEvent.OpenNotes -> navController.navigate(MyNotepadRoute.Notes.notesScreen) {
-                    popUpTo(MyNotepadRoute.Welcome.welcomeScreen) {
-                        inclusive = true
-                    }
+                    navController.backQueue.clear()
                 }
             }
         }

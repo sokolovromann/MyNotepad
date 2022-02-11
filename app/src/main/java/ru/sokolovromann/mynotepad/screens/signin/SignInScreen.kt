@@ -35,9 +35,7 @@ fun SignInScreen(
         signInViewModel.signInUiEvent.collectLatest { uiEvent ->
             when (uiEvent) {
                 SignInUiEvent.OpenNotes -> navController.navigate(MyNotepadRoute.Notes.notesScreen) {
-                    popUpTo(MyNotepadRoute.Welcome.welcomeScreen) {
-                        inclusive = true
-                    }
+                    navController.backQueue.clear()
                 }
                 SignInUiEvent.OpenWelcome -> navController.popBackStack()
                 SignInUiEvent.ShowNetworkErrorMessage -> coroutineScope.launch {
