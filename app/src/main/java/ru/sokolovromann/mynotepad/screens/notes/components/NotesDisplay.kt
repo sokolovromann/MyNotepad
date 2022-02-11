@@ -44,7 +44,7 @@ fun NotesDisplay(
                             NotesSort.LAST_MODIFIED_ASC -> stringResource(id = R.string.notes_sort_last_modified_asc)
                             NotesSort.LAST_MODIFIED_DESC -> stringResource(id = R.string.notes_sort_last_modified_desc)
                         },
-                        modifier = Modifier.padding(all = 8.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
                 ClickableSurface(
