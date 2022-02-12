@@ -40,11 +40,13 @@
     <string name="drawer_settings">@string/settings_name</string>
 
     <string name="notes_delete_note">Delete</string>
+    <string name="notes_multi_column_content_description">Multi-column view</string>
     <string name="notes_name">Notes</string>
     <string name="notes_not_found_message">You have no notes</string>
     <string name="notes_note_deleted_message">Note deleted</string>
     <string name="notes_note_deleted_undo">Undo</string>
     <string name="notes_refreshing">Refreshing…</string>
+    <string name="notes_single_column_content_description">Single-column view</string>
     <string name="notes_sort_by">Sort by</string>
     <string name="notes_sort_created_asc">Created▲</string>
     <string name="notes_sort_created_desc">Created▼</string>

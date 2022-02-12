@@ -26,6 +26,10 @@ class SettingsRepositoryImpl @Inject constructor(
         return settingsDataStore.getNotesLastSync()
     }
 
+    override suspend fun getNotesMultiColumns(): Flow<Boolean> {
+        return settingsDataStore.getNotesMultiColumns()
+    }
+
     override suspend fun saveAppNightTheme(nightTheme: Boolean) {
         settingsDataStore.saveAppNightTheme(nightTheme)
     }
@@ -36,6 +40,10 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun saveNotesLastSync(notesLastSync: Long) {
         settingsDataStore.saveNotesLastSync(notesLastSync)
+    }
+
+    override suspend fun saveNotesMultiColumns(notesMultiColumns: Boolean) {
+        settingsDataStore.saveNotesMultiColumns(notesMultiColumns)
     }
 
     override suspend fun clearSettings() {

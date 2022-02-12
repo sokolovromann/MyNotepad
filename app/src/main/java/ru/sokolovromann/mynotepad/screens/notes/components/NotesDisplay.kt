@@ -2,14 +2,15 @@ package ru.sokolovromann.mynotepad.screens.notes.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,51 +31,61 @@ fun NotesDisplay(
     onNoteDeletedUndo: () -> Unit,
     snackbarHostState: SnackbarHostState,
     onSortClick: () -> Unit,
-    notesSort: NotesSort
+    notesSort: NotesSort,
+    notesMultiColumns: Boolean,
+    onMultiColumnsClick: () -> Unit
 ) {
-    Box {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            itemsIndexed(notes) { index, note ->
-                if (index == 0) {
-                    DefaultTextButton(
-                        onClick = onSortClick,
-                        text = when (notesSort) {
-                            NotesSort.CREATED_ASC -> stringResource(id = R.string.notes_sort_created_asc)
-                            NotesSort.CREATED_DESC -> stringResource(id = R.string.notes_sort_created_desc)
-                            NotesSort.LAST_MODIFIED_ASC -> stringResource(id = R.string.notes_sort_last_modified_asc)
-                            NotesSort.LAST_MODIFIED_DESC -> stringResource(id = R.string.notes_sort_last_modified_desc)
-                        },
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                }
-                ClickableSurface(
-                    onClick = { onNoteClick(note) },
-                    onLongClick = { onNoteMenuIndexChange(index) },
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    elevation = 1.dp
-                ) {
-                    TextItem(
-                        modifier = Modifier.padding(8.dp),
-                        title = if (note.title.isEmpty()) {
-                            null
-                        } else {
-                            { Title(text = note.title) }
-                        },
-                        body = { Body(text = note.text)},
-                        dropdownMenu = {
-                            NotesDropdownMenu(
-                                expanded = noteMenuIndex == index,
-                                onDismiss = { onNoteMenuIndexChange(-1) },
-                                onDeleteClick = { onDeleteNote(note) }
-                            )
-                        }
-                    )
-                }
-                TransparentDivider(thickness = if (index == notes.size - 1) 128.dp else 8.dp)
-            }
-        }
+    val scrollState = rememberScrollState()
 
+    Box {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+        ) {
+            Row {
+                DefaultTextButton(
+                    onClick = onSortClick,
+                    text = when (notesSort) {
+                        NotesSort.CREATED_ASC -> stringResource(id = R.string.notes_sort_created_asc)
+                        NotesSort.CREATED_DESC -> stringResource(id = R.string.notes_sort_created_desc)
+                        NotesSort.LAST_MODIFIED_ASC -> stringResource(id = R.string.notes_sort_last_modified_asc)
+                        NotesSort.LAST_MODIFIED_DESC -> stringResource(id = R.string.notes_sort_last_modified_desc)
+                    },
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                DefaultIconButton(
+                    onClick = onMultiColumnsClick,
+                    icon = if (notesMultiColumns) {
+                        painterResource(id = R.drawable.ic_notes_list_multi_columns)
+                    } else {
+                        painterResource(id = R.drawable.ic_notes_grid_multi_columns)
+                    },
+                    contentDescription = if (notesMultiColumns) {
+                        stringResource(id = R.string.notes_multi_column_content_description)
+                    } else {
+                        stringResource(id = R.string.notes_single_column_content_description)
+                    }
+                )
+            }
+            StaggeredVerticalGrid(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                multiColumns = notesMultiColumns
+            ) {
+                notes.forEachIndexed { index, note ->
+                    NotesSurface(
+                        index = index,
+                        note = note,
+                        onNoteClick = onNoteClick,
+                        noteMenuIndex = noteMenuIndex,
+                        onNoteMenuIndexChange = onNoteMenuIndexChange,
+                        onDeleteNote = onDeleteNote,
+                        multiColumns = notesMultiColumns
+                    )
+                }
+            }
+            TransparentDivider(thickness = 128.dp)
+        }
         DefaultSnackbar(
             snackbarHostState = snackbarHostState,
             onActionClick = onNoteDeletedUndo,
@@ -85,20 +96,68 @@ fun NotesDisplay(
     }
 }
 
+@ExperimentalFoundationApi
+@Composable
+private fun NotesSurface(
+    index: Int,
+    note: Note,
+    onNoteClick: (note: Note) -> Unit,
+    noteMenuIndex: Int,
+    onNoteMenuIndexChange: (newIndex: Int) -> Unit,
+    onDeleteNote: (note: Note) -> Unit,
+    multiColumns: Boolean
+) {
+    ClickableSurface(
+        onClick = { onNoteClick(note) },
+        onLongClick = { onNoteMenuIndexChange(index) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(all = 4.dp),
+        shape = MaterialTheme.shapes.medium,
+        elevation = 1.dp
+    ) {
+        TextItem(
+            modifier = Modifier.padding(8.dp),
+            title = if (note.title.isEmpty()) {
+                null
+            } else {
+                { Title(text = note.title) }
+            },
+            body = {
+                Body(
+                    text = note.text,
+                    multiColumns = multiColumns
+                )
+            },
+            dropdownMenu = {
+                NotesDropdownMenu(
+                    expanded = noteMenuIndex == index,
+                    onDismiss = { onNoteMenuIndexChange(-1) },
+                    onDeleteClick = { onDeleteNote(note) }
+                )
+            }
+        )
+    }
+}
+
 @Composable
 private fun Title(text: String) {
     ItemTitleText(
         text = text,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 4.dp),
+            .padding(bottom = 4.dp)
     )
 }
 
 @Composable
-private fun Body(text: String) {
+private fun Body(
+    text: String,
+    multiColumns: Boolean
+) {
     ItemBodyText(
         text = text,
+        maxLines = if (multiColumns) 15 else 10,
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -124,7 +183,9 @@ private fun NoteDisplayPreview() {
             onNoteDeletedUndo = {},
             snackbarHostState = rememberScaffoldState().snackbarHostState,
             onSortClick = {},
-            notesSort = NotesSort.CREATED_DESC
+            notesSort = NotesSort.CREATED_DESC,
+            notesMultiColumns = false,
+            onMultiColumnsClick = {}
         )
     }
 }

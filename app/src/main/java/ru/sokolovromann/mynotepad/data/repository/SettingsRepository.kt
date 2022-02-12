@@ -14,11 +14,15 @@ interface SettingsRepository {
 
     suspend fun getNotesLastSync(): Flow<Long>
 
+    suspend fun getNotesMultiColumns(): Flow<Boolean>
+
     suspend fun saveAppNightTheme(nightTheme: Boolean)
 
     suspend fun saveNotesSort(notesSort: NotesSort)
 
     suspend fun saveNotesLastSync(notesLastSync: Long)
+
+    suspend fun saveNotesMultiColumns(notesMultiColumns: Boolean)
 
     suspend fun clearSettings()
 }

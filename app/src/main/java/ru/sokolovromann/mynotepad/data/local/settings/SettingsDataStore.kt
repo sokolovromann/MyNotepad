@@ -12,13 +12,15 @@ class SettingsDataStore @Inject constructor(
     private val appNightThemeKey = booleanPreferencesKey("appNightTheme")
     private val notesSortKey = stringPreferencesKey("notesSort")
     private val notesLastSyncKey = longPreferencesKey("notesLastSync")
+    private val notesMultiColumnsKey = booleanPreferencesKey("notesMultiColumns")
 
     fun getSettings(): Flow<Settings> {
         return dataStore.data.map { preferences ->
             Settings(
                 appNightTheme = preferences[appNightThemeKey] ?: false,
                 notesSort = enumValueOf(preferences[notesSortKey] ?: NotesSort.CREATED_ASC.name),
-                notesLastSync = preferences[notesLastSyncKey] ?: 0L
+                notesLastSync = preferences[notesLastSyncKey] ?: 0L,
+                notesMultiColumns = preferences[notesMultiColumnsKey] ?: false
             )
         }
     }
@@ -41,6 +43,12 @@ class SettingsDataStore @Inject constructor(
         }
     }
 
+    fun getNotesMultiColumns(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[notesMultiColumnsKey] ?: false
+        }
+    }
+
     suspend fun saveAppNightTheme(nightTheme: Boolean) {
         dataStore.edit { preferences ->
             preferences[appNightThemeKey] = nightTheme
@@ -59,12 +67,19 @@ class SettingsDataStore @Inject constructor(
         }
     }
 
+    suspend fun saveNotesMultiColumns(notesMultiColumns: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[notesMultiColumnsKey] = notesMultiColumns
+        }
+    }
+
     suspend fun clearSettings() {
         val defaultSettings = Settings()
         dataStore.edit { preferences ->
             preferences[appNightThemeKey] = defaultSettings.appNightTheme
             preferences[notesSortKey] = defaultSettings.notesSort.name
             preferences[notesLastSyncKey] = defaultSettings.notesLastSync
+            preferences[notesMultiColumnsKey] = defaultSettings.notesMultiColumns
         }
     }
 }

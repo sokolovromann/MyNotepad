@@ -40,11 +40,13 @@
     <string name="drawer_settings">@string/settings_name</string>
 
     <string name="notes_delete_note">Удалить</string>
+    <string name="notes_multi_column_content_description">Несколько столбцов</string>
     <string name="notes_name">Заметки</string>
     <string name="notes_not_found_message">У вас нет заметок</string>
     <string name="notes_note_deleted_message">Заметка удалена</string>
     <string name="notes_note_deleted_undo">Отмена</string>
     <string name="notes_refreshing">Обновление…</string>
+    <string name="notes_single_column_content_description">Один столбец</string>
     <string name="notes_sort_by">Сортировать</string>
     <string name="notes_sort_created_asc">По созданию▲</string>
     <string name="notes_sort_created_desc">По созданию▼</string>

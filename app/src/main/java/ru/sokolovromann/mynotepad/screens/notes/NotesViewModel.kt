@@ -41,6 +41,9 @@ class NotesViewModel @Inject constructor(
     private val _notesSyncState: MutableState<NotesSyncState> = mutableStateOf(NotesSyncState())
     val notesSyncState: State<NotesSyncState> = _notesSyncState
 
+    private val _notesMultiColumnsState: MutableState<Boolean> = mutableStateOf(false)
+    val notesMultiColumnsState: State<Boolean> = _notesMultiColumnsState
+
     private val _notesUiEvent: MutableSharedFlow<NotesUiEvent> = MutableSharedFlow()
     val notesUiEvent: SharedFlow<NotesUiEvent> = _notesUiEvent
 
@@ -52,6 +55,7 @@ class NotesViewModel @Inject constructor(
         checkSyncNotes { isSync ->
             if (isSync) syncNotes()
         }
+        getNotesMultiColumns {  }
         getNotesSort {
             getNotes()
         }
@@ -92,6 +96,8 @@ class NotesViewModel @Inject constructor(
 
             is NotesEvent.OnNotesSortChange -> saveNotesSort(event.notesSort)
 
+            is NotesEvent.NotesMultiColumnsClick -> saveNotesMultiColumns()
+
             is NotesEvent.RefreshNotesClick -> syncNotes()
         }
     }
@@ -107,9 +113,26 @@ class NotesViewModel @Inject constructor(
         }
     }
 
+    private fun getNotesMultiColumns(onCompleted: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.getNotesMultiColumns().collect { notesMultiColumns ->
+                withContext(Dispatchers.Main) {
+                    _notesMultiColumnsState.value = notesMultiColumns
+                    onCompleted()
+                }
+            }
+        }
+    }
+
     private fun saveNotesSort(notesSort: NotesSort) {
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.saveNotesSort(notesSort)
+        }
+    }
+
+    private fun saveNotesMultiColumns() {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.saveNotesMultiColumns(!_notesMultiColumnsState.value)
         }
     }
 

@@ -9,11 +9,13 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -75,6 +77,57 @@ fun DefaultTextButton(
     }
 }
 
+@Composable
+fun DefaultIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    icon: ImageVector,
+    iconColor: Color = tint(),
+    contentDescription: String = ""
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        interactionSource = interactionSource
+    ) {
+        Icon(
+            imageVector = icon,
+            tint = iconColor,
+            contentDescription = contentDescription
+        )
+    }
+}
+
+@Composable
+fun DefaultIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    icon: Painter,
+    iconColor: Color = tint(),
+    contentDescription: String = ""
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        interactionSource = interactionSource
+    ) {
+        Icon(
+            painter = icon,
+            tint = iconColor,
+            contentDescription = contentDescription
+        )
+    }
+}
+
+@Composable
+private fun tint(): Color = MaterialTheme.colors.onBackground.copy(0.6f)
+
 @Preview(showBackground = true)
 @Composable
 private fun ButtonPreview() {
@@ -82,5 +135,7 @@ private fun ButtonPreview() {
         IconFloatingActionButton(onClick = {})
         Spacer(modifier = Modifier.height(8.dp))
         DefaultTextButton(onClick = {}, text = "Text Button")
+        Spacer(modifier = Modifier.height(8.dp))
+        DefaultIconButton(onClick = {}, icon = Icons.Default.Email)
     }
 }

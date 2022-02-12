@@ -29,6 +29,7 @@ fun NotesScreen(
     val noteMenuState = notesViewModel.noteMenuState
     val accountState = notesViewModel.accountState
     val notesSortState = notesViewModel.notesSortState
+    val notesMultiColumnsState = notesViewModel.notesMultiColumnsState
     val notesSyncState = notesViewModel.notesSyncState
     val scaffoldState = rememberScaffoldState()
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
@@ -132,7 +133,9 @@ fun NotesScreen(
                     onNoteDeletedUndo = { notesViewModel.onEvent(NotesEvent.NoteDeletedUndoClick) },
                     snackbarHostState = scaffoldState.snackbarHostState,
                     onSortClick = { notesViewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(true)) },
-                    notesSort = notesSortState.value
+                    notesSort = notesSortState.value,
+                    notesMultiColumns = notesMultiColumnsState.value,
+                    onMultiColumnsClick = { notesViewModel.onEvent(NotesEvent.NotesMultiColumnsClick) }
                 )
 
                 NotesState.NotFound -> NotesNotFound()

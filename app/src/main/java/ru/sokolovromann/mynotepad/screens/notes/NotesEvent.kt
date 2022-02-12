@@ -12,5 +12,6 @@ sealed class NotesEvent {
     data class OnNavigationMenuStateChange(val isOpen: Boolean) : NotesEvent()
     data class OnNotesSortSheetStateChange(val isOpen: Boolean) : NotesEvent()
     data class OnNotesSortChange(val notesSort: NotesSort) : NotesEvent()
+    object NotesMultiColumnsClick : NotesEvent()
     object RefreshNotesClick : NotesEvent()
 }
