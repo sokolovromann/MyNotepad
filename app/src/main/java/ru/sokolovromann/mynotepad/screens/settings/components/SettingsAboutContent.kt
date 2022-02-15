@@ -9,6 +9,9 @@ import ru.sokolovromann.mynotepad.R
 fun SettingsAboutContent(
     appVersion: String,
     onGitHubClick: () -> Unit,
+    onFeedbackClick: () -> Unit,
+    onTermsClick: () -> Unit,
+    onPrivacyPolicyClick: () -> Unit
 ) {
     SettingsHeader(
         text = stringResource(id = R.string.settings_about_header)
@@ -24,5 +27,23 @@ fun SettingsAboutContent(
         icon = painterResource(id = R.drawable.ic_settings_github),
         description = stringResource(id = R.string.settings_github_description),
         onItemClick = onGitHubClick
+    )
+    SettingsItem(
+        title = stringResource(id = R.string.settings_feedback_title),
+        icon = painterResource(id = R.drawable.ic_settings_feedback),
+        description = stringResource(id = R.string.settings_feedback_description),
+        onItemClick = onFeedbackClick
+    )
+    SettingsItem(
+        title = stringResource(id = R.string.settings_terms_title),
+        icon = painterResource(id = R.drawable.ic_settings_terms),
+        description = stringResource(id = R.string.settings_terms_description),
+        onItemClick = onTermsClick
+    )
+    SettingsItem(
+        title = stringResource(id = R.string.settings_privacy_policy_title),
+        icon = painterResource(id = R.drawable.ic_settings_privacy_policy),
+        description = stringResource(id = R.string.settings_privacy_policy_description),
+        onItemClick = onPrivacyPolicyClick
     )
 }

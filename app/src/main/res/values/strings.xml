@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
     <string name="add_edit_note_empty_text_error_label">Add note to save</string>
     <string name="add_edit_note_save">Save</string>
@@ -5,8 +6,13 @@
     <string name="add_edit_note_text_label">Note</string>
     <string name="add_edit_note_title_label">Title</string>
 
+    <string name="app_choose_email_app">Choose email app</string>
+    <string name="app_developer_email" translatable="false">sokolovromann@gmail.com</string>
+    <string name="app_github_link" translatable="false">https://github.com/sokolovromann/MyNotepad</string>
     <string name="app_name">My Notepad</string>
     <string name="app_network_error_message">Network error, please check your internet connection</string>
+    <string name="app_privacy_policy_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/privacy_policy.html</string>
+    <string name="app_terms_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/terms_and_conditions.html</string>
     <string name="app_unknown_error_message">Unknown error, please try again later</string>
 
     <string name="change_email_change">Change</string>
@@ -60,14 +66,21 @@
     <string name="settings_change_email_title">Change email</string>
     <string name="settings_change_password_title">Change password</string>
     <string name="settings_delete_account_title">Delete account</string>
+    <string name="settings_feedback_description">Tap to write email</string>
+    <string name="settings_feedback_title">Feedback</string>
     <string name="settings_general_header">General</string>
     <string name="settings_github_description">Tap to open</string>
     <string name="settings_github_title">GitHub</string>
     <string name="settings_name">Settings</string>
+    <string name="settings_privacy_policy_description">Tap to read</string>
+    <string name="settings_privacy_policy_title">Privacy policy</string>
     <string name="settings_sign_in_title">Sign in</string>
     <string name="settings_sign_out_title">Sign out</string>
     <string name="settings_sign_up_title">Sign up</string>
+    <string name="settings_terms_description">Tap to read</string>
+    <string name="settings_terms_title">Terms &amp; Conditions</string>
 
+    <string name="sign_in_agree">By clicking Sign in button, you agree to \nTerms &amp; Conditions\n and \nPrivacy Policy</string>
     <string name="sign_in_email_label">Email</string>
     <string name="sign_in_incorrect_email_message">Enter email</string>
     <string name="sign_in_incorrect_password_message">Enter password</string>
@@ -80,6 +93,7 @@
     <string name="sign_in_sign_in_error_message">Incorrect email or password</string>
     <string name="sign_in_unknown_error_message">@string/app_unknown_error_message</string>
 
+    <string name="sign_up_agree">By clicking Create account button, you agree to \nTerms &amp; Conditions\n and \nPrivacy Policy</string>
     <string name="sign_up_create_account">Create account</string>
     <string name="sign_up_email_label">Email</string>
     <string name="sign_up_incorrect_email_message">Incorrect email</string>

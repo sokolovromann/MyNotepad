@@ -77,6 +77,18 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.DeleteAccountClick -> viewModelScope.launch {
                 _settingsUiEvent.emit(SettingsUiEvent.OpenDeleteAccount)
             }
+
+            SettingsEvent.FeedbackClick -> viewModelScope.launch {
+                _settingsUiEvent.emit(SettingsUiEvent.OpenEmailApp)
+            }
+
+            SettingsEvent.TermsClick -> viewModelScope.launch {
+                _settingsUiEvent.emit(SettingsUiEvent.OpenTerms)
+            }
+
+            SettingsEvent.PrivacyPolicyClick -> viewModelScope.launch {
+                _settingsUiEvent.emit(SettingsUiEvent.OpenPrivacyPolicy)
+            }
         }
     }
 

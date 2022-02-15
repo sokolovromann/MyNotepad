@@ -10,4 +10,7 @@ sealed class SettingsUiEvent {
     object OpenChangePassword : SettingsUiEvent()
     object OpenWelcome : SettingsUiEvent()
     object OpenDeleteAccount : SettingsUiEvent()
+    object OpenEmailApp : SettingsUiEvent()
+    object OpenTerms : SettingsUiEvent()
+    object OpenPrivacyPolicy : SettingsUiEvent()
 }

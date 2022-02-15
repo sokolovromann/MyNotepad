@@ -54,12 +54,21 @@ fun NavGraphBuilder.notesGraph(navController: NavController) {
 }
 
 @ExperimentalFoundationApi
-fun NavGraphBuilder.settingsGraph(navController: NavController, onOpenGitHub: () -> Unit) {
+fun NavGraphBuilder.settingsGraph(
+    navController: NavController,
+    onOpenGitHub: () -> Unit,
+    onOpenEmailApp: () -> Unit,
+    onOpenTerms: () -> Unit,
+    onOpenPrivacyPolicy: () -> Unit
+) {
     navigation(startDestination = MyNotepadRoute.Settings.settingsScreen, route = MyNotepadRoute.Settings.graph) {
         composable(MyNotepadRoute.Settings.settingsScreen) {
             SettingsScreen(
                 navController = navController,
-                onOpenGitHub = onOpenGitHub
+                onOpenGitHub = onOpenGitHub,
+                onOpenEmailApp = onOpenEmailApp,
+                onOpenTerms = onOpenTerms,
+                onOpenPrivacyPolicy = onOpenPrivacyPolicy
             )
         }
         composable(MyNotepadRoute.Settings.changeEmailScreen) {

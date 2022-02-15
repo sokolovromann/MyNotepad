@@ -25,7 +25,10 @@ fun SettingsDisplay(
     onChangeEmailClick: () -> Unit,
     onChangePasswordClick: () -> Unit,
     onSignOutClick: () -> Unit,
-    onDeleteAccountClick: () -> Unit
+    onDeleteAccountClick: () -> Unit,
+    onFeedbackClick: () -> Unit,
+    onTermsClick: () -> Unit,
+    onPrivacyPolicyClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -52,7 +55,10 @@ fun SettingsDisplay(
         Divider()
         SettingsAboutContent(
             appVersion = appVersion,
-            onGitHubClick = onGitHubClick
+            onGitHubClick = onGitHubClick,
+            onFeedbackClick = onFeedbackClick,
+            onTermsClick = onTermsClick,
+            onPrivacyPolicyClick = onPrivacyPolicyClick
         )
     }
 }
@@ -74,7 +80,10 @@ private fun SettingsDisplayPreview() {
             onChangeEmailClick = {},
             onChangePasswordClick = {},
             onSignOutClick = {},
-            onDeleteAccountClick = {}
+            onDeleteAccountClick = {},
+            onFeedbackClick = {},
+            onTermsClick = {},
+            onPrivacyPolicyClick = {}
         )
     }
 }

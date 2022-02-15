@@ -26,7 +26,10 @@ import ru.sokolovromann.mynotepad.ui.components.NavigationDrawerHeader
 fun SettingsScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
     navController: NavController,
-    onOpenGitHub: () -> Unit
+    onOpenGitHub: () -> Unit,
+    onOpenEmailApp: () -> Unit,
+    onOpenTerms: () -> Unit,
+    onOpenPrivacyPolicy: () -> Unit
 ) {
     val settingsState = settingsViewModel.settingsState.value
     val accountState = settingsViewModel.accountState
@@ -60,6 +63,12 @@ fun SettingsScreen(
                 }
 
                 SettingsUiEvent.OpenDeleteAccount -> navController.navigate(MyNotepadRoute.Settings.deleteAccountScreen)
+
+                SettingsUiEvent.OpenEmailApp -> onOpenEmailApp()
+
+                SettingsUiEvent.OpenTerms -> onOpenTerms()
+
+                SettingsUiEvent.OpenPrivacyPolicy -> onOpenPrivacyPolicy()
             }
         }
     }
@@ -109,7 +118,10 @@ fun SettingsScreen(
                 onChangeEmailClick = { settingsViewModel.onEvent(SettingsEvent.ChangeEmailClick) },
                 onChangePasswordClick = { settingsViewModel.onEvent(SettingsEvent.ChangePasswordClick) },
                 onSignOutClick = { settingsViewModel.onEvent(SettingsEvent.SignOutClick) },
-                onDeleteAccountClick = { settingsViewModel.onEvent(SettingsEvent.DeleteAccountClick) }
+                onDeleteAccountClick = { settingsViewModel.onEvent(SettingsEvent.DeleteAccountClick) },
+                onFeedbackClick = { settingsViewModel.onEvent(SettingsEvent.FeedbackClick) },
+                onTermsClick = { settingsViewModel.onEvent(SettingsEvent.TermsClick) },
+                onPrivacyPolicyClick = { settingsViewModel.onEvent(SettingsEvent.PrivacyPolicyClick) }
             )
         }
     }

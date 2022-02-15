@@ -13,12 +13,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import ru.sokolovromann.mynotepad.MyNotepadRoute
+import ru.sokolovromann.mynotepad.*
+import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
-import ru.sokolovromann.mynotepad.notesGraph
-import ru.sokolovromann.mynotepad.settingsGraph
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
-import ru.sokolovromann.mynotepad.welcomeGraph
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
@@ -37,7 +35,13 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController, MyNotepadRoute.Welcome.graph) {
                     welcomeGraph(navController)
                     notesGraph(navController)
-                    settingsGraph(navController) { openGitHub() }
+                    settingsGraph(
+                        navController = navController,
+                        onOpenGitHub = { openGitHub() },
+                        onOpenEmailApp = { openEmailApp() },
+                        onOpenTerms = { openTerms() },
+                        onOpenPrivacyPolicy = { openPrivacyPolicy() }
+                    )
                 }
             }
         }
@@ -46,7 +50,33 @@ class MainActivity : ComponentActivity() {
     private fun openGitHub() {
         val intent = Intent(
             Intent.ACTION_VIEW,
-            Uri.parse("https://github.com/sokolovromann/MyNotepad")
+            Uri.parse(getString(R.string.app_github_link))
+        )
+        startActivity(intent)
+    }
+
+    private fun openEmailApp() {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            type = "text/plain"
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.app_developer_email)))
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
+        }
+        startActivity(Intent.createChooser(intent, getString(R.string.app_choose_email_app)))
+    }
+
+    private fun openTerms() {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(getString(R.string.app_terms_link))
+        )
+        startActivity(intent)
+    }
+
+    private fun openPrivacyPolicy() {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(getString(R.string.app_privacy_policy_link))
         )
         startActivity(intent)
     }
