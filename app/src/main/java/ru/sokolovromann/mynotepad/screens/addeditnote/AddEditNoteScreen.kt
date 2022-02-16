@@ -20,6 +20,7 @@ fun AddEditNoteScreen(
     navController: NavController
 ) {
     val addEditNoteState = addEditNoteViewModel.addEditNoteState
+    val showKeyboardState = addEditNoteViewModel.showKeyboardState
     val scaffoldState = rememberScaffoldState()
 
     val coroutineScope = rememberCoroutineScope()
@@ -55,7 +56,8 @@ fun AddEditNoteScreen(
             onTitleChange = { newTitle -> addEditNoteViewModel.onEvent(AddEditNoteEvent.OnTitleChange(newTitle)) },
             onTextChange = { newText -> addEditNoteViewModel.onEvent(AddEditNoteEvent.OnTextChange(newText)) },
             snackbarHostState = scaffoldState.snackbarHostState,
-            emptyTextError = addEditNoteState.value.emptyTextError
+            emptyTextError = addEditNoteState.value.emptyTextError,
+            showKeyboard = showKeyboardState.value
         )
     }
 }

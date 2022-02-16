@@ -32,6 +32,9 @@ class AddEditNoteViewModel @Inject constructor(
     private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
     val accountState: State<Account> = _accountState
 
+    private val _showKeyboardState: MutableState<Boolean> = mutableStateOf(false)
+    val showKeyboardState: State<Boolean> = _showKeyboardState
+
     private val _addEditNoteUiEvent: MutableSharedFlow<AddEditNoteUiEvent> = MutableSharedFlow()
     val addEditNoteUiEvent: SharedFlow<AddEditNoteUiEvent> = _addEditNoteUiEvent
 
@@ -41,8 +44,10 @@ class AddEditNoteViewModel @Inject constructor(
         val uid = savedStateHandle.get<String>("uid")
         if (uid == null || uid.isEmpty()) {
             initNote()
+            _showKeyboardState.value = true
         } else {
             loadNote(uid)
+            _showKeyboardState.value = false
         }
 
         getAccount()

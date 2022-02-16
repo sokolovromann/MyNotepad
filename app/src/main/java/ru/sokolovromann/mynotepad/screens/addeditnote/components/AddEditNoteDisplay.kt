@@ -11,7 +11,10 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,14 +30,25 @@ fun AddEditNoteDisplay(
     onTitleChange: (newTitle: String) -> Unit,
     onTextChange: (newText: String) -> Unit,
     snackbarHostState: SnackbarHostState,
-    emptyTextError: Boolean
+    emptyTextError: Boolean,
+    showKeyboard: Boolean
 ) {
     val scrollState = rememberScrollState()
+
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    LaunchedEffect(true) {
+        if (showKeyboard) {
+            focusRequester.requestFocus()
+        } else {
+            focusManager.clearFocus()
+        }
+    }
     
     Box(modifier = Modifier.background(MaterialTheme.colors.surface)) {
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp)
+            .padding(horizontal = 8.dp)
             .verticalScroll(scrollState)
         ) {
             BasicTextField(
@@ -52,7 +66,7 @@ fun AddEditNoteDisplay(
                 keyboardActions = KeyboardActions.Default,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(start = 8.dp, top = 16.dp, end = 8.dp, bottom = 8.dp)
             )
             BasicTextField(
                 value = text,
@@ -69,7 +83,8 @@ fun AddEditNoteDisplay(
                 keyboardActions = KeyboardActions.Default,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp)
+                    .padding(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 0.dp)
+                    .focusRequester(focusRequester)
             )
         }
 
@@ -118,7 +133,8 @@ private fun AddEditNoteDisplayPreview() {
             onTitleChange = {},
             onTextChange = {},
             snackbarHostState = rememberScaffoldState().snackbarHostState,
-            emptyTextError = false
+            emptyTextError = false,
+            showKeyboard = false
         )
     }
 }
