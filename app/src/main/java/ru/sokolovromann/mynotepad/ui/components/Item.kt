@@ -158,7 +158,10 @@ fun SwitchItem(
         }
         Switch(
             checked = checked,
-            onCheckedChange = null
+            onCheckedChange = null,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colors.secondary
+            )
         )
     }
 }

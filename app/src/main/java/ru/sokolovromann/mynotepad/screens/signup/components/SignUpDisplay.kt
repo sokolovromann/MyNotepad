@@ -105,7 +105,9 @@ fun SignUpDisplay(
 private fun AgreeText() {
     val agreeText = stringResource(id = R.string.sign_up_agree).split("\n")
     val text = buildAnnotatedString {
-        append(agreeText[0])
+        withStyle(style = SpanStyle(color = MaterialTheme.colors.onSurface)) {
+            append(agreeText[0])
+        }
         pushStringAnnotation(
             tag = "TERMS",
             annotation = stringResource(id = R.string.app_terms_link)
@@ -113,7 +115,9 @@ private fun AgreeText() {
         withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
             append(agreeText[1])
         }
-        append(agreeText[2])
+        withStyle(style = SpanStyle(color = MaterialTheme.colors.onSurface)) {
+            append(agreeText[2])
+        }
         pop()
 
         pushStringAnnotation(

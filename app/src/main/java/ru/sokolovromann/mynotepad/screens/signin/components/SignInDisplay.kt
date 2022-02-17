@@ -74,7 +74,7 @@ fun SignInDisplay(
                 onClick = onResetPassword,
                 text = stringResource(id = R.string.sign_in_reset_password),
                 modifier = Modifier
-                    .padding(start = 8.dp, bottom = 8.dp)
+                    .padding(horizontal = 8.dp)
             )
             AgreeText()
             Column(
@@ -107,7 +107,9 @@ fun SignInDisplay(
 private fun AgreeText() {
     val agreeText = stringResource(id = R.string.sign_in_agree).split("\n")
     val text = buildAnnotatedString {
-        append(agreeText[0])
+        withStyle(style = SpanStyle(color = MaterialTheme.colors.onSurface)) {
+            append(agreeText[0])
+        }
         pushStringAnnotation(
             tag = "TERMS",
             annotation = stringResource(id = R.string.app_terms_link)
@@ -115,7 +117,9 @@ private fun AgreeText() {
         withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
             append(agreeText[1])
         }
-        append(agreeText[2])
+        withStyle(style = SpanStyle(color = MaterialTheme.colors.onSurface)) {
+            append(agreeText[2])
+        }
         pop()
 
         pushStringAnnotation(
