@@ -2,8 +2,10 @@ package ru.sokolovromann.mynotepad.screens.signin.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,11 +36,14 @@ fun SignInDisplay(
     signingIn: Boolean,
     snackbarHostState: SnackbarHostState
 ) {
+    val scrollState = rememberScrollState()
+
     Box(modifier = Modifier.background(MaterialTheme.colors.surface)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp)
+                .verticalScroll(scrollState)
         ) {
             OutlinedTextField(
                 value = email,
