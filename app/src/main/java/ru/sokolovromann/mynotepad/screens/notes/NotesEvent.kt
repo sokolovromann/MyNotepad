@@ -14,4 +14,5 @@ sealed class NotesEvent {
     data class OnNotesSortChange(val notesSort: NotesSort) : NotesEvent()
     object NotesMultiColumnsClick : NotesEvent()
     object RefreshNotesClick : NotesEvent()
+    data class NoteDeleted(val deletedNote: Note) : NotesEvent()
 }

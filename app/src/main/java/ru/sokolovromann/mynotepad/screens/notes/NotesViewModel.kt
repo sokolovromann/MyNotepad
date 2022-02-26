@@ -99,6 +99,13 @@ class NotesViewModel @Inject constructor(
             is NotesEvent.NotesMultiColumnsClick -> saveNotesMultiColumns()
 
             is NotesEvent.RefreshNotesClick -> syncNotes()
+
+            is NotesEvent.NoteDeleted -> if (event.deletedNote.isNotEmpty()) {
+                lastDeletedNote = event.deletedNote
+                viewModelScope.launch(Dispatchers.Main) {
+                    _notesUiEvent.emit(NotesUiEvent.ShowDeletedMessage)
+                }
+            }
         }
     }
 

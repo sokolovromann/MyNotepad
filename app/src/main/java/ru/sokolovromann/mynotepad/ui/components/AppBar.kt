@@ -71,7 +71,8 @@ fun AppBarIconButton(
     onClick: () -> Unit,
     icon: ImageVector,
     iconColor: Color = tint(),
-    contentDescription: String = ""
+    contentDescription: String = "",
+    content: @Composable () -> Unit = {}
 ) {
     IconButton(onClick = onClick) {
         Icon(
@@ -79,6 +80,7 @@ fun AppBarIconButton(
             contentDescription = contentDescription,
             tint = iconColor
         )
+        content()
     }
 }
 
@@ -87,7 +89,8 @@ fun AppBarIconButton(
     onClick: () -> Unit,
     icon: Painter,
     iconColor: Color = tint(),
-    contentDescription: String = ""
+    contentDescription: String = "",
+    content: @Composable () -> Unit = {}
 ) {
     IconButton(onClick = onClick) {
         Icon(
@@ -95,6 +98,7 @@ fun AppBarIconButton(
             contentDescription = contentDescription,
             tint = iconColor
         )
+        content()
     }
 }
 

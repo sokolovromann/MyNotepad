@@ -5,4 +5,6 @@ sealed class AddEditNoteEvent {
     data class OnTextChange(val newText: String) : AddEditNoteEvent()
     object BackClick : AddEditNoteEvent()
     object SaveNoteClick : AddEditNoteEvent()
+    data class OnAddEditNoteMenuChange(val isShowMenu: Boolean) : AddEditNoteEvent()
+    object DeleteNoteClick : AddEditNoteEvent()
 }

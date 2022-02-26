@@ -3,9 +3,11 @@ package ru.sokolovromann.mynotepad.data.local.note
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 import java.util.*
 
 @Entity(tableName = "notes")
+@Serializable
 data class Note(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
@@ -31,6 +33,14 @@ data class Note(
     @ColumnInfo(name = "sync_state")
     val syncState: String = NoteSyncState.SAVE.name
 ) {
+
+    fun isEmpty(): Boolean {
+        return id == 0L
+    }
+
+    fun isNotEmpty(): Boolean {
+        return !isEmpty()
+    }
 
     companion object {
         val EMPTY: Note = Note(title = "", text = "")

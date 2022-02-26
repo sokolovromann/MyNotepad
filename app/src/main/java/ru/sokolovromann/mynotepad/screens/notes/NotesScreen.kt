@@ -11,8 +11,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import ru.sokolovromann.mynotepad.MyNotepadRoute
 import ru.sokolovromann.mynotepad.R
+import ru.sokolovromann.mynotepad.data.local.note.Note
+import ru.sokolovromann.mynotepad.screens.addeditnote.DELETED_NOTE_JSON
 import ru.sokolovromann.mynotepad.screens.notes.components.*
 import ru.sokolovromann.mynotepad.ui.components.IconFloatingActionButton
 import ru.sokolovromann.mynotepad.ui.components.NavigationDrawer
@@ -38,6 +42,15 @@ fun NotesScreen(
 
     val deletedMessage = stringResource(id = R.string.notes_note_deleted_message)
     val noteDeletedUndo = stringResource(id = R.string.notes_note_deleted_undo)
+
+    val navArguments = navController.currentBackStackEntry?.arguments
+    LaunchedEffect(navArguments) {
+        val deletedNote = navArguments?.getString(DELETED_NOTE_JSON)?.let {
+            Json.decodeFromString<Note>(it)
+        } ?: Note.EMPTY
+
+        notesViewModel.onEvent(NotesEvent.NoteDeleted(deletedNote = deletedNote))
+    }
 
     LaunchedEffect(true) {
         notesViewModel.notesUiEvent.collectLatest { uiEvent ->

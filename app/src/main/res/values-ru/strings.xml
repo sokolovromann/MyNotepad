@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
+    <string name="add_edit_note_delete_note">Удалить</string>
     <string name="add_edit_note_empty_text_error_label">Добавьте заметку для сохранения</string>
     <string name="add_edit_note_save">Сохранить</string>
     <string name="add_edit_note_saved_message">Заметка сохранена</string>

@@ -35,6 +35,12 @@ class AddEditNoteViewModel @Inject constructor(
     private val _showKeyboardState: MutableState<Boolean> = mutableStateOf(false)
     val showKeyboardState: State<Boolean> = _showKeyboardState
 
+    private val _addEditNoteMenuState: MutableState<Boolean> = mutableStateOf(false)
+    val addEditNoteMenuState: State<Boolean> = _addEditNoteMenuState
+
+    private val _lastDeletedNoteState: MutableState<Note> = mutableStateOf(Note.EMPTY)
+    val lastDeletedNoteState: State<Note> = _lastDeletedNoteState
+
     private val _addEditNoteUiEvent: MutableSharedFlow<AddEditNoteUiEvent> = MutableSharedFlow()
     val addEditNoteUiEvent: SharedFlow<AddEditNoteUiEvent> = _addEditNoteUiEvent
 
@@ -49,6 +55,7 @@ class AddEditNoteViewModel @Inject constructor(
             loadNote(uid)
             _showKeyboardState.value = false
         }
+        _lastDeletedNoteState.value = Note.EMPTY
 
         getAccount()
     }
@@ -62,9 +69,12 @@ class AddEditNoteViewModel @Inject constructor(
                 text = event.newText
             )
             AddEditNoteEvent.BackClick -> viewModelScope.launch {
+                _lastDeletedNoteState.value = Note.EMPTY
                 _addEditNoteUiEvent.emit(AddEditNoteUiEvent.OpenNotes)
             }
             AddEditNoteEvent.SaveNoteClick -> saveNote()
+            is AddEditNoteEvent.OnAddEditNoteMenuChange -> _addEditNoteMenuState.value = event.isShowMenu
+            AddEditNoteEvent.DeleteNoteClick -> deleteNote()
         }
     }
 
@@ -137,6 +147,25 @@ class AddEditNoteViewModel @Inject constructor(
                     noteRepository.saveNote(note, tokenId)
                     withContext(Dispatchers.Main) {
                         _addEditNoteUiEvent.emit(AddEditNoteUiEvent.ShowSavedMessage)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun deleteNote() {
+        _lastDeletedNoteState.value = originalNote ?: Note.EMPTY
+
+        if (originalNote == null) {
+            viewModelScope.launch {
+                _addEditNoteUiEvent.emit(AddEditNoteUiEvent.OpenNotes)
+            }
+        } else {
+            getTokenId { tokenId ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    noteRepository.deleteNote(originalNote!!, tokenId)
+                    withContext(Dispatchers.Main) {
+                        _addEditNoteUiEvent.emit(AddEditNoteUiEvent.OpenNotes)
                     }
                 }
             }
