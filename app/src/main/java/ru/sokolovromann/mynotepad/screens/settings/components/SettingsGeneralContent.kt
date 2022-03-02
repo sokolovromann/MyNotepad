@@ -10,7 +10,9 @@ import ru.sokolovromann.mynotepad.ui.components.SwitchItem
 @Composable
 fun SettingsGeneralContent(
     appNightTheme: Boolean,
-    onAppNightThemeChange: (appNightTheme: Boolean) -> Unit
+    notesSaveAndClose: Boolean,
+    onAppNightThemeChange: (appNightTheme: Boolean) -> Unit,
+    onNotesSaveAndClose: (notesSaveAndClose: Boolean) -> Unit
 ) {
     SettingsHeader(
         text = stringResource(id = R.string.settings_general_header)
@@ -22,5 +24,13 @@ fun SettingsGeneralContent(
         },
         checked = appNightTheme,
         onCheckedChange = onAppNightThemeChange
+    )
+    SwitchItem(
+        title = stringResource(id = R.string.settings_save_note_and_close_title),
+        icon = {
+               ItemIcon(painter = painterResource(id = R.drawable.ic_settings_notes_save_and_close))
+        },
+        checked = notesSaveAndClose,
+        onCheckedChange = onNotesSaveAndClose
     )
 }

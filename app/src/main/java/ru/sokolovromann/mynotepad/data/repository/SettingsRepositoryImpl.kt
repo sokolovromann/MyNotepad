@@ -30,6 +30,10 @@ class SettingsRepositoryImpl @Inject constructor(
         return settingsDataStore.getNotesMultiColumns()
     }
 
+    override suspend fun getNotesSaveAndClose(): Flow<Boolean> {
+        return settingsDataStore.getNotesSaveAndClose()
+    }
+
     override suspend fun saveAppNightTheme(nightTheme: Boolean) {
         settingsDataStore.saveAppNightTheme(nightTheme)
     }
@@ -44,6 +48,10 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun saveNotesMultiColumns(notesMultiColumns: Boolean) {
         settingsDataStore.saveNotesMultiColumns(notesMultiColumns)
+    }
+
+    override suspend fun saveNotesSaveAndClose(notesSaveAndClose: Boolean) {
+        settingsDataStore.saveNotesSaveAndClose(notesSaveAndClose)
     }
 
     override suspend fun clearSettings() {

@@ -106,6 +106,12 @@ class NotesViewModel @Inject constructor(
                     _notesUiEvent.emit(NotesUiEvent.ShowDeletedMessage)
                 }
             }
+
+            is NotesEvent.NoteSaved -> if (event.noteSaved) {
+                viewModelScope.launch(Dispatchers.Main) {
+                    _notesUiEvent.emit(NotesUiEvent.ShowSavedMessage)
+                }
+            }
         }
     }
 

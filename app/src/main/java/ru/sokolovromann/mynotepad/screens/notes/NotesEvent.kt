@@ -15,4 +15,5 @@ sealed class NotesEvent {
     object NotesMultiColumnsClick : NotesEvent()
     object RefreshNotesClick : NotesEvent()
     data class NoteDeleted(val deletedNote: Note) : NotesEvent()
+    data class NoteSaved(val noteSaved: Boolean) : NotesEvent()
 }

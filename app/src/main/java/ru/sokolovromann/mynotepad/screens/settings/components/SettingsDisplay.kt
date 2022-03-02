@@ -15,8 +15,10 @@ import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 @Composable
 fun SettingsDisplay(
     appNightTheme: Boolean,
+    notesSaveAndClose: Boolean,
     appVersion: String,
     onAppNightThemeChange: (appNightTheme: Boolean) -> Unit,
+    onNotesSaveAndClose: (notesSaveAndClose: Boolean) -> Unit,
     onGitHubClick: () -> Unit,
     localAccount: Boolean,
     onSignUpClick: () -> Unit,
@@ -39,7 +41,9 @@ fun SettingsDisplay(
     ) {
         SettingsGeneralContent(
             appNightTheme = appNightTheme,
-            onAppNightThemeChange = onAppNightThemeChange
+            notesSaveAndClose = notesSaveAndClose,
+            onAppNightThemeChange = onAppNightThemeChange,
+            onNotesSaveAndClose = onNotesSaveAndClose
         )
         Divider()
         SettingsAccountContent(
@@ -70,8 +74,10 @@ private fun SettingsDisplayPreview() {
     MyNotepadTheme {
         SettingsDisplay(
             appNightTheme = true,
+            notesSaveAndClose = false,
             appVersion = BuildConfig.VERSION_NAME,
             onAppNightThemeChange = {},
+            onNotesSaveAndClose = {},
             onGitHubClick = {},
             localAccount = false,
             onSignUpClick = {},

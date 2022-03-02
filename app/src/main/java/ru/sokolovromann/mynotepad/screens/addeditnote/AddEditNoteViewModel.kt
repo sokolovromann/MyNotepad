@@ -16,6 +16,7 @@ import ru.sokolovromann.mynotepad.data.local.note.Note
 import ru.sokolovromann.mynotepad.data.local.note.NoteSyncState
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
+import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
 import javax.inject.Inject
 
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class AddEditNoteViewModel @Inject constructor(
     private val noteRepository: NoteRepository,
     private val accountRepository: AccountRepository,
+    private val settingsRepository: SettingsRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(), ScreensEvent<AddEditNoteEvent> {
 
@@ -41,6 +43,9 @@ class AddEditNoteViewModel @Inject constructor(
     private val _lastDeletedNoteState: MutableState<Note> = mutableStateOf(Note.EMPTY)
     val lastDeletedNoteState: State<Note> = _lastDeletedNoteState
 
+    private val _notesSaveAndCloseState: MutableState<Boolean> = mutableStateOf(false)
+    val notesSaveAndCloseState: State<Boolean> = _notesSaveAndCloseState
+
     private val _addEditNoteUiEvent: MutableSharedFlow<AddEditNoteUiEvent> = MutableSharedFlow()
     val addEditNoteUiEvent: SharedFlow<AddEditNoteUiEvent> = _addEditNoteUiEvent
 
@@ -58,6 +63,7 @@ class AddEditNoteViewModel @Inject constructor(
         _lastDeletedNoteState.value = Note.EMPTY
 
         getAccount()
+        getNotesSaveAndClose()
     }
 
     override fun onEvent(event: AddEditNoteEvent) {
@@ -107,6 +113,16 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
+    private fun getNotesSaveAndClose() {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.getNotesSaveAndClose().collect { notesSaveAndClose ->
+                withContext(Dispatchers.Main) {
+                    _notesSaveAndCloseState.value = notesSaveAndClose
+                }
+            }
+        }
+    }
+
     private fun getTokenId(onCompleted: (tokenId: String) -> Unit) {
         if (_accountState.value.isLocalAccount()) {
             onCompleted(NoteRepository.LOCAL_TOKEN_ID)
@@ -145,8 +161,13 @@ class AddEditNoteViewModel @Inject constructor(
             getTokenId { tokenId ->
                 viewModelScope.launch(Dispatchers.IO) {
                     noteRepository.saveNote(note, tokenId)
+
                     withContext(Dispatchers.Main) {
-                        _addEditNoteUiEvent.emit(AddEditNoteUiEvent.ShowSavedMessage)
+                        if (_notesSaveAndCloseState.value) {
+                            _addEditNoteUiEvent.emit(AddEditNoteUiEvent.OpenNotesAfterSaved)
+                        } else {
+                            _addEditNoteUiEvent.emit(AddEditNoteUiEvent.ShowSavedMessage)
+                        }
                     }
                 }
             }
@@ -165,7 +186,7 @@ class AddEditNoteViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.IO) {
                     noteRepository.deleteNote(originalNote!!, tokenId)
                     withContext(Dispatchers.Main) {
-                        _addEditNoteUiEvent.emit(AddEditNoteUiEvent.OpenNotes)
+                        _addEditNoteUiEvent.emit(AddEditNoteUiEvent.OpenNotesAfterDeleted)
                     }
                 }
             }

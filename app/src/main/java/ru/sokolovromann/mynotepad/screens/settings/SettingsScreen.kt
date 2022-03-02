@@ -106,9 +106,13 @@ fun SettingsScreen(
         } else {
             SettingsDisplay(
                 appNightTheme = settingsState.settings.appNightTheme,
+                notesSaveAndClose = settingsState.settings.notesSaveAndClose,
                 appVersion = BuildConfig.VERSION_NAME,
                 onAppNightThemeChange = { appNightTheme ->
                     settingsViewModel.onEvent(SettingsEvent.OnAppNightThemeChange(appNightTheme))
+                },
+                onNotesSaveAndClose = { notesSaveAndClose ->
+                    settingsViewModel.onEvent(SettingsEvent.OnNotesSaveAndCloseChange(notesSaveAndClose))
                 },
                 onGitHubClick = { settingsViewModel.onEvent(SettingsEvent.GitHubClick) },
                 localAccount = accountState.value.isLocalAccount(),

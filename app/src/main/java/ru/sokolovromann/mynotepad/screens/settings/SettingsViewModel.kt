@@ -44,6 +44,8 @@ class SettingsViewModel @Inject constructor(
         when (event) {
             is SettingsEvent.OnAppNightThemeChange -> saveAppNightTheme(event.appNightTheme)
 
+            is SettingsEvent.OnNotesSaveAndCloseChange -> saveNotesSaveAndClose(event.notesSaveAndClose)
+
             SettingsEvent.GitHubClick -> viewModelScope.launch {
                 _settingsUiEvent.emit(SettingsUiEvent.OpenGitHub)
             }
@@ -122,6 +124,12 @@ class SettingsViewModel @Inject constructor(
     private fun saveAppNightTheme(appNightTheme: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.saveAppNightTheme(appNightTheme)
+        }
+    }
+
+    private fun saveNotesSaveAndClose(notesSaveAndClose: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.saveNotesSaveAndClose(notesSaveAndClose)
         }
     }
 

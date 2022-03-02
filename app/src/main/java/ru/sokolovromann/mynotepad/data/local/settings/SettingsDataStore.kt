@@ -13,6 +13,7 @@ class SettingsDataStore @Inject constructor(
     private val notesSortKey = stringPreferencesKey("notesSort")
     private val notesLastSyncKey = longPreferencesKey("notesLastSync")
     private val notesMultiColumnsKey = booleanPreferencesKey("notesMultiColumns")
+    private val notesSaveAndCloseKey = booleanPreferencesKey("notesSaveAndClose")
 
     fun getSettings(): Flow<Settings> {
         return dataStore.data.map { preferences ->
@@ -20,7 +21,8 @@ class SettingsDataStore @Inject constructor(
                 appNightTheme = preferences[appNightThemeKey] ?: false,
                 notesSort = enumValueOf(preferences[notesSortKey] ?: NotesSort.CREATED_ASC.name),
                 notesLastSync = preferences[notesLastSyncKey] ?: 0L,
-                notesMultiColumns = preferences[notesMultiColumnsKey] ?: false
+                notesMultiColumns = preferences[notesMultiColumnsKey] ?: false,
+                notesSaveAndClose = preferences[notesSaveAndCloseKey] ?: false
             )
         }
     }
@@ -49,6 +51,12 @@ class SettingsDataStore @Inject constructor(
         }
     }
 
+    fun getNotesSaveAndClose(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[notesSaveAndCloseKey] ?: false
+        }
+    }
+
     suspend fun saveAppNightTheme(nightTheme: Boolean) {
         dataStore.edit { preferences ->
             preferences[appNightThemeKey] = nightTheme
@@ -73,6 +81,12 @@ class SettingsDataStore @Inject constructor(
         }
     }
 
+    suspend fun saveNotesSaveAndClose(notesSaveAndClose: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[notesSaveAndCloseKey] = notesSaveAndClose
+        }
+    }
+
     suspend fun clearSettings() {
         val defaultSettings = Settings()
         dataStore.edit { preferences ->
@@ -80,6 +94,7 @@ class SettingsDataStore @Inject constructor(
             preferences[notesSortKey] = defaultSettings.notesSort.name
             preferences[notesLastSyncKey] = defaultSettings.notesLastSync
             preferences[notesMultiColumnsKey] = defaultSettings.notesMultiColumns
+            preferences[notesSaveAndCloseKey] = defaultSettings.notesSaveAndClose
         }
     }
 }

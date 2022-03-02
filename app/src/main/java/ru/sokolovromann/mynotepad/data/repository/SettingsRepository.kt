@@ -16,6 +16,8 @@ interface SettingsRepository {
 
     suspend fun getNotesMultiColumns(): Flow<Boolean>
 
+    suspend fun getNotesSaveAndClose(): Flow<Boolean>
+
     suspend fun saveAppNightTheme(nightTheme: Boolean)
 
     suspend fun saveNotesSort(notesSort: NotesSort)
@@ -23,6 +25,8 @@ interface SettingsRepository {
     suspend fun saveNotesLastSync(notesLastSync: Long)
 
     suspend fun saveNotesMultiColumns(notesMultiColumns: Boolean)
+
+    suspend fun saveNotesSaveAndClose(notesSaveAndClose: Boolean)
 
     suspend fun clearSettings()
 }

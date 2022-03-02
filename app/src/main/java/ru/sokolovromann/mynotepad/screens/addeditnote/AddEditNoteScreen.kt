@@ -18,6 +18,7 @@ import ru.sokolovromann.mynotepad.screens.addeditnote.components.AddEditNoteDisp
 import ru.sokolovromann.mynotepad.screens.addeditnote.components.AddEditNoteTopAppBar
 
 const val DELETED_NOTE_JSON = "DELETED_NOTE_JSON"
+const val NOTE_SAVED = "SAVED_NOTE_JSON"
 
 @Composable
 fun AddEditNoteScreen(
@@ -37,13 +38,33 @@ fun AddEditNoteScreen(
     LaunchedEffect(true) {
         addEditNoteViewModel.addEditNoteUiEvent.collectLatest { uiEvent ->
             when (uiEvent) {
-                is AddEditNoteUiEvent.OpenNotes -> {
+                AddEditNoteUiEvent.OpenNotes -> {
                     navController.apply {
-                        previousBackStackEntry?.arguments
-                            ?.putString(DELETED_NOTE_JSON, Json.encodeToString(lastDeletedNoteState.value))
+                        previousBackStackEntry?.arguments?.clear()
                         popBackStack()
                     }
                 }
+
+                AddEditNoteUiEvent.OpenNotesAfterDeleted -> {
+                    navController.apply {
+                        previousBackStackEntry?.arguments?.apply {
+                            clear()
+                            putString(DELETED_NOTE_JSON, Json.encodeToString(lastDeletedNoteState.value))
+                        }
+                        popBackStack()
+                    }
+                }
+
+                AddEditNoteUiEvent.OpenNotesAfterSaved -> {
+                    navController.apply {
+                        previousBackStackEntry?.arguments?.apply {
+                            clear()
+                            putBoolean(NOTE_SAVED, true)
+                        }
+                        popBackStack()
+                    }
+                }
+
                 AddEditNoteUiEvent.ShowSavedMessage -> coroutineScope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = savedMessage

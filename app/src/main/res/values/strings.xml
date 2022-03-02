@@ -3,7 +3,7 @@
     <string name="add_edit_note_delete_note">Delete</string>
     <string name="add_edit_note_empty_text_error_label">Add note to save</string>
     <string name="add_edit_note_save">Save</string>
-    <string name="add_edit_note_saved_message">Note saved</string>
+    <string name="add_edit_note_saved_message">@string/app_note_saved_message</string>
     <string name="add_edit_note_text_label">Note</string>
     <string name="add_edit_note_title_label">Title</string>
 
@@ -13,6 +13,7 @@
     <string name="app_name">My Notepad</string>
     <string name="app_network_error_message">Network error, please check your internet connection</string>
     <string name="app_privacy_policy_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/privacy_policy.html</string>
+    <string name="app_note_saved_message">Note saved</string>
     <string name="app_terms_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/terms_and_conditions.html</string>
     <string name="app_unknown_error_message">Unknown error, please try again later</string>
 
@@ -53,6 +54,7 @@
     <string name="notes_note_deleted_message">Note deleted</string>
     <string name="notes_note_deleted_undo">Undo</string>
     <string name="notes_refreshing">Refreshing…</string>
+    <string name="notes_note_saved_message">@string/app_note_saved_message</string>
     <string name="notes_single_column_content_description">Single-column view</string>
     <string name="notes_sort_by">Sort by</string>
     <string name="notes_sort_created_asc">Created▲</string>
@@ -73,6 +75,7 @@
     <string name="settings_github_description">Tap to open</string>
     <string name="settings_github_title">GitHub</string>
     <string name="settings_name">Settings</string>
+    <string name="settings_save_note_and_close_title">Close note after saved</string>
     <string name="settings_privacy_policy_description">Tap to read</string>
     <string name="settings_privacy_policy_title">Privacy policy</string>
     <string name="settings_sign_in_title">Sign in</string>

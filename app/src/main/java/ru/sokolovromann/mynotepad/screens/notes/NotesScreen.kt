@@ -17,6 +17,7 @@ import ru.sokolovromann.mynotepad.MyNotepadRoute
 import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.data.local.note.Note
 import ru.sokolovromann.mynotepad.screens.addeditnote.DELETED_NOTE_JSON
+import ru.sokolovromann.mynotepad.screens.addeditnote.NOTE_SAVED
 import ru.sokolovromann.mynotepad.screens.notes.components.*
 import ru.sokolovromann.mynotepad.ui.components.IconFloatingActionButton
 import ru.sokolovromann.mynotepad.ui.components.NavigationDrawer
@@ -41,6 +42,7 @@ fun NotesScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val deletedMessage = stringResource(id = R.string.notes_note_deleted_message)
+    val savedMessage = stringResource(id = R.string.notes_note_saved_message)
     val noteDeletedUndo = stringResource(id = R.string.notes_note_deleted_undo)
 
     val navArguments = navController.currentBackStackEntry?.arguments
@@ -48,8 +50,10 @@ fun NotesScreen(
         val deletedNote = navArguments?.getString(DELETED_NOTE_JSON)?.let {
             Json.decodeFromString<Note>(it)
         } ?: Note.EMPTY
-
         notesViewModel.onEvent(NotesEvent.NoteDeleted(deletedNote = deletedNote))
+
+        val noteSaved = navArguments?.getBoolean(NOTE_SAVED) ?: false
+        notesViewModel.onEvent(NotesEvent.NoteSaved(noteSaved = noteSaved))
     }
 
     LaunchedEffect(true) {
@@ -63,6 +67,12 @@ fun NotesScreen(
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = deletedMessage,
                         actionLabel = noteDeletedUndo
+                    )
+                }
+
+                NotesUiEvent.ShowSavedMessage -> coroutineScope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = savedMessage
                     )
                 }
 
