@@ -13,4 +13,5 @@ sealed class SettingsUiEvent {
     object OpenEmailApp : SettingsUiEvent()
     object OpenTerms : SettingsUiEvent()
     object OpenPrivacyPolicy : SettingsUiEvent()
+    object OpenNotes : SettingsUiEvent()
 }

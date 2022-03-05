@@ -14,4 +14,5 @@ sealed class SettingsEvent {
     object FeedbackClick : SettingsEvent()
     object TermsClick : SettingsEvent()
     object PrivacyPolicyClick : SettingsEvent()
+    object BackClick : SettingsEvent()
 }

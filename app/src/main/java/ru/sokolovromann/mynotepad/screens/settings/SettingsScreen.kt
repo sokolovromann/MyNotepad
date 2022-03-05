@@ -69,12 +69,23 @@ fun SettingsScreen(
                 SettingsUiEvent.OpenTerms -> onOpenTerms()
 
                 SettingsUiEvent.OpenPrivacyPolicy -> onOpenPrivacyPolicy()
+
+                SettingsUiEvent.OpenNotes -> {
+                    navController.apply {
+                        previousBackStackEntry?.arguments?.clear()
+                        popBackStack()
+                    }
+                }
             }
         }
     }
 
     BackHandler(enabled = scaffoldState.drawerState.isOpen) {
         settingsViewModel.onEvent(SettingsEvent.OnNavigationMenuStateChange(false))
+    }
+
+    BackHandler {
+        settingsViewModel.onEvent(SettingsEvent.BackClick)
     }
 
     Scaffold(

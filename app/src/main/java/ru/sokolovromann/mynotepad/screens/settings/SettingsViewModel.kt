@@ -91,6 +91,10 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.PrivacyPolicyClick -> viewModelScope.launch {
                 _settingsUiEvent.emit(SettingsUiEvent.OpenPrivacyPolicy)
             }
+
+            SettingsEvent.BackClick -> viewModelScope.launch {
+                _settingsUiEvent.emit(SettingsUiEvent.OpenNotes)
+            }
         }
     }
 
