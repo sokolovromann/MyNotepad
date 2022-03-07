@@ -30,7 +30,7 @@ class ChangeEmailViewModel @Inject constructor(
     override fun onEvent(event: ChangeEmailEvent) {
         when (event) {
             is ChangeEmailEvent.OnEmailChange -> _changeEmailState.value = _changeEmailState.value.copy(
-                email = event.newEmail
+                email = event.newEmail.trim()
             )
 
             is ChangeEmailEvent.OnPasswordChange -> _changeEmailState.value = _changeEmailState.value.copy(

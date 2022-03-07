@@ -33,7 +33,7 @@ class SignUpViewModel @Inject constructor(
     override fun onEvent(event: SignUpEvent) {
         when (event) {
             is SignUpEvent.OnEmailChange -> _signUpState.value = _signUpState.value.copy(
-                email = event.newEmail
+                email = event.newEmail.trim()
             )
             is SignUpEvent.OnPasswordChange -> _signUpState.value = _signUpState.value.copy(
                 password = event.newPassword
