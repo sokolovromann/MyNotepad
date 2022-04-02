@@ -14,7 +14,7 @@ buildscript {
         appcompat_version = '1.4.1'
         material_version = '1.5.0'
         compose_version = '1.1.1'
-        compose_ui_version = '1.2.0-alpha05'
+        compose_ui_version = '1.2.0-alpha06'
         activity_compose_version = '1.4.0'
         navigation_compose_version = '2.4.1'
         system_ui_controller_version = '0.24.1-alpha'
