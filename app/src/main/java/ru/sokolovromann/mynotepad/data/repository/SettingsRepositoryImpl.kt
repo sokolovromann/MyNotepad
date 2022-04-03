@@ -2,6 +2,7 @@ package ru.sokolovromann.mynotepad.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.sokolovromann.mynotepad.data.local.settings.NotesSort
+import ru.sokolovromann.mynotepad.data.local.settings.NotesSyncPeriod
 import ru.sokolovromann.mynotepad.data.local.settings.Settings
 import ru.sokolovromann.mynotepad.data.local.settings.SettingsDataStore
 import javax.inject.Inject
@@ -26,6 +27,10 @@ class SettingsRepositoryImpl @Inject constructor(
         return settingsDataStore.getNotesLastSync()
     }
 
+    override suspend fun getNotesSyncPeriod(): Flow<NotesSyncPeriod> {
+        return settingsDataStore.getNotesSyncPeriod()
+    }
+
     override suspend fun getNotesMultiColumns(): Flow<Boolean> {
         return settingsDataStore.getNotesMultiColumns()
     }
@@ -44,6 +49,10 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun saveNotesLastSync(notesLastSync: Long) {
         settingsDataStore.saveNotesLastSync(notesLastSync)
+    }
+
+    override suspend fun saveNotesSyncPeriod(notesSyncPeriod: NotesSyncPeriod) {
+        settingsDataStore.saveNotesSyncPeriod(notesSyncPeriod)
     }
 
     override suspend fun saveNotesMultiColumns(notesMultiColumns: Boolean) {

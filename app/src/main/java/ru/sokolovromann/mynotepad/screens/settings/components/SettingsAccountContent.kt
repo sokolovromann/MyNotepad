@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import ru.sokolovromann.mynotepad.R
+import ru.sokolovromann.mynotepad.data.local.settings.NotesSyncPeriod
 
 @Composable
 fun SettingsAccountContent(
@@ -12,6 +13,8 @@ fun SettingsAccountContent(
     onSignUpClick: () -> Unit,
     onSignInClick: () -> Unit,
     accountName: String,
+    notesSyncPeriod: NotesSyncPeriod,
+    onSyncPeriodClick: () -> Unit,
     onChangeEmailClick: () -> Unit,
     onChangePasswordClick: () -> Unit,
     onSignOutClick: () -> Unit,
@@ -27,6 +30,8 @@ fun SettingsAccountContent(
         )
     } else {
         AccountCardContent(
+            notesSyncPeriod = notesSyncPeriod,
+            onSyncPeriodClick = onSyncPeriodClick,
             onChangeEmailClick = onChangeEmailClick,
             onChangePasswordClick = onChangePasswordClick,
             onDeleteAccount = onDeleteAccountClick,
@@ -56,12 +61,20 @@ private fun LocalAccountCardContent(
 
 @Composable
 private fun AccountCardContent(
+    notesSyncPeriod: NotesSyncPeriod,
+    onSyncPeriodClick: () -> Unit,
     onChangeEmailClick: () -> Unit,
     onChangePasswordClick: () -> Unit,
     onSignOutClick: () -> Unit,
     onDeleteAccount: () -> Unit
 ) {
     Column {
+        SettingsItem(
+            title = stringResource(id = R.string.settings_sync_period_title),
+            description = syncPeriodDescription(notesSyncPeriod = notesSyncPeriod),
+            icon = painterResource(id = R.drawable.ic_settings_notes_sync_period),
+            onItemClick = onSyncPeriodClick
+        )
         SettingsItem(
             title = stringResource(id = R.string.settings_change_email_title),
             icon = painterResource(id = R.drawable.ic_settings_change_email),
@@ -83,4 +96,11 @@ private fun AccountCardContent(
             onItemClick = onDeleteAccount
         )
     }
+}
+
+@Composable
+private fun syncPeriodDescription(notesSyncPeriod: NotesSyncPeriod): String = when (notesSyncPeriod) {
+    NotesSyncPeriod.ONE_HOUR -> stringResource(id = R.string.settings_sync_period_description_one_hour)
+    NotesSyncPeriod.THREE_HOURS -> stringResource(id = R.string.settings_sync_period_description_three_hour)
+    NotesSyncPeriod.FIVE_HOURS -> stringResource(id = R.string.settings_sync_period_description_five_hour)
 }

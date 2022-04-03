@@ -9,10 +9,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.sokolovromann.mynotepad.data.local.account.Account
+import ru.sokolovromann.mynotepad.data.local.settings.NotesSyncPeriod
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
@@ -31,6 +31,9 @@ class SettingsViewModel @Inject constructor(
 
     private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
     val accountState: State<Account> = _accountState
+
+    private val _syncPeriodDialogState: MutableState<Boolean> = mutableStateOf(false)
+    val syncPeriodDialogState: State<Boolean> = _syncPeriodDialogState
 
     private val _settingsUiEvent: MutableSharedFlow<SettingsUiEvent> = MutableSharedFlow()
     val settingsUiEvent: SharedFlow<SettingsUiEvent> = _settingsUiEvent
@@ -95,6 +98,10 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.BackClick -> viewModelScope.launch {
                 _settingsUiEvent.emit(SettingsUiEvent.OpenNotes)
             }
+
+            is SettingsEvent.OnSyncPeriodDialogChange -> _syncPeriodDialogState.value = event.show
+
+            is SettingsEvent.OnNotesSyncPeriodChange -> saveNotesSyncPeriod(event.notesSyncPeriod)
         }
     }
 
@@ -134,6 +141,12 @@ class SettingsViewModel @Inject constructor(
     private fun saveNotesSaveAndClose(notesSaveAndClose: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.saveNotesSaveAndClose(notesSaveAndClose)
+        }
+    }
+
+    private fun saveNotesSyncPeriod(notesSyncPeriod: NotesSyncPeriod) {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.saveNotesSyncPeriod(notesSyncPeriod)
         }
     }
 

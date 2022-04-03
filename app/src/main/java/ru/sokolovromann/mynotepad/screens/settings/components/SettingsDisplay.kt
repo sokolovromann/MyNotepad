@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import ru.sokolovromann.mynotepad.BuildConfig
+import ru.sokolovromann.mynotepad.data.local.settings.NotesSyncPeriod
 import ru.sokolovromann.mynotepad.ui.theme.MyNotepadTheme
 
 @ExperimentalFoundationApi
@@ -30,7 +31,11 @@ fun SettingsDisplay(
     onDeleteAccountClick: () -> Unit,
     onFeedbackClick: () -> Unit,
     onTermsClick: () -> Unit,
-    onPrivacyPolicyClick: () -> Unit
+    onPrivacyPolicyClick: () -> Unit,
+    showSyncPeriodDialog: Boolean,
+    onShowSyncPeriodDialogChange: (show: Boolean) -> Unit,
+    syncPeriodSelected: NotesSyncPeriod,
+    onSyncPeriodSelectedChange: (notesSyncPeriod: NotesSyncPeriod) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -51,6 +56,8 @@ fun SettingsDisplay(
             onSignUpClick = onSignUpClick,
             onSignInClick = onSignInClick,
             accountName = accountName,
+            notesSyncPeriod = syncPeriodSelected,
+            onSyncPeriodClick = { onShowSyncPeriodDialogChange(true) },
             onChangeEmailClick = onChangeEmailClick,
             onChangePasswordClick = onChangePasswordClick,
             onSignOutClick = onSignOutClick,
@@ -65,6 +72,16 @@ fun SettingsDisplay(
             onPrivacyPolicyClick = onPrivacyPolicyClick
         )
     }
+
+    SettingsSyncPeriodDialog(
+        showDialog = showSyncPeriodDialog,
+        onDismiss = { onShowSyncPeriodDialogChange(false) },
+        selected = syncPeriodSelected,
+        onSelectedChange = {
+            onSyncPeriodSelectedChange(it)
+            onShowSyncPeriodDialogChange(false)
+        }
+    )
 }
 
 @ExperimentalFoundationApi
@@ -89,7 +106,11 @@ private fun SettingsDisplayPreview() {
             onDeleteAccountClick = {},
             onFeedbackClick = {},
             onTermsClick = {},
-            onPrivacyPolicyClick = {}
+            onPrivacyPolicyClick = {},
+            showSyncPeriodDialog = false,
+            onShowSyncPeriodDialogChange = {},
+            syncPeriodSelected = NotesSyncPeriod.FIVE_HOURS,
+            onSyncPeriodSelectedChange = {}
         )
     }
 }

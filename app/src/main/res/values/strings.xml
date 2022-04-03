@@ -12,8 +12,8 @@
     <string name="app_github_link" translatable="false">https://github.com/sokolovromann/MyNotepad</string>
     <string name="app_name">My Notepad</string>
     <string name="app_network_error_message">Network error, please check your internet connection</string>
-    <string name="app_privacy_policy_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/privacy_policy.html</string>
     <string name="app_note_saved_message">Note saved</string>
+    <string name="app_privacy_policy_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/privacy_policy.html</string>
     <string name="app_terms_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/terms_and_conditions.html</string>
     <string name="app_unknown_error_message">Unknown error, please try again later</string>
 
@@ -53,8 +53,8 @@
     <string name="notes_not_found_message">You have no notes</string>
     <string name="notes_note_deleted_message">Note deleted</string>
     <string name="notes_note_deleted_undo">Undo</string>
-    <string name="notes_refreshing">Refreshing…</string>
     <string name="notes_note_saved_message">@string/app_note_saved_message</string>
+    <string name="notes_refreshing">Refreshing…</string>
     <string name="notes_single_column_content_description">Single-column view</string>
     <string name="notes_sort_by">Sort by</string>
     <string name="notes_sort_created_asc">Created▲</string>
@@ -75,12 +75,16 @@
     <string name="settings_github_description">Tap to open</string>
     <string name="settings_github_title">GitHub</string>
     <string name="settings_name">Settings</string>
-    <string name="settings_save_note_and_close_title">Close note after saved</string>
     <string name="settings_privacy_policy_description">Tap to read</string>
     <string name="settings_privacy_policy_title">Privacy policy</string>
+    <string name="settings_save_note_and_close_title">Close note after saved</string>
     <string name="settings_sign_in_title">Sign in</string>
     <string name="settings_sign_out_title">Sign out</string>
     <string name="settings_sign_up_title">Sign up</string>
+    <string name="settings_sync_period_description_five_hour">Every 5 hours</string>
+    <string name="settings_sync_period_description_one_hour">Every 1 hour</string>
+    <string name="settings_sync_period_description_three_hour">Every 3 hours</string>
+    <string name="settings_sync_period_title">Notes sync period</string>
     <string name="settings_terms_description">Tap to read</string>
     <string name="settings_terms_title">Terms &amp; Conditions</string>
 

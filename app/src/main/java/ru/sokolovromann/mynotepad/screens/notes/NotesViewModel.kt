@@ -47,8 +47,6 @@ class NotesViewModel @Inject constructor(
     private val _notesUiEvent: MutableSharedFlow<NotesUiEvent> = MutableSharedFlow()
     val notesUiEvent: SharedFlow<NotesUiEvent> = _notesUiEvent
 
-    private val defaultSyncPeriod: Long = 3600000L // 1 hour
-
     private var lastDeletedNote: Note? = null
 
     init {
@@ -152,10 +150,14 @@ class NotesViewModel @Inject constructor(
     private fun checkSyncNotes(onCompleted: (isSync: Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val lastSync = settingsRepository.getNotesLastSync().first()
+            val period = settingsRepository.getNotesSyncPeriod().first()
             withContext(Dispatchers.Main) {
-                _notesSyncState.value = _notesSyncState.value.copy(lastSync = lastSync)
+                _notesSyncState.value = _notesSyncState.value.copy(
+                    lastSync = lastSync,
+                    period = period
+                )
 
-                val nextSync = lastSync + defaultSyncPeriod
+                val nextSync = lastSync + period.millis
                 onCompleted(nextSync < System.currentTimeMillis())
             }
         }

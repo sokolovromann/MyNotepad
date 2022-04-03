@@ -10,8 +10,8 @@
     <string name="app_choose_email_app">Выберите приложение</string>
     <string name="app_name">Мой блокнот</string>
     <string name="app_network_error_message">Сетевая ошибка, пожалуйста, проверьте ваше интернет-соединение</string>
-    <string name="app_privacy_policy_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/privacy_policy.html</string>
     <string name="app_note_saved_message">Заметка сохранена</string>
+    <string name="app_privacy_policy_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/privacy_policy.html</string>
     <string name="app_terms_link">https://htmlpreview.github.io/?https://github.com/sokolovromann/MyNotepad/blob/dev/terms_and_conditions.html</string>
     <string name="app_unknown_error_message">Неизвестная ошибка, пожалуйста, попробуйте позже</string>
 
@@ -51,8 +51,8 @@
     <string name="notes_not_found_message">У вас нет заметок</string>
     <string name="notes_note_deleted_message">Заметка удалена</string>
     <string name="notes_note_deleted_undo">Отмена</string>
-    <string name="notes_refreshing">Обновление…</string>
     <string name="notes_note_saved_message">@string/app_note_saved_message</string>
+    <string name="notes_refreshing">Обновление…</string>
     <string name="notes_single_column_content_description">Один столбец</string>
     <string name="notes_sort_by">Сортировать</string>
     <string name="notes_sort_created_asc">По созданию▲</string>
@@ -73,12 +73,16 @@
     <string name="settings_github_description">Нажмите, чтобы открыть</string>
     <string name="settings_github_title">GitHub</string>
     <string name="settings_name">Настройки</string>
-    <string name="settings_save_note_and_close_title">Закрыть экран после сохранения заметки</string>
     <string name="settings_privacy_policy_description">Нажмите, чтобы прочитать</string>
     <string name="settings_privacy_policy_title">Политика конфиденциальности</string>
+    <string name="settings_save_note_and_close_title">Закрыть экран после сохранения заметки</string>
     <string name="settings_sign_in_title">Войти</string>
     <string name="settings_sign_out_title">Выйти</string>
     <string name="settings_sign_up_title">Создать аккаунт</string>
+    <string name="settings_sync_period_description_five_hour">Каждые 5 часов</string>
+    <string name="settings_sync_period_description_one_hour">Каждый час</string>
+    <string name="settings_sync_period_description_three_hour">Каждые 3 часа</string>
+    <string name="settings_sync_period_title">Период синхронизации заметок</string>
     <string name="settings_terms_description">Нажмите, чтобы прочитать</string>
     <string name="settings_terms_title">Условия использования</string>
 

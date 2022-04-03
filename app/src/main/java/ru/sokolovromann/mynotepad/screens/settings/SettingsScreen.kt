@@ -10,7 +10,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.sokolovromann.mynotepad.BuildConfig
 import ru.sokolovromann.mynotepad.MyNotepadRoute
@@ -33,6 +32,7 @@ fun SettingsScreen(
 ) {
     val settingsState = settingsViewModel.settingsState.value
     val accountState = settingsViewModel.accountState
+    val syncPeriodDialogState = settingsViewModel.syncPeriodDialogState
     val scaffoldState = rememberScaffoldState()
 
     val coroutineScope = rememberCoroutineScope()
@@ -136,7 +136,15 @@ fun SettingsScreen(
                 onDeleteAccountClick = { settingsViewModel.onEvent(SettingsEvent.DeleteAccountClick) },
                 onFeedbackClick = { settingsViewModel.onEvent(SettingsEvent.FeedbackClick) },
                 onTermsClick = { settingsViewModel.onEvent(SettingsEvent.TermsClick) },
-                onPrivacyPolicyClick = { settingsViewModel.onEvent(SettingsEvent.PrivacyPolicyClick) }
+                onPrivacyPolicyClick = { settingsViewModel.onEvent(SettingsEvent.PrivacyPolicyClick) },
+                showSyncPeriodDialog = syncPeriodDialogState.value,
+                onShowSyncPeriodDialogChange = { show ->
+                    settingsViewModel.onEvent(SettingsEvent.OnSyncPeriodDialogChange(show))
+                },
+                syncPeriodSelected = settingsState.settings.notesSyncPeriod,
+                onSyncPeriodSelectedChange = { notesSyncPeriod ->
+                    settingsViewModel.onEvent(SettingsEvent.OnNotesSyncPeriodChange(notesSyncPeriod))
+                }
             )
         }
     }

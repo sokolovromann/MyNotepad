@@ -12,6 +12,7 @@ class SettingsDataStore @Inject constructor(
     private val appNightThemeKey = booleanPreferencesKey("appNightTheme")
     private val notesSortKey = stringPreferencesKey("notesSort")
     private val notesLastSyncKey = longPreferencesKey("notesLastSync")
+    private val notesSyncPeriodKey = longPreferencesKey("notesSyncPeriod")
     private val notesMultiColumnsKey = booleanPreferencesKey("notesMultiColumns")
     private val notesSaveAndCloseKey = booleanPreferencesKey("notesSaveAndClose")
 
@@ -21,6 +22,7 @@ class SettingsDataStore @Inject constructor(
                 appNightTheme = preferences[appNightThemeKey] ?: false,
                 notesSort = enumValueOf(preferences[notesSortKey] ?: NotesSort.CREATED_ASC.name),
                 notesLastSync = preferences[notesLastSyncKey] ?: 0L,
+                notesSyncPeriod = NotesSyncPeriod.millisOf(preferences[notesSyncPeriodKey] ?: NotesSyncPeriod.THREE_HOURS.millis),
                 notesMultiColumns = preferences[notesMultiColumnsKey] ?: false,
                 notesSaveAndClose = preferences[notesSaveAndCloseKey] ?: false
             )
@@ -42,6 +44,12 @@ class SettingsDataStore @Inject constructor(
     fun getNotesLastSync(): Flow<Long> {
         return dataStore.data.map { preferences ->
             preferences[notesLastSyncKey] ?: 0L
+        }
+    }
+
+    fun getNotesSyncPeriod(): Flow<NotesSyncPeriod> {
+        return dataStore.data.map { preferences ->
+            NotesSyncPeriod.millisOf(preferences[notesSyncPeriodKey] ?: NotesSyncPeriod.THREE_HOURS.millis)
         }
     }
 
@@ -73,6 +81,13 @@ class SettingsDataStore @Inject constructor(
         dataStore.edit { preferences ->
             preferences[notesLastSyncKey] = notesLastSync
         }
+
+    }
+
+    suspend fun saveNotesSyncPeriod(notesSyncPeriod: NotesSyncPeriod) {
+        dataStore.edit { preferences ->
+            preferences[notesSyncPeriodKey] = notesSyncPeriod.millis
+        }
     }
 
     suspend fun saveNotesMultiColumns(notesMultiColumns: Boolean) {
@@ -93,6 +108,7 @@ class SettingsDataStore @Inject constructor(
             preferences[appNightThemeKey] = defaultSettings.appNightTheme
             preferences[notesSortKey] = defaultSettings.notesSort.name
             preferences[notesLastSyncKey] = defaultSettings.notesLastSync
+            preferences[notesSyncPeriodKey] = defaultSettings.notesSyncPeriod.millis
             preferences[notesMultiColumnsKey] = defaultSettings.notesMultiColumns
             preferences[notesSaveAndCloseKey] = defaultSettings.notesSaveAndClose
         }
