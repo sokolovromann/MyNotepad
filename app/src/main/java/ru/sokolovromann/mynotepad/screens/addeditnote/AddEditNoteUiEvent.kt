@@ -5,4 +5,6 @@ sealed class AddEditNoteUiEvent {
     object OpenNotesAfterDeleted : AddEditNoteUiEvent()
     object OpenNotesAfterSaved : AddEditNoteUiEvent()
     object ShowSavedMessage : AddEditNoteUiEvent()
+    object ShowKeyboard : AddEditNoteUiEvent()
+    object HideKeyboard : AddEditNoteUiEvent()
 }
