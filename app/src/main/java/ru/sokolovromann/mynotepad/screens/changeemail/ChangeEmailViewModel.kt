@@ -14,6 +14,8 @@ import ru.sokolovromann.mynotepad.data.exception.AuthException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
+import ru.sokolovromann.mynotepad.screens.changeemail.state.ChangeEmailEmailFieldState
+import ru.sokolovromann.mynotepad.screens.changeemail.state.ChangeEmailPasswordFieldState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,20 +23,28 @@ class ChangeEmailViewModel @Inject constructor(
     private val accountRepository: AccountRepository
 ) : ViewModel(), ScreensEvent<ChangeEmailEvent> {
 
-    private val _changeEmailState: MutableState<ChangeEmailState> = mutableStateOf(ChangeEmailState())
-    val changeEmailState: State<ChangeEmailState> = _changeEmailState
+    private val _emailFieldState: MutableState<ChangeEmailEmailFieldState> = mutableStateOf(ChangeEmailEmailFieldState.Default)
+    val emailFieldState: State<ChangeEmailEmailFieldState> = _emailFieldState
+
+    private val _passwordFieldState: MutableState<ChangeEmailPasswordFieldState> = mutableStateOf(ChangeEmailPasswordFieldState.Default)
+    val passwordFieldState: State<ChangeEmailPasswordFieldState> = _passwordFieldState
+
+    private val _changingState: MutableState<Boolean> = mutableStateOf(false)
+    val changingState: State<Boolean> = _changingState
 
     private val _changeEmailUiEvent: MutableSharedFlow<ChangeEmailUiEvent> = MutableSharedFlow()
     val changeEmailUiEvent: SharedFlow<ChangeEmailUiEvent> = _changeEmailUiEvent
 
     override fun onEvent(event: ChangeEmailEvent) {
         when (event) {
-            is ChangeEmailEvent.OnEmailChange -> _changeEmailState.value = _changeEmailState.value.copy(
-                email = event.newEmail.trim()
+            is ChangeEmailEvent.OnEmailChange -> _emailFieldState.value = _emailFieldState.value.copy(
+                email = event.newEmail.trim(),
+                showError = event.newEmail.trim().isEmpty()
             )
 
-            is ChangeEmailEvent.OnPasswordChange -> _changeEmailState.value = _changeEmailState.value.copy(
-                password = event.newPassword
+            is ChangeEmailEvent.OnPasswordChange -> _passwordFieldState.value = _passwordFieldState.value.copy(
+                password = event.newPassword,
+                showError = event.newPassword.isEmpty()
             )
 
             ChangeEmailEvent.ChangeClick -> if (isCorrectEmail() && isCorrectPassword()) {
@@ -48,59 +58,55 @@ class ChangeEmailViewModel @Inject constructor(
     }
 
     private fun isCorrectEmail(): Boolean {
-        val correctEmail = Patterns.EMAIL_ADDRESS.matcher(_changeEmailState.value.email).matches()
-        _changeEmailState.value = _changeEmailState.value.copy(
-            incorrectEmail = !correctEmail,
-            changing = false
+        val correctEmail = Patterns.EMAIL_ADDRESS.matcher(_emailFieldState.value.email).matches()
+        _emailFieldState.value = _emailFieldState.value.copy(
+            showError = !correctEmail
         )
 
-        return !_changeEmailState.value.incorrectEmail
+        return correctEmail
     }
 
     private fun isCorrectPassword(): Boolean {
-        val correctPassword = _changeEmailState.value.password.isNotEmpty()
-        _changeEmailState.value = _changeEmailState.value.copy(
-            incorrectPassword = !correctPassword,
-            changing = false
+        val correctPassword = _passwordFieldState.value.password.isNotEmpty()
+        _passwordFieldState.value = _passwordFieldState.value.copy(
+            showError = !correctPassword
         )
 
-        return !_changeEmailState.value.incorrectPassword
+        return correctPassword
     }
 
     private fun changeEmail() {
-        _changeEmailState.value = _changeEmailState.value.copy(
-            changing = true
-        )
+        _changingState.value = true
 
         accountRepository.updateEmail(
-            currentPassword = _changeEmailState.value.password,
-            newEmail = _changeEmailState.value.email
+            currentPassword = _passwordFieldState.value.password,
+            newEmail = _emailFieldState.value.email
         ) { result ->
-            _changeEmailState.value = _changeEmailState.value.copy(
-                changing = false
-            )
+            _changingState.value = false
 
             viewModelScope.launch {
-                result
-                    .onSuccess {
-                        _changeEmailUiEvent.emit(ChangeEmailUiEvent.ShowEmailChangedMessage)
-                    }
-                    .onFailure { exception ->
-                        when (exception) {
-                            is NetworkException -> _changeEmailUiEvent.emit(
-                                ChangeEmailUiEvent.ShowNetworkErrorMessage
-                            )
-                            is AuthException -> {
-                                _changeEmailState.value = _changeEmailState.value.copy(
-                                    incorrectPassword = true
-                                )
-                            }
-                            else -> _changeEmailUiEvent.emit(
-                                ChangeEmailUiEvent.ShowUnknownErrorMessage
-                            )
-                        }
-                    }
+                onResult(result)
             }
         }
+    }
+
+    private suspend fun onResult(updateEmailResult: Result<Unit>) {
+        updateEmailResult
+            .onSuccess { _changeEmailUiEvent.emit(ChangeEmailUiEvent.ShowEmailChangedMessage) }
+            .onFailure { exception ->
+                when (exception) {
+                    is NetworkException -> _changeEmailUiEvent.emit(
+                        ChangeEmailUiEvent.ShowNetworkErrorMessage
+                    )
+
+                    is AuthException -> _passwordFieldState.value = _passwordFieldState.value.copy(
+                        showError = true
+                    )
+
+                    else -> _changeEmailUiEvent.emit(
+                        ChangeEmailUiEvent.ShowUnknownErrorMessage
+                    )
+                }
+            }
     }
 }
