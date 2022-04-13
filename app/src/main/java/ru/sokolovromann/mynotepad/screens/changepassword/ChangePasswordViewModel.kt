@@ -13,6 +13,8 @@ import ru.sokolovromann.mynotepad.data.exception.AuthException
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
+import ru.sokolovromann.mynotepad.screens.changepassword.state.CurrentPasswordFieldState
+import ru.sokolovromann.mynotepad.screens.changepassword.state.NewPasswordFieldState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,20 +22,28 @@ class ChangePasswordViewModel @Inject constructor(
     private val accountRepository: AccountRepository
 ) : ViewModel(), ScreensEvent<ChangePasswordEvent> {
 
-    private val _changePasswordState: MutableState<ChangePasswordState> = mutableStateOf(ChangePasswordState())
-    val changePasswordState: State<ChangePasswordState> = _changePasswordState
+    private val _newPasswordFieldState: MutableState<NewPasswordFieldState> = mutableStateOf(NewPasswordFieldState.Default)
+    val newPasswordFieldState: State<NewPasswordFieldState> = _newPasswordFieldState
+
+    private val _currentPasswordFieldState: MutableState<CurrentPasswordFieldState> = mutableStateOf(CurrentPasswordFieldState.Default)
+    val currentPasswordFieldState: State<CurrentPasswordFieldState> = _currentPasswordFieldState
+
+    private val _changingState: MutableState<Boolean> = mutableStateOf(false)
+    val changingState: State<Boolean> = _changingState
 
     private val _changePasswordUiEvent: MutableSharedFlow<ChangePasswordUiEvent> = MutableSharedFlow()
     val changePasswordUiEvent: SharedFlow<ChangePasswordUiEvent> = _changePasswordUiEvent
 
     override fun onEvent(event: ChangePasswordEvent) {
         when (event) {
-            is ChangePasswordEvent.OnNewPasswordChange -> _changePasswordState.value = _changePasswordState.value.copy(
-                newPassword = event.newPassword
+            is ChangePasswordEvent.OnNewPasswordChange -> _newPasswordFieldState.value = _newPasswordFieldState.value.copy(
+                newPassword = event.newPassword,
+                showError = event.newPassword.isEmpty()
             )
 
-            is ChangePasswordEvent.OnCurrentPasswordChange -> _changePasswordState.value = _changePasswordState.value.copy(
-                currentPassword = event.newPassword
+            is ChangePasswordEvent.OnCurrentPasswordChange -> _currentPasswordFieldState.value = _currentPasswordFieldState.value.copy(
+                currentPassword = event.newPassword,
+                showError = event.newPassword.isEmpty()
             )
 
             ChangePasswordEvent.ChangeClick -> if (isCorrectNewPassword() && isCorrectCurrentPassword()) {
@@ -47,57 +57,55 @@ class ChangePasswordViewModel @Inject constructor(
     }
 
     private fun isCorrectNewPassword(): Boolean {
-        val correctPassword = _changePasswordState.value.newPassword.length > 8
-        _changePasswordState.value = _changePasswordState.value.copy(
-            incorrectNewPassword = !correctPassword,
-            changing = false
+        val correctPassword = _newPasswordFieldState.value.newPassword.length > 8
+        _newPasswordFieldState.value = _newPasswordFieldState.value.copy(
+            showError = !correctPassword
         )
 
-        return !_changePasswordState.value.incorrectNewPassword
+        return correctPassword
     }
 
     private fun isCorrectCurrentPassword(): Boolean {
-        val correctPassword = _changePasswordState.value.currentPassword.isNotEmpty()
-        _changePasswordState.value = _changePasswordState.value.copy(
-            incorrectCurrentPassword = !correctPassword,
-            changing = false
+        val correctPassword = _currentPasswordFieldState.value.currentPassword.isNotEmpty()
+        _currentPasswordFieldState.value = _currentPasswordFieldState.value.copy(
+            showError = !correctPassword
         )
 
-        return !_changePasswordState.value.incorrectCurrentPassword
+        return correctPassword
     }
 
     private fun changePassword() {
-        _changePasswordState.value = _changePasswordState.value.copy(
-            changing = true
-        )
+        _changingState.value = true
 
         accountRepository.updatePassword(
-            currentPassword = _changePasswordState.value.currentPassword,
-            newPassword = _changePasswordState.value.newPassword
+            currentPassword = _currentPasswordFieldState.value.currentPassword,
+            newPassword = _newPasswordFieldState.value.newPassword
         ) { result ->
-            _changePasswordState.value = _changePasswordState.value.copy(
-                changing = false
-            )
+            _changingState.value = false
 
             viewModelScope.launch {
-                result
-                    .onSuccess {
-                        _changePasswordUiEvent.emit(ChangePasswordUiEvent.ShowPasswordChangedMessage)
-                    }
-                    .onFailure { exception ->
-                        when (exception) {
-                            is NetworkException -> _changePasswordUiEvent.emit(
-                                ChangePasswordUiEvent.ShowNetworkErrorMessage
-                            )
-                            is AuthException -> _changePasswordState.value = _changePasswordState.value.copy(
-                                incorrectCurrentPassword = true
-                            )
-                            else -> _changePasswordUiEvent.emit(
-                                ChangePasswordUiEvent.ShowUnknownErrorMessage
-                            )
-                        }
-                    }
+                onResult(result)
             }
         }
+    }
+
+    private suspend fun onResult(changePasswordResult: Result<Unit>) {
+        changePasswordResult
+            .onSuccess { _changePasswordUiEvent.emit(ChangePasswordUiEvent.ShowPasswordChangedMessage) }
+            .onFailure { exception ->
+                when (exception) {
+                    is NetworkException -> _changePasswordUiEvent.emit(
+                        ChangePasswordUiEvent.ShowNetworkErrorMessage
+                    )
+
+                    is AuthException -> _currentPasswordFieldState.value = _currentPasswordFieldState.value.copy(
+                        showError = true
+                    )
+
+                    else -> _changePasswordUiEvent.emit(
+                        ChangePasswordUiEvent.ShowUnknownErrorMessage)
+
+                }
+            }
     }
 }
