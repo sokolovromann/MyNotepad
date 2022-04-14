@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.sokolovromann.mynotepad.data.exception.AuthException
@@ -19,6 +18,7 @@ import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
+import ru.sokolovromann.mynotepad.screens.deleteaccount.state.DeleteAccountPasswordFieldState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,8 +28,11 @@ class DeleteAccountViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : ViewModel(), ScreensEvent<DeleteAccountEvent> {
 
-    private val _deleteAccountState: MutableState<DeleteAccountState> = mutableStateOf(DeleteAccountState())
-    val deleteAccountState: State<DeleteAccountState> = _deleteAccountState
+    private val _passwordFieldState: MutableState<DeleteAccountPasswordFieldState> = mutableStateOf(DeleteAccountPasswordFieldState.Default)
+    val passwordFieldState: State<DeleteAccountPasswordFieldState> = _passwordFieldState
+
+    private val _deletingState: MutableState<Boolean> = mutableStateOf(false)
+    val deletingState: State<Boolean> = _deletingState
 
     private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
     val accountState: State<Account> = _accountState
@@ -43,8 +46,9 @@ class DeleteAccountViewModel @Inject constructor(
 
     override fun onEvent(event: DeleteAccountEvent) {
         when (event) {
-            is DeleteAccountEvent.OnPasswordChange -> _deleteAccountState.value = _deleteAccountState.value.copy(
-                password = event.newPassword
+            is DeleteAccountEvent.OnPasswordChange -> _passwordFieldState.value = _passwordFieldState.value.copy(
+                password = event.newPassword,
+                showError = event.newPassword.isEmpty()
             )
 
             DeleteAccountEvent.DeleteClick -> if (isCorrectPassword()) {
@@ -68,19 +72,16 @@ class DeleteAccountViewModel @Inject constructor(
     }
 
     private fun isCorrectPassword(): Boolean {
-        val correctPassword = _deleteAccountState.value.password.isNotEmpty()
-        _deleteAccountState.value = _deleteAccountState.value.copy(
-            incorrectPassword = !correctPassword,
-            deleting = false
+        val correctPassword = _passwordFieldState.value.password.isNotEmpty()
+        _passwordFieldState.value = _passwordFieldState.value.copy(
+            showError = !correctPassword
         )
 
-        return !_deleteAccountState.value.incorrectPassword
+        return correctPassword
     }
 
     private fun deleteAllUserData() {
-        _deleteAccountState.value = _deleteAccountState.value.copy(
-            deleting = true
-        )
+        _deletingState.value = true
 
         clearData {
             deleteAccount {
@@ -103,11 +104,10 @@ class DeleteAccountViewModel @Inject constructor(
 
     private fun deleteAccount(onSuccess: () -> Unit) {
         accountRepository.deleteAccount(
-            currentPassword = _deleteAccountState.value.password
+            currentPassword = _passwordFieldState.value.password
         ) { result ->
-            _deleteAccountState.value = _deleteAccountState.value.copy(
-                deleting = false
-            )
+            _deletingState.value = false
+
             result
                 .onSuccess { onSuccess() }
                 .onFailure { exception ->
@@ -116,9 +116,11 @@ class DeleteAccountViewModel @Inject constructor(
                             is NetworkException -> _deleteAccountUiEvent.emit(
                                 DeleteAccountUiEvent.ShowNetworkErrorMessage
                             )
-                            is AuthException -> _deleteAccountState.value = _deleteAccountState.value.copy(
-                                incorrectPassword = true
+
+                            is AuthException -> _passwordFieldState.value = _passwordFieldState.value.copy(
+                                showError = true
                             )
+
                             else -> _deleteAccountUiEvent.emit(
                                 DeleteAccountUiEvent.ShowUnknownErrorMessage
                             )
