@@ -12,10 +12,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import ru.sokolovromann.mynotepad.data.exception.NetworkException
+import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.local.note.NoteSyncState
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
+import ru.sokolovromann.mynotepad.screens.signup.state.SignUpEmailFieldState
+import ru.sokolovromann.mynotepad.screens.signup.state.SignUpPasswordFieldState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,23 +27,34 @@ class SignUpViewModel @Inject constructor(
     private val noteRepository: NoteRepository
 ) : ViewModel(), ScreensEvent<SignUpEvent> {
 
-    private val _signUpState: MutableState<SignUpState> = mutableStateOf(SignUpState())
-    val signUpState: State<SignUpState> = _signUpState
+    private val _emailFieldState: MutableState<SignUpEmailFieldState> = mutableStateOf(SignUpEmailFieldState.Default)
+    val emailFieldState: State<SignUpEmailFieldState> = _emailFieldState
+
+    private val _passwordFieldState: MutableState<SignUpPasswordFieldState> = mutableStateOf(SignUpPasswordFieldState.Default)
+    val passwordFieldState: State<SignUpPasswordFieldState> = _passwordFieldState
+
+    private val _creatingState: MutableState<Boolean> = mutableStateOf(false)
+    val creatingState: State<Boolean> = _creatingState
 
     private val _signUpUiEvent: MutableSharedFlow<SignUpUiEvent> = MutableSharedFlow()
     val signUpUiEvent: SharedFlow<SignUpUiEvent> = _signUpUiEvent
 
     override fun onEvent(event: SignUpEvent) {
         when (event) {
-            is SignUpEvent.OnEmailChange -> _signUpState.value = _signUpState.value.copy(
-                email = event.newEmail.trim()
+            is SignUpEvent.OnEmailChange -> _emailFieldState.value = _emailFieldState.value.copy(
+                email = event.newEmail.trim(),
+                showError = event.newEmail.trim().isEmpty()
             )
-            is SignUpEvent.OnPasswordChange -> _signUpState.value = _signUpState.value.copy(
-                password = event.newPassword
+
+            is SignUpEvent.OnPasswordChange -> _passwordFieldState.value = _passwordFieldState.value.copy(
+                password = event.newPassword,
+                showError = event.newPassword.isEmpty()
             )
+
             SignUpEvent.CreateAccountClick -> if (isCorrectEmailPassword()) {
                 createAccount()
             }
+
             SignUpEvent.CloseClick -> viewModelScope.launch {
                 _signUpUiEvent.emit(SignUpUiEvent.OpenWelcome)
             }
@@ -48,52 +62,49 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun isCorrectEmailPassword(): Boolean {
-        val correctEmail = Patterns.EMAIL_ADDRESS.matcher(_signUpState.value.email).matches()
-        _signUpState.value = _signUpState.value.copy(
-            incorrectEmail = !correctEmail,
-            creatingAccount = false
+        val correctEmail = Patterns.EMAIL_ADDRESS.matcher(_emailFieldState.value.email).matches()
+        _emailFieldState.value = _emailFieldState.value.copy(
+            showError = !correctEmail
         )
 
-        val correctMinLengthPassword = _signUpState.value.password.length >= 8
-        _signUpState.value = _signUpState.value.copy(
-            incorrectMinLengthPassword = !correctMinLengthPassword,
-            creatingAccount = false
+        val correctMinLengthPassword = _passwordFieldState.value.password.length >= 8
+        _passwordFieldState.value = _passwordFieldState.value.copy(
+            showError = !correctMinLengthPassword
         )
 
-        return !_signUpState.value.incorrectEmail &&
-                !_signUpState.value.incorrectMinLengthPassword
+        return correctEmail && correctMinLengthPassword
     }
 
     private fun createAccount() {
-        _signUpState.value = _signUpState.value.copy(
-            creatingAccount = true
-        )
+        _creatingState.value = true
 
         viewModelScope.launch(Dispatchers.IO) {
             accountRepository.signUpWithEmailPassword(
-                email = _signUpState.value.email,
-                password = _signUpState.value.password,
+                email = _emailFieldState.value.email,
+                password = _passwordFieldState.value.password,
             ) { result ->
-                viewModelScope.launch(Dispatchers.Main) {
-                    _signUpState.value = _signUpState.value.copy(
-                        creatingAccount = false
-                    )
+                _creatingState.value = false
 
-                    result
-                        .onSuccess { account ->
-                            prepareNotesForSync(account.uid)
-                            _signUpUiEvent.emit(SignUpUiEvent.OpenNotes)
-                        }
-                        .onFailure { exception ->
-                            if (exception is NetworkException) {
-                                _signUpUiEvent.emit(SignUpUiEvent.ShowNetworkErrorMessage)
-                            } else {
-                                _signUpUiEvent.emit(SignUpUiEvent.ShowUnknownErrorMessage)
-                            }
-                        }
+                viewModelScope.launch {
+                    onResult(result)
                 }
             }
         }
+    }
+
+    private suspend fun onResult(signUpResult: Result<Account>) {
+        signUpResult
+            .onSuccess { account ->
+                prepareNotesForSync(account.uid)
+                _signUpUiEvent.emit(SignUpUiEvent.OpenNotes)
+            }
+            .onFailure { exception ->
+                if (exception is NetworkException) {
+                    _signUpUiEvent.emit(SignUpUiEvent.ShowNetworkErrorMessage)
+                } else {
+                    _signUpUiEvent.emit(SignUpUiEvent.ShowUnknownErrorMessage)
+                }
+            }
     }
 
     private fun prepareNotesForSync(owner: String) {
