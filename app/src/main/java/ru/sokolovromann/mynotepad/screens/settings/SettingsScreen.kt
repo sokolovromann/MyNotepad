@@ -2,43 +2,46 @@ package ru.sokolovromann.mynotepad.screens.settings
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
-import ru.sokolovromann.mynotepad.BuildConfig
 import ru.sokolovromann.mynotepad.MyNotepadRoute
 import ru.sokolovromann.mynotepad.R
-import ru.sokolovromann.mynotepad.screens.settings.components.SettingsDisplay
-import ru.sokolovromann.mynotepad.screens.settings.components.SettingsLoading
-import ru.sokolovromann.mynotepad.screens.settings.components.SettingsTopAppBar
+import ru.sokolovromann.mynotepad.screens.settings.components.*
 import ru.sokolovromann.mynotepad.ui.components.NavigationDrawer
 import ru.sokolovromann.mynotepad.ui.components.NavigationDrawerHeader
 
 @ExperimentalFoundationApi
 @Composable
 fun SettingsScreen(
-    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    viewModel: SettingsViewModel = hiltViewModel(),
     navController: NavController,
     onOpenGitHub: () -> Unit,
     onOpenEmailApp: () -> Unit,
     onOpenTerms: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit
 ) {
-    val settingsState = settingsViewModel.settingsState.value
-    val accountState = settingsViewModel.accountState
-    val syncPeriodDialogState = settingsViewModel.syncPeriodDialogState
+    val scrollState = rememberScrollState()
     val scaffoldState = rememberScaffoldState()
 
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(true) {
-        settingsViewModel.settingsUiEvent.collect { uiEvent ->
+    LaunchedEffect(Unit) {
+        viewModel.settingsUiEvent.collect { uiEvent ->
             when (uiEvent) {
                 SettingsUiEvent.OpenGitHub -> onOpenGitHub()
 
@@ -81,17 +84,17 @@ fun SettingsScreen(
     }
 
     BackHandler(enabled = scaffoldState.drawerState.isOpen) {
-        settingsViewModel.onEvent(SettingsEvent.OnNavigationMenuStateChange(false))
+        viewModel.onEvent(SettingsEvent.OnNavigationMenuStateChange(false))
     }
 
     BackHandler {
-        settingsViewModel.onEvent(SettingsEvent.BackClick)
+        viewModel.onEvent(SettingsEvent.BackClick)
     }
 
     Scaffold(
         topBar = {
             SettingsTopAppBar(onNavigationIconClick = {
-                settingsViewModel.onEvent(SettingsEvent.OnNavigationMenuStateChange(true))
+                viewModel.onEvent(SettingsEvent.OnNavigationMenuStateChange(true))
             })
         },
         scaffoldState = scaffoldState,
@@ -99,53 +102,60 @@ fun SettingsScreen(
             NavigationDrawer(
                 navController = navController,
                 closeNavigation = {
-                    settingsViewModel.onEvent(
+                    viewModel.onEvent(
                         SettingsEvent.OnNavigationMenuStateChange(false)
                     )},
                 drawerHeader = {
                     NavigationDrawerHeader(
                         title = stringResource(id = R.string.app_name),
-                        description = accountState.value.getName()
+                        description = viewModel.accountNameState.value
                     )
                 }
             )
         },
         snackbarHost = { scaffoldState.snackbarHostState }
     ) {
-        if (settingsState.loading) {
-            SettingsLoading()
-        } else {
-            SettingsDisplay(
-                appNightTheme = settingsState.settings.appNightTheme,
-                notesSaveAndClose = settingsState.settings.notesSaveAndClose,
-                appVersion = BuildConfig.VERSION_NAME,
-                onAppNightThemeChange = { appNightTheme ->
-                    settingsViewModel.onEvent(SettingsEvent.OnAppNightThemeChange(appNightTheme))
-                },
-                onNotesSaveAndClose = { notesSaveAndClose ->
-                    settingsViewModel.onEvent(SettingsEvent.OnNotesSaveAndCloseChange(notesSaveAndClose))
-                },
-                onGitHubClick = { settingsViewModel.onEvent(SettingsEvent.GitHubClick) },
-                localAccount = accountState.value.isLocalAccount(),
-                onSignUpClick = { settingsViewModel.onEvent(SettingsEvent.SignUpClick) },
-                onSignInClick = { settingsViewModel.onEvent(SettingsEvent.SignInClick) },
-                accountName = accountState.value.getName(),
-                onChangeEmailClick = { settingsViewModel.onEvent(SettingsEvent.ChangeEmailClick) },
-                onChangePasswordClick = { settingsViewModel.onEvent(SettingsEvent.ChangePasswordClick) },
-                onSignOutClick = { settingsViewModel.onEvent(SettingsEvent.SignOutClick) },
-                onDeleteAccountClick = { settingsViewModel.onEvent(SettingsEvent.DeleteAccountClick) },
-                onFeedbackClick = { settingsViewModel.onEvent(SettingsEvent.FeedbackClick) },
-                onTermsClick = { settingsViewModel.onEvent(SettingsEvent.TermsClick) },
-                onPrivacyPolicyClick = { settingsViewModel.onEvent(SettingsEvent.PrivacyPolicyClick) },
-                showSyncPeriodDialog = syncPeriodDialogState.value,
-                onShowSyncPeriodDialogChange = { show ->
-                    settingsViewModel.onEvent(SettingsEvent.OnSyncPeriodDialogChange(show))
-                },
-                syncPeriodSelected = settingsState.settings.notesSyncPeriod,
-                onSyncPeriodSelectedChange = { notesSyncPeriod ->
-                    settingsViewModel.onEvent(SettingsEvent.OnNotesSyncPeriodChange(notesSyncPeriod))
-                }
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.surface)
+            .verticalScroll(scrollState)
+        ) {
+            SettingsGeneralContent(
+                appNightTheme = viewModel.appNightThemeState.value,
+                notesSaveAndClose = viewModel.notesSaveAndCloseState.value,
+                onAppNightThemeChange = { viewModel.onEvent(SettingsEvent.OnAppNightThemeChange(it)) },
+                onNotesSaveAndClose = { viewModel.onEvent(SettingsEvent.OnNotesSaveAndCloseChange(it)) }
+            )
+            Divider()
+            SettingsAccountContent(
+                localAccount = viewModel.localAccountState.value,
+                onSignUpClick = { viewModel.onEvent(SettingsEvent.SignUpClick) },
+                onSignInClick = { viewModel.onEvent(SettingsEvent.SignInClick) },
+                accountName = viewModel.accountNameState.value,
+                notesSyncPeriod = viewModel.notesSyncPeriodState.value,
+                onSyncPeriodClick = { viewModel.onEvent(SettingsEvent.OnSyncPeriodDialogChange(true)) },
+                onChangeEmailClick = { viewModel.onEvent(SettingsEvent.ChangeEmailClick) },
+                onChangePasswordClick = { viewModel.onEvent(SettingsEvent.ChangePasswordClick) },
+                onSignOutClick = { viewModel.onEvent(SettingsEvent.SignOutClick) },
+                onDeleteAccountClick = { viewModel.onEvent(SettingsEvent.DeleteAccountClick) }
+            )
+            Divider()
+            SettingsAboutContent(
+                appVersion = viewModel.appVersionState.value,
+                onGitHubClick = { viewModel.onEvent(SettingsEvent.GitHubClick) },
+                onFeedbackClick = { viewModel.onEvent(SettingsEvent.FeedbackClick) },
+                onTermsClick = { viewModel.onEvent(SettingsEvent.TermsClick) },
+                onPrivacyPolicyClick = { viewModel.onEvent(SettingsEvent.PrivacyPolicyClick) }
             )
         }
+
+        SettingsSyncPeriodDialog(
+            dialogState = viewModel.syncPeriodDialogState.value,
+            onDismiss = { viewModel.onEvent(SettingsEvent.OnSyncPeriodDialogChange(false)) },
+            onSelectedChange = {
+                viewModel.onEvent(SettingsEvent.OnNotesSyncPeriodChange(it))
+                viewModel.onEvent(SettingsEvent.OnSyncPeriodDialogChange(false))
+            }
+        )
     }
 }

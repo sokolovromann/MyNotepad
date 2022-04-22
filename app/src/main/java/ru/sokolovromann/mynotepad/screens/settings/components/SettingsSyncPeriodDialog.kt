@@ -13,16 +13,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ru.sokolovromann.mynotepad.R
 import ru.sokolovromann.mynotepad.data.local.settings.NotesSyncPeriod
+import ru.sokolovromann.mynotepad.screens.settings.state.SettingsSyncPeriodDialogState
 import ru.sokolovromann.mynotepad.ui.components.RadioButtonItem
 
 @Composable
 fun SettingsSyncPeriodDialog(
-    showDialog: Boolean,
+    dialogState: SettingsSyncPeriodDialogState,
     onDismiss: () -> Unit,
-    selected: NotesSyncPeriod,
     onSelectedChange: (notesSyncPeriod: NotesSyncPeriod) -> Unit
 ) {
-    if (!showDialog) {
+    if (!dialogState.showDialog) {
         return
     }
 
@@ -37,17 +37,17 @@ fun SettingsSyncPeriodDialog(
             )
             RadioButtonItem(
                 title = stringResource(id = R.string.settings_sync_period_description_one_hour),
-                selected = selected == NotesSyncPeriod.ONE_HOUR,
+                selected = dialogState.selected == NotesSyncPeriod.ONE_HOUR,
                 onSelectedChange = { onSelectedChange(NotesSyncPeriod.ONE_HOUR) }
             )
             RadioButtonItem(
                 title = stringResource(id = R.string.settings_sync_period_description_three_hour),
-                selected = selected == NotesSyncPeriod.THREE_HOURS,
+                selected = dialogState.selected == NotesSyncPeriod.THREE_HOURS,
                 onSelectedChange = { onSelectedChange(NotesSyncPeriod.THREE_HOURS) }
             )
             RadioButtonItem(
                 title = stringResource(id = R.string.settings_sync_period_description_five_hour),
-                selected = selected == NotesSyncPeriod.FIVE_HOURS,
+                selected = dialogState.selected == NotesSyncPeriod.FIVE_HOURS,
                 onSelectedChange = { onSelectedChange(NotesSyncPeriod.FIVE_HOURS) }
             )
         }

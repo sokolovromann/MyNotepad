@@ -11,12 +11,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.sokolovromann.mynotepad.BuildConfig
 import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.local.settings.NotesSyncPeriod
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
+import ru.sokolovromann.mynotepad.screens.settings.state.SettingsSyncPeriodDialogState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,14 +28,26 @@ class SettingsViewModel @Inject constructor(
     private val noteRepository: NoteRepository
 ) : ViewModel(), ScreensEvent<SettingsEvent> {
 
-    private val _settingsState: MutableState<SettingsState> = mutableStateOf(SettingsState())
-    val settingsState: State<SettingsState> = _settingsState
+    private val _appNightThemeState: MutableState<Boolean> = mutableStateOf(false)
+    val appNightThemeState: State<Boolean> = _appNightThemeState
 
-    private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
-    val accountState: State<Account> = _accountState
+    private val _notesSaveAndCloseState: MutableState<Boolean> = mutableStateOf(false)
+    val notesSaveAndCloseState: State<Boolean> = _notesSaveAndCloseState
 
-    private val _syncPeriodDialogState: MutableState<Boolean> = mutableStateOf(false)
-    val syncPeriodDialogState: State<Boolean> = _syncPeriodDialogState
+    private val _localAccountState: MutableState<Boolean> = mutableStateOf(false)
+    val localAccountState: State<Boolean> = _localAccountState
+
+    private val _accountNameState: MutableState<String> = mutableStateOf(Account.DEFAULT_NAME)
+    val accountNameState: State<String> = _accountNameState
+
+    private val _notesSyncPeriodState: MutableState<NotesSyncPeriod> = mutableStateOf(NotesSyncPeriod.THREE_HOURS)
+    val notesSyncPeriodState: State<NotesSyncPeriod> = _notesSyncPeriodState
+
+    private val _appVersionState: MutableState<String> = mutableStateOf(BuildConfig.VERSION_NAME)
+    val appVersionState: State<String> = _appVersionState
+
+    private val _syncPeriodDialogState: MutableState<SettingsSyncPeriodDialogState> = mutableStateOf(SettingsSyncPeriodDialogState.Default)
+    val syncPeriodDialogState: State<SettingsSyncPeriodDialogState> = _syncPeriodDialogState
 
     private val _settingsUiEvent: MutableSharedFlow<SettingsUiEvent> = MutableSharedFlow()
     val settingsUiEvent: SharedFlow<SettingsUiEvent> = _settingsUiEvent
@@ -99,23 +113,23 @@ class SettingsViewModel @Inject constructor(
                 _settingsUiEvent.emit(SettingsUiEvent.OpenNotes)
             }
 
-            is SettingsEvent.OnSyncPeriodDialogChange -> _syncPeriodDialogState.value = event.show
+            is SettingsEvent.OnSyncPeriodDialogChange -> _syncPeriodDialogState.value = _syncPeriodDialogState.value.copy(
+                showDialog = event.show
+            )
 
             is SettingsEvent.OnNotesSyncPeriodChange -> saveNotesSyncPeriod(event.notesSyncPeriod)
         }
     }
 
     private fun getSettings() {
-        _settingsState.value = _settingsState.value.copy(
-            loading = true
-        )
-
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.getSettings().collect { settings ->
                 withContext(Dispatchers.Main) {
-                    _settingsState.value = _settingsState.value.copy(
-                        loading = false,
-                        settings = settings
+                    _appNightThemeState.value = settings.appNightTheme
+                    _notesSaveAndCloseState.value = settings.notesSaveAndClose
+                    _notesSyncPeriodState.value = settings.notesSyncPeriod
+                    _syncPeriodDialogState.value = _syncPeriodDialogState.value.copy(
+                        selected = settings.notesSyncPeriod
                     )
                 }
             }
@@ -126,7 +140,8 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             accountRepository.getAccount().collect { account ->
                 withContext(Dispatchers.Main) {
-                    _accountState.value = account
+                    _localAccountState.value = account.isLocalAccount()
+                    _accountNameState.value = account.getName()
                 }
             }
         }
