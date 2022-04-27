@@ -13,10 +13,12 @@ import kotlinx.coroutines.withContext
 import ru.sokolovromann.mynotepad.data.local.account.Account
 import ru.sokolovromann.mynotepad.data.local.note.Note
 import ru.sokolovromann.mynotepad.data.local.settings.NotesSort
+import ru.sokolovromann.mynotepad.data.local.settings.Settings
 import ru.sokolovromann.mynotepad.data.repository.AccountRepository
 import ru.sokolovromann.mynotepad.data.repository.NoteRepository
 import ru.sokolovromann.mynotepad.data.repository.SettingsRepository
 import ru.sokolovromann.mynotepad.screens.ScreensEvent
+import ru.sokolovromann.mynotepad.screens.notes.state.NotesItemState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,23 +28,20 @@ class NotesViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : ViewModel(), ScreensEvent<NotesEvent> {
 
-    private val _notesState: MutableState<NotesState> = mutableStateOf(NotesState.Loading)
-    val notesState: State<NotesState> = _notesState
+    private val _notesItemsState: MutableState<List<NotesItemState>> = mutableStateOf(listOf())
+    val notesItemsState: State<List<NotesItemState>> = _notesItemsState
 
-    private val _noteMenuState: MutableState<Int> = mutableStateOf(-1)
-    val noteMenuState: State<Int> = _noteMenuState
-
-    private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
-    val accountState: State<Account> = _accountState
+    private val _loadingState: MutableState<Boolean> = mutableStateOf(false)
+    val loadingState: State<Boolean> = _loadingState
 
     private val _notesSortState: MutableState<NotesSort> = mutableStateOf(NotesSort.CREATED_ASC)
     val notesSortState: State<NotesSort> = _notesSortState
 
-    private val _notesSyncState: MutableState<NotesSyncState> = mutableStateOf(NotesSyncState())
-    val notesSyncState: State<NotesSyncState> = _notesSyncState
-
     private val _notesMultiColumnsState: MutableState<Boolean> = mutableStateOf(false)
     val notesMultiColumnsState: State<Boolean> = _notesMultiColumnsState
+
+    private val _accountState: MutableState<Account> = mutableStateOf(Account.LocalAccount)
+    val accountState: State<Account> = _accountState
 
     private val _notesUiEvent: MutableSharedFlow<NotesUiEvent> = MutableSharedFlow()
     val notesUiEvent: SharedFlow<NotesUiEvent> = _notesUiEvent
@@ -50,14 +49,7 @@ class NotesViewModel @Inject constructor(
     private var lastDeletedNote: Note? = null
 
     init {
-        checkSyncNotes { isSync ->
-            if (isSync) syncNotes()
-        }
-        getNotesMultiColumns {  }
-        getNotesSort {
-            getNotes()
-        }
-        getAccount()
+        getData()
     }
 
     override fun onEvent(event: NotesEvent) {
@@ -70,7 +62,7 @@ class NotesViewModel @Inject constructor(
                 _notesUiEvent.emit(NotesUiEvent.EditNote(event.note))
             }
 
-            is NotesEvent.OpenNoteMenu -> _noteMenuState.value = event.index
+            is NotesEvent.OnNoteMenuChange -> showOrHideNoteMenu(event.isShow, event.note)
 
             is NotesEvent.DeleteNoteClick -> deleteNote(event.note)
 
@@ -96,7 +88,7 @@ class NotesViewModel @Inject constructor(
 
             is NotesEvent.NotesMultiColumnsClick -> saveNotesMultiColumns()
 
-            is NotesEvent.RefreshNotesClick -> syncNotes()
+            is NotesEvent.RefreshNotesClick -> getData()
 
             is NotesEvent.NoteDeleted -> if (event.deletedNote.isNotEmpty()) {
                 lastDeletedNote = event.deletedNote
@@ -113,25 +105,33 @@ class NotesViewModel @Inject constructor(
         }
     }
 
-    private fun getNotesSort(onCompleted: () -> Unit) {
+    private fun getData() {
+        getAccount()
+        getSettings {
+            getNotes(it)
+        }
+    }
+
+    private fun getSettings(onCompleted: (Settings) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            settingsRepository.getNotesSort().collect { notesSort ->
+            settingsRepository.getSettings().collect { settings ->
                 withContext(Dispatchers.Main) {
-                    _notesSortState.value = notesSort
-                    onCompleted()
+                    _notesSortState.value = settings.notesSort
+                    _notesMultiColumnsState.value = settings.notesMultiColumns
+                    onCompleted(settings)
                 }
             }
         }
     }
 
-    private fun getNotesMultiColumns(onCompleted: () -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            settingsRepository.getNotesMultiColumns().collect { notesMultiColumns ->
-                withContext(Dispatchers.Main) {
-                    _notesMultiColumnsState.value = notesMultiColumns
-                    onCompleted()
-                }
-            }
+    private fun showOrHideNoteMenu(showMenu: Boolean, note: Note) {
+        _notesItemsState.value.find { it.note == note }?.let { state ->
+            val index = _notesItemsState.value.indexOf(state)
+
+            val notes = _notesItemsState.value.toMutableList()
+            notes[index] = state.copy(showMenu = showMenu)
+
+            _notesItemsState.value = notes
         }
     }
 
@@ -147,45 +147,44 @@ class NotesViewModel @Inject constructor(
         }
     }
 
-    private fun checkSyncNotes(onCompleted: (isSync: Boolean) -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val lastSync = settingsRepository.getNotesLastSync().first()
-            val period = settingsRepository.getNotesSyncPeriod().first()
-            withContext(Dispatchers.Main) {
-                _notesSyncState.value = _notesSyncState.value.copy(
-                    lastSync = lastSync,
-                    period = period
-                )
+    private fun getNotes(settings: Settings) {
+        _loadingState.value = true
 
-                val nextSync = lastSync + period.millis
-                onCompleted(nextSync < System.currentTimeMillis())
-            }
+        val nextSync = settings.notesLastSync + settings.notesSyncPeriod.millis
+        if (nextSync < System.currentTimeMillis()) {
+            syncNotes { _loadingState.value = false }
+        } else {
+            getLocalNotes { _loadingState.value = false }
         }
     }
 
-    private fun syncNotes() {
-        _notesSyncState.value = _notesSyncState.value.copy(syncing = true)
+    private fun syncNotes(onCompleted: () -> Unit) {
         noteRepository.scheduleSyncNotes()
-
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.saveNotesLastSync(System.currentTimeMillis())
+            noteRepository.getNotes().collect { notes ->
+                showNotes(notes)
+                onCompleted()
+            }
         }
     }
 
-    private fun getNotes() {
-        _notesState.value = NotesState.Loading
-
+    private fun getLocalNotes(onCompleted: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             noteRepository.getNotes().collect { notes ->
-                withContext(Dispatchers.Main) {
-                    if (notes.isEmpty()) {
-                        _notesState.value = NotesState.NotFound
-                    } else {
-                        _notesState.value = NotesState.Notes(sortNotes(notes))
-                    }
-                    _notesSyncState.value = _notesSyncState.value.copy(syncing = false)
-                }
+                showNotes(notes)
+                onCompleted()
             }
+        }
+    }
+
+    private suspend fun showNotes(notes: List<Note>) = withContext(Dispatchers.Main) {
+        _notesItemsState.value = sortNotes(notes).map { note ->
+            NotesItemState(
+                note = note,
+                showMenu = false,
+                maxLines = if (_notesMultiColumnsState.value) 15 else 10
+            )
         }
     }
 
@@ -205,7 +204,6 @@ class NotesViewModel @Inject constructor(
 
                 withContext(Dispatchers.Main) {
                     lastDeletedNote = note
-                    _noteMenuState.value = -1
                     _notesUiEvent.emit(NotesUiEvent.ShowDeletedMessage)
                 }
             }

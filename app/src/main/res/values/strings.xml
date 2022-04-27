@@ -54,7 +54,6 @@
     <string name="notes_note_deleted_message">Note deleted</string>
     <string name="notes_note_deleted_undo">Undo</string>
     <string name="notes_note_saved_message">@string/app_note_saved_message</string>
-    <string name="notes_refreshing">Refreshing…</string>
     <string name="notes_single_column_content_description">Single-column view</string>
     <string name="notes_sort_by">Sort by</string>
     <string name="notes_sort_created_asc">Created▲</string>

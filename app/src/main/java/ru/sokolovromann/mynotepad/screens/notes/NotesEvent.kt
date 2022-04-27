@@ -6,7 +6,7 @@ import ru.sokolovromann.mynotepad.data.local.settings.NotesSort
 sealed class NotesEvent {
     object AddNoteClick : NotesEvent()
     data class NoteClick(val note: Note) : NotesEvent()
-    data class OpenNoteMenu(val index: Int) : NotesEvent()
+    data class OnNoteMenuChange(val isShow: Boolean, val note: Note) : NotesEvent()
     data class DeleteNoteClick(val note: Note) : NotesEvent()
     object NoteDeletedUndoClick : NotesEvent()
     data class OnNavigationMenuStateChange(val isOpen: Boolean) : NotesEvent()

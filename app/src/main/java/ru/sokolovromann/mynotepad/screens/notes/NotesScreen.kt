@@ -2,11 +2,17 @@ package ru.sokolovromann.mynotepad.screens.notes
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
@@ -19,25 +25,22 @@ import ru.sokolovromann.mynotepad.data.local.note.Note
 import ru.sokolovromann.mynotepad.screens.addeditnote.DELETED_NOTE_JSON
 import ru.sokolovromann.mynotepad.screens.addeditnote.NOTE_SAVED
 import ru.sokolovromann.mynotepad.screens.notes.components.*
-import ru.sokolovromann.mynotepad.ui.components.IconFloatingActionButton
-import ru.sokolovromann.mynotepad.ui.components.NavigationDrawer
-import ru.sokolovromann.mynotepad.ui.components.NavigationDrawerHeader
+import ru.sokolovromann.mynotepad.ui.components.*
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @Composable
 fun NotesScreen(
-    notesViewModel: NotesViewModel = hiltViewModel(),
+    viewModel: NotesViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val notesState = notesViewModel.notesState
-    val noteMenuState = notesViewModel.noteMenuState
-    val accountState = notesViewModel.accountState
-    val notesSortState = notesViewModel.notesSortState
-    val notesMultiColumnsState = notesViewModel.notesMultiColumnsState
-    val notesSyncState = notesViewModel.notesSyncState
+    val notesItemsState = viewModel.notesItemsState
+    val accountState = viewModel.accountState
+    val notesSortState = viewModel.notesSortState
+    val notesMultiColumnsState = viewModel.notesMultiColumnsState
     val scaffoldState = rememberScaffoldState()
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val scrollState = rememberScrollState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -50,14 +53,14 @@ fun NotesScreen(
         val deletedNote = navArguments?.getString(DELETED_NOTE_JSON)?.let {
             Json.decodeFromString<Note>(it)
         } ?: Note.EMPTY
-        notesViewModel.onEvent(NotesEvent.NoteDeleted(deletedNote = deletedNote))
+        viewModel.onEvent(NotesEvent.NoteDeleted(deletedNote = deletedNote))
 
         val noteSaved = navArguments?.getBoolean(NOTE_SAVED) ?: false
-        notesViewModel.onEvent(NotesEvent.NoteSaved(noteSaved = noteSaved))
+        viewModel.onEvent(NotesEvent.NoteSaved(noteSaved = noteSaved))
     }
 
-    LaunchedEffect(true) {
-        notesViewModel.notesUiEvent.collectLatest { uiEvent ->
+    LaunchedEffect(Unit) {
+        viewModel.notesUiEvent.collectLatest { uiEvent ->
             when (uiEvent) {
                 NotesUiEvent.AddNote -> navController.navigate(MyNotepadRoute.Notes.addNoteScreen)
 
@@ -96,11 +99,11 @@ fun NotesScreen(
     }
 
     BackHandler(enabled = scaffoldState.drawerState.isOpen) {
-        notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(false))
+        viewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(false))
     }
 
     BackHandler(enabled = sheetState.isVisible) {
-        notesViewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(false))
+        viewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(false))
     }
 
     ModalBottomSheetLayout(
@@ -108,8 +111,8 @@ fun NotesScreen(
             NotesSortSheet(
                 notesSort = notesSortState.value,
                 onNotesSortChange = { notesSort ->
-                    notesViewModel.onEvent(NotesEvent.OnNotesSortChange(notesSort))
-                    notesViewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(false))
+                    viewModel.onEvent(NotesEvent.OnNotesSortChange(notesSort))
+                    viewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(false))
                 }
             )
         },
@@ -118,13 +121,12 @@ fun NotesScreen(
         Scaffold(
             topBar = {
                 NotesTopAppBar(
-                    onNavigationIconClick = { notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(true)) },
-                    syncing = notesSyncState.value.syncing
+                    onNavigationIconClick = { viewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(true)) },
                 )
             },
             floatingActionButton = {
                 IconFloatingActionButton(onClick = {
-                    notesViewModel.onEvent(NotesEvent.AddNoteClick)
+                    viewModel.onEvent(NotesEvent.AddNoteClick)
                 })
             },
             scaffoldState = scaffoldState,
@@ -133,35 +135,63 @@ fun NotesScreen(
                 NavigationDrawer(
                     navController = navController,
                     closeNavigation = {
-                        notesViewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(false))},
+                        viewModel.onEvent(NotesEvent.OnNavigationMenuStateChange(false))},
                     drawerHeader = {
                         NavigationDrawerHeader(
                             title = stringResource(id = R.string.app_name),
                             description = accountState.value.getName()
                         )
                     },
-                    onRefresh = { notesViewModel.onEvent(NotesEvent.RefreshNotesClick) }
+                    onRefresh = { viewModel.onEvent(NotesEvent.RefreshNotesClick) }
                 )
             }
         ) {
-            when (val state = notesState.value) {
-                NotesState.Loading -> NotesLoading()
+            if (viewModel.loadingState.value) {
+                NotesLoading()
+                return@Scaffold
+            }
 
-                is NotesState.Notes -> NotesDisplay(
-                    notes = state.notes,
-                    onNoteClick = { note -> notesViewModel.onEvent(NotesEvent.NoteClick(note)) },
-                    noteMenuIndex = noteMenuState.value,
-                    onNoteMenuIndexChange = { newIndex -> notesViewModel.onEvent(NotesEvent.OpenNoteMenu(newIndex))},
-                    onDeleteNote = { note -> notesViewModel.onEvent(NotesEvent.DeleteNoteClick(note)) },
-                    onNoteDeletedUndo = { notesViewModel.onEvent(NotesEvent.NoteDeletedUndoClick) },
+            if (notesItemsState.value.isEmpty()) {
+                NotesNotFound()
+                return@Scaffold
+            }
+
+            Box {
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                ) {
+                    Row {
+                        NotesSortButton(notesSort = notesSortState.value) {
+                            viewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(true))
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        NotesMultiColumnsButton(multiColumns = notesMultiColumnsState.value) {
+                            viewModel.onEvent(NotesEvent.NotesMultiColumnsClick)
+                        }
+                    }
+                    StaggeredVerticalGrid(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        multiColumns = notesMultiColumnsState.value
+                    ) {
+                        notesItemsState.value.forEachIndexed { index, itemState ->
+                            NotesItem(
+                                itemState = itemState,
+                                onClick = { viewModel.onEvent(NotesEvent.NoteClick(itemState.note)) },
+                                onShowMenuChange = { viewModel.onEvent(NotesEvent.OnNoteMenuChange(it, itemState.note)) },
+                                onDelete = { viewModel.onEvent(NotesEvent.DeleteNoteClick(itemState.note)) }
+                            )
+                        }
+                    }
+                    TransparentDivider(thickness = 128.dp)
+                }
+                DefaultSnackbar(
                     snackbarHostState = scaffoldState.snackbarHostState,
-                    onSortClick = { notesViewModel.onEvent(NotesEvent.OnNotesSortSheetStateChange(true)) },
-                    notesSort = notesSortState.value,
-                    notesMultiColumns = notesMultiColumnsState.value,
-                    onMultiColumnsClick = { notesViewModel.onEvent(NotesEvent.NotesMultiColumnsClick) }
+                    onActionClick = { viewModel.onEvent(NotesEvent.NoteDeletedUndoClick) },
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 88.dp)
+                        .align(alignment = Alignment.BottomCenter)
                 )
-
-                NotesState.NotFound -> NotesNotFound()
             }
         }
     }

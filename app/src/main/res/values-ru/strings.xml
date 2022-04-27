@@ -52,7 +52,6 @@
     <string name="notes_note_deleted_message">Заметка удалена</string>
     <string name="notes_note_deleted_undo">Отмена</string>
     <string name="notes_note_saved_message">@string/app_note_saved_message</string>
-    <string name="notes_refreshing">Обновление…</string>
     <string name="notes_single_column_content_description">Один столбец</string>
     <string name="notes_sort_by">Сортировать</string>
     <string name="notes_sort_created_asc">По созданию▲</string>
