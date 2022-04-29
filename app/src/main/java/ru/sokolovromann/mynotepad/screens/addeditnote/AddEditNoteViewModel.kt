@@ -192,7 +192,9 @@ class AddEditNoteViewModel @Inject constructor(
 
         getTokenId { tokenId ->
             viewModelScope.launch(Dispatchers.IO) {
-                noteRepository.saveNote(note, tokenId)
+                noteRepository.saveNote(note, tokenId) { note ->
+                    originalNote = note
+                }
 
                 withContext(Dispatchers.Main) {
                     if (_notesSaveAndCloseState.value) {

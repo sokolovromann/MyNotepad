@@ -25,7 +25,7 @@ interface NoteRepository {
 
     suspend fun getNoteByUid(uid: String): Flow<Note>
 
-    suspend fun saveNote(note: Note, tokenId: String)
+    suspend fun saveNote(note: Note, tokenId: String, onResult: (Note) -> Unit)
 
     suspend fun updateSyncStates(syncState: NoteSyncState)
 

@@ -215,7 +215,7 @@ class NotesViewModel @Inject constructor(
             viewModelScope.launch(Dispatchers.IO) {
                 lastDeletedNote?.let {
                     val note = it.copy(id = 0L)
-                    noteRepository.saveNote(note, tokenId)
+                    noteRepository.saveNote(note, tokenId) {}
                 }
             }
         }

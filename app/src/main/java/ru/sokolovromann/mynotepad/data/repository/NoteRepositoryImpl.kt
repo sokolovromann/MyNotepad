@@ -80,16 +80,22 @@ class NoteRepositoryImpl @Inject constructor(
         return flowOf(note)
     }
 
-    override suspend fun saveNote(note: Note, tokenId: String) {
+    override suspend fun saveNote(note: Note, tokenId: String, onResult: (Note) -> Unit) {
         when (tokenId) {
-            NoteRepository.LOCAL_TOKEN_ID -> saveLocalNote(note)
+            NoteRepository.LOCAL_TOKEN_ID -> {
+                val result = saveLocalNote(note)
+                onResult(result.getOrThrow())
+            }
 
             NoteRepository.NO_TOKEN_ID -> {
                 // Nothing
             }
 
             else -> noteApi.putNote(noteMapping.toNoteRequest(note), tokenId)
-                .onSuccess { saveLocalNote(note.copyWithNothingSyncState()) }
+                .onSuccess {
+                    val result = saveLocalNote(note.copyWithNothingSyncState())
+                    onResult(result.getOrThrow())
+                }
                 .onFailure { scheduleSyncNotes() }
         }
     }
@@ -130,11 +136,13 @@ class NoteRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun saveLocalNote(note: Note) {
-        if (note.id == 0L) {
-            noteDao.insertNote(note)
+    private fun saveLocalNote(note: Note): Result<Note> {
+        return if (note.id == 0L) {
+            val id = noteDao.insertNote(note)
+            Result.success(note.copy(id = id))
         } else {
             noteDao.updateNote(note)
+            Result.success(note)
         }
     }
 
