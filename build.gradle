@@ -3,9 +3,9 @@ buildscript {
     ext {
         my_notepad_code_version = 1
         my_notepad_version = '1.0.0'
-        compile_sdk_version = 31
+        compile_sdk_version = 32
         min_sdk_version = 23
-        target_sdk_version = 31
+        target_sdk_version = 32
 
         gradle_version = '7.2.1'
         kotlin_version = '1.6.10'
