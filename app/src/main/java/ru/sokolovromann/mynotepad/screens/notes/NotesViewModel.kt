@@ -237,7 +237,7 @@ class NotesViewModel @Inject constructor(
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 accountRepository.getToken { tokenResult ->
-                    val tokenId = tokenResult.getOrDefault(NoteRepository.NO_TOKEN_ID)
+                    val tokenId = tokenResult.getOrDefault(NoteRepository.LOCAL_TOKEN_ID)
                     onCompleted(tokenId)
                 }
             }
